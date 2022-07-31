@@ -14,6 +14,18 @@
   },
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
-    "semi": "off"
+    "semi": "off",
+    "react/jsx-filename-extension": [
+      1,
+      { "extensions": [".jsx", ".tsx", ".ts"] }
+    ],
+    " react/jsx-no-useless-fragment": "off",
+    "comma-dangle": "off",
+    "comma-spacing": "off",
+    "object-curly-newline": "off",
+    "react/forbid-prop-types": "off",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": "off"
   }
 }
