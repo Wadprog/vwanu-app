@@ -8,6 +8,7 @@ import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 // Custom dependencies
 import colors from '../config/colors';
+import tw from '../lib/tailwind';
 
 const Wrapper = styled.View`
   flex-direction: row;
@@ -22,7 +23,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
-    width: '100%',
     marginVertical: 5,
   },
   text: {
@@ -34,12 +34,17 @@ function Button(props) {
   const { icon = null, title, color = 'primary', onPress, style } = props;
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: colors[color] }, { ...style }]}
+      style={[
+        styles.button,
+        { backgroundColor: colors[color] },
+        tw`bg-cs-primary`,
+        { ...style },
+      ]}
       onPress={onPress}
     >
       <Wrapper>
         {icon && <MaterialCommunityIcons {...icon} size={20} />}
-        <Text style={styles.text}>{title}</Text>
+        <Text style={[styles.text, tw`font-bold text-md`]}>{title}</Text>
       </Wrapper>
     </TouchableOpacity>
   );
