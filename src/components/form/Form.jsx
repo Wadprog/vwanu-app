@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -11,7 +12,7 @@ function AppForm(props) {
       onSubmit={onSubmit}
       validationSchema={validationSchema}
     >
-      {() => ({ children })}
+      {() => <>{children}</>}
     </Formik>
   );
 }

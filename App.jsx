@@ -1,22 +1,16 @@
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
-import WelcomeScreen from './src/screens/Welcome.screen';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+import theme from './src/config/custom-theme.json';
+// import Welcome from './src/screens/Welcome.screen'
+// import Register from './src/screens/Register.screen'
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// })
+import Login from './src/screens/Login.screen';
 
 export default function App() {
   return (
-    <View>
-      <WelcomeScreen />
-      <StatusBar />
-    </View>
+    <ApplicationProvider {...eva} theme={{ ...eva.dark, ...theme }}>
+      <Login />
+    </ApplicationProvider>
   );
 }

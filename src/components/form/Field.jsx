@@ -1,6 +1,7 @@
 import React from 'react';
 import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
+import tw from '../../lib/tailwind';
 
 import Input from '../Input';
 import Error from './Error';
@@ -14,7 +15,7 @@ function FormField({ name, ...otherProps }) {
         onChangeText={handleChange(name)}
         {...otherProps}
       />
-      <Error error={errors[name]} visible={touched[name]} />
+      <Error error={errors[name]} visible={touched[name]} style={tw`block`} />
     </>
   );
 }
