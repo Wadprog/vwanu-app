@@ -3,7 +3,6 @@ import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
-import tw from '../lib/tailwind';
 
 // Customs Dependencies
 
@@ -33,13 +32,7 @@ const styles = StyleSheet.create({
 // Main Function
 function AppInput({ style, icon, ...otherProps }) {
   return (
-    <View
-      style={[
-        styles.container,
-        tw`bg-blue-200 text-secondary placeholder:text-secondary font-semibold rounded-full input-secondary border-none invalid:text-red-500 autofill:text-secondary autofill:bg-blue-200`,
-        style,
-      ]}
-    >
+    <View style={[styles.container, defaultStyles.input, style]}>
       {icon && (
         <MaterialCommunityIcons name={icon} size={20} style={styles.icon} />
       )}
