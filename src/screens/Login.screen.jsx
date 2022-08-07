@@ -4,6 +4,7 @@ import { View, Image, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import PropTypes from 'prop-types';
 // Core components
 import tw from '../lib/tailwind';
 import { image } from '../config';
@@ -15,7 +16,7 @@ const ValidationSchema = Yup.object().shape({
   password: Yup.string().required().min(8).label('Password'),
 });
 
-const LoginScreen = () => (
+const LoginScreen = ({ navigation }) => (
   <View style={tw`mx-0`}>
     <View style={tw`grid grid-cols-1 lg:mb:0 lg:grid-cols-2`}>
       <LinearGradient
@@ -186,6 +187,9 @@ const LoginScreen = () => (
               </Text>
 
               <TouchableWithoutFeedback
+                onPress={() => {
+                  navigation.navigate('SignUp');
+                }}
                 style={tw`rounded-3xl md:px-8 ml-1 text-base-100 bg-blue-700 p-2 px-3 flex flex-row items-center justify-center ml-1`}
               >
                 <Text style={tw` text-lg font-semibold text-white `}>
@@ -200,4 +204,7 @@ const LoginScreen = () => (
   </View>
 );
 
+LoginScreen.propTypes = {
+  navigation: PropTypes.object.isRequired,
+};
 export default LoginScreen;
