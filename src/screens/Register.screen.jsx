@@ -39,6 +39,7 @@ const initialValues = {
 
 const RegisterScreen = () => {
   const navigation = React.useContext(NavigationContext);
+
   const handleSubmit = (values) => {
     const { log } = console;
     log('values', values);
