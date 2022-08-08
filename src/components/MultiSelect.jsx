@@ -4,38 +4,43 @@ import {
   Modal,
   SafeAreaView,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
+
 import React from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
 // Custom import
 import tw from '../lib/tailwind';
 import SelecTableItems from './SelectedItems';
+import Button from './Button';
 
 export default function MultiSelect({
   items,
   placeholder,
   onValueChange,
+  containerStyle,
   ...otherProps
 }) {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
 
   const handleValueChange = (item, action) => {
-    let selected = [];
+    let itemSelected = [];
     if (action === 'select') {
-      selected = [...selectedItems, item];
-      setSelectedItems(selected);
+      itemSelected = [...selectedItems, item];
+      setSelectedItems(itemSelected);
     } else {
-      selected = selectedItems.filter((i) => i.id !== item.id);
-      setSelectedItems(selected);
+      itemSelected = selectedItems.filter((i) => i.id !== item.id);
+      setSelectedItems(itemSelected);
     }
-    if (onValueChange) onValueChange(selected);
+    if (onValueChange) onValueChange(itemSelected);
   };
   return (
     <View
       style={[
         tw`bg-blue-200 text-secondary placeholder:text-secondary font-semibold rounded-full input-secondary border-none invalid:text-red-500 autofill:text-secondary autofill:bg-blue-200 p-5`,
+        containerStyle,
       ]}
       {...otherProps}
     >
@@ -63,27 +68,39 @@ export default function MultiSelect({
           <MaterialCommunityIcons name="chevron-down" size={20} />
         </TouchableOpacity>
       </View>
-      <Modal visible={modalVisible}>
+      <Modal visible={modalVisible} presentationStyle="formSheet">
         <SafeAreaView>
-          <View style={tw`p-3`}>
+          <View style={[tw`p-1  h-full`]}>
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
-              style={tw`flex flex-row justify-end`}
+              style={tw`flex flex-row justify-end `}
             >
               <MaterialCommunityIcons
                 name="close"
                 style={tw`m-2 text-cs-primary text-3xl`}
               />
             </TouchableOpacity>
-            <Text>Select as many items you want</Text>
-            {items.map((item) => (
-              <SelecTableItems
-                item={item}
-                onSelect={() => handleValueChange(item, 'select')}
-                onDeselect={() => handleValueChange(item, 'deselect')}
-                selected={selectedItems.includes(item)}
-              />
-            ))}
+            <Text style={tw`text-cs-primary text-lg font-bold mb-2`}>
+              Pick as many items you want
+            </Text>
+            <View style={tw`flex justify-between  flex-1`}>
+              <View style={tw`flex max-h-5/6  overflow-hidden`}>
+                <FlatList
+                  data={items}
+                  renderItem={({ item }) => (
+                    <SelecTableItems
+                      item={item}
+                      onSelect={() => handleValueChange(item, 'select')}
+                      onDeselect={() => handleValueChange(item, 'deselect')}
+                      selected={selectedItems.includes(item)}
+                    />
+                  )}
+                />
+              </View>
+              <View style={tw`justify-self-end`}>
+                <Button title="done" onPress={() => setModalVisible(false)} />
+              </View>
+            </View>
           </View>
         </SafeAreaView>
       </Modal>
@@ -96,4 +113,5 @@ MultiSelect.propTypes = {
   selectedItems: PropTypes.array.isRequired,
   onValueChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
+  containerStyle: PropTypes.object,
 };

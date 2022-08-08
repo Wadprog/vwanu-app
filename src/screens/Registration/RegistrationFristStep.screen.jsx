@@ -52,14 +52,16 @@ const RegistrationStepsContainer = () => {
     if (data) {
       log(data);
     }
-    if (currentPosition <= labels.length - 1) {
+    if (currentPosition < labels.length) {
       setCurrentPosition((position) => position + 1);
     }
   };
 
   return (
-    <View style={tw`mx-0 md:mx-0 lg:h-screen`}>
-      <View style={tw`grid grid-cols-1 lg:mb:0 lg:grid-cols-2`}>
+    <View style={tw`mx-0 flex flex-1 lg:h-screen bg-gray-300 `}>
+      <View
+        style={tw`bg-gray-500 flex-1 grid grid-cols-1 lg:mb:0 lg:grid-cols-2`}
+      >
         <View style={tw`inline lg:hidden`}>
           <LinearGradient
             colors={[tw.color('g-one/[0.78]'), tw.color('g-two/[0.78]')]}
@@ -87,7 +89,7 @@ const RegistrationStepsContainer = () => {
         </View>
 
         <View
-          style={tw`place-items-center bg-white shadow-t-2xl rounded-t-[30px] lg:rounded-none px-4 md:px-8 -mt-28 z-10 md:mx-36 lg:mt-0 lg:mx-0 lg:h-screen pt-5`}
+          style={tw` bg-white flex-1 flex shadow-t-2xl rounded-t-[30px] lg:rounded-none px-2 md:px-8 -mt-28 z-10 md:mx-36 lg:mt-0 lg:mx-0 lg:h-screen pt-5`}
         >
           <Step
             handleSubmit={handleSubmit}

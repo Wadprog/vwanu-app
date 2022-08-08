@@ -16,6 +16,7 @@ export default function Select({
   items,
   placeholder,
   onValueChange,
+  style,
   ...otherProps
 }) {
   const [selectedItem, setSelectedItem] = React.useState(null);
@@ -24,7 +25,8 @@ export default function Select({
   return (
     <View
       style={[
-        tw`bg-blue-200 text-secondary placeholder:text-secondary font-semibold rounded-full input-secondary border-none invalid:text-red-500 autofill:text-secondary autofill:bg-blue-200 p-5 my-2`,
+        tw`bg-blue-200 text-secondary placeholder:text-secondary font-semibold rounded-full input-secondary border-none invalid:text-red-500 autofill:text-secondary autofill:bg-blue-200 p-5 my-1`,
+        style,
       ]}
       {...otherProps}
     >
@@ -32,10 +34,10 @@ export default function Select({
         <MaterialCommunityIcons name="apps" size={20} />
         <View>
           {selectedItem ? (
-            <Text>{selectedItem}</Text>
+            <Text style={tw`font-semibold text-lg`}>{selectedItem}</Text>
           ) : (
-            <Text style={tw`text-gray-400`}>
-              {placeholder || 'Pic an option'}
+            <Text style={tw`text-gray-400 font-semibold text-lg`}>
+              {placeholder || 'Pick an option'}
             </Text>
           )}
         </View>
@@ -55,7 +57,9 @@ export default function Select({
                 style={tw`m-2 text-cs-primary text-3xl`}
               />
             </TouchableOpacity>
-            <Text>Pick one option</Text>
+            <Text style={tw`font-bold text-lg text-cs-primary my-2`}>
+              Pick an option
+            </Text>
             {items.map((item) => (
               <TouchableOpacity
                 onPress={() => {
@@ -64,7 +68,9 @@ export default function Select({
                   setModalVisible(false);
                 }}
               >
-                <Text>{item}</Text>
+                <View style={tw`p-2 bg-gray-200 my-1 rounded-lg`}>
+                  <Text style={tw`font-bold text-lg`}>{item}</Text>
+                </View>
               </TouchableOpacity>
             ))}
           </View>
@@ -78,4 +84,5 @@ Select.propTypes = {
   items: PropTypes.arrayOf(PropTypes.string).isRequired,
   onValueChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
+  style: PropTypes.object,
 };

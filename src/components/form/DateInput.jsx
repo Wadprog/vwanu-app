@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 import React from 'react';
 import DatePicker from 'react-native-datepicker';
 import { useFormikContext } from 'formik';
@@ -8,13 +9,14 @@ import Error from './Error';
 import tw from '../../lib/tailwind';
 
 function DateInput({ name, ...otherProps }) {
-  const { setFieldTouched, setFieldValue, errors, touched } = useFormikContext();
+  const { setFieldTouched, setFieldValue, errors, touched, values } =
+    useFormikContext();
   return (
     <>
       <DatePicker
         onBlur={() => setFieldTouched(name)}
         onDateChange={(date) => setFieldValue(name, date)}
-        date={new Date()}
+        date={values[name]}
         style={tw`bg-blue-200 rounded-full p-2 w-full`}
         customStyles={{
           dateIcon: {
