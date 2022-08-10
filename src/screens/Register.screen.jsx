@@ -42,6 +42,7 @@ const RegisterScreen = () => {
   const dispatch = useDispatch();
   const user = useSelector(getCurrentUser);
   const navigation = React.useContext(NavigationContext);
+
   const handleSubmit = (values) => {
     const { log } = console;
     log(' registering wi la ');

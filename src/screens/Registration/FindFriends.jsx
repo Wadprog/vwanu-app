@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Yup from 'yup';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableHighlight } from 'react-native';
 import PropTypes from 'prop-types';
 
 // Custom dependencies
@@ -83,9 +83,9 @@ const initialValues = {
 const ValidationSchema = Yup.object().shape({
   users: Yup.array().required().label('users'),
 });
-const FindFriends = ({ handleSubmit }) => (
-  <View>
-    <Text style={tw` text-cs-primary font-bold text-lg `}>
+const FindFriends = ({ handleSubmit, onBack }) => (
+  <View style={tw`flex-1`}>
+    <Text style={tw`text-cs-primary font-bold text-lg `}>
       Select all the person you want to follow
     </Text>
     <Form
@@ -94,20 +94,29 @@ const FindFriends = ({ handleSubmit }) => (
       onSubmit={handleSubmit}
     >
       <View
-        style={tw` bg-red-1500  pb-10 flex pb-1 justify-between items-center relative`}
+        style={tw`flex-1 pb-10 flex pb-1 justify-between items-center relative`}
       >
-        <View style={tw` bg-green-1500 h-4/6  mb-4 `}>
+        <View style={tw` h-5/6 `}>
           <MultiImageSelector items={us} name="users" />
         </View>
-        <View
-          style={tw` flex flex-1 h-2/6 bg-blue-1500 justify-self-end self-end mb-4 justify-end  w-full`}
-        >
-          <View>
-            <Submit
-              title="Finish"
+        <View style={tw` justify-self-end self-end mb-2 justify-end  w-full`}>
+          <View style={tw`flex flex-row justify-between items-center`}>
+            <TouchableHighlight
+              onPress={() => {
+                onBack();
+              }}
+            >
+              <Text style={tw`text-cs-primary font-bold text-lg `}> Back</Text>
+            </TouchableHighlight>
+            <View style={tw`flex flex-row justify-end items-center w-3/4`}>
+              <TouchableHighlight onPress={() => {}}>
+                <Text style={tw`text-cs-primary  text-lg`}>(skip)</Text>
+              </TouchableHighlight>
 
-              // title={isLoading ? <Loader /> : 'Next'}
-            />
+              <View style={tw`grow`}>
+                <Submit title="Finish" />
+              </View>
+            </View>
           </View>
         </View>
       </View>
@@ -117,5 +126,6 @@ const FindFriends = ({ handleSubmit }) => (
 
 FindFriends.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
+  onBack: PropTypes.func.isRequired,
 };
 export default FindFriends;
