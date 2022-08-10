@@ -5,12 +5,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 // import PropTypes from 'prop-types'
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
-
+import { useDispatch, useSelector } from 'react-redux';
 import { NavigationContext } from '@react-navigation/native';
 
 // Core components
 import tw from '../lib/tailwind';
 import { image } from '../config';
+import { Register, getCurrentUser } from '../store/auth';
 import { Form, Field, Submit, Switch } from '../components/form';
 
 const ValidationSchema = Yup.object().shape({
@@ -38,10 +39,14 @@ const initialValues = {
 };
 
 const RegisterScreen = () => {
+  const dispatch = useDispatch();
+  const user = useSelector(getCurrentUser);
   const navigation = React.useContext(NavigationContext);
   const handleSubmit = (values) => {
     const { log } = console;
-    log('values', values);
+    log(' registering wi la ');
+    dispatch(Register(values));
+    // log('values', values)
     navigation.replace('SignUpStep', {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -49,6 +54,7 @@ const RegisterScreen = () => {
       password: values.password,
     });
   };
+
   return (
     <View style={tw`mx-0 md:mx-0 lg:h-screen`}>
       <View style={tw`grid grid-cols-1 lg:mb:0 lg:grid-cols-2`}>
@@ -252,8 +258,8 @@ const RegisterScreen = () => {
               </View>
             </View>
             <Submit
-              title="Register"
-              // title={isLoading ? <Loader /> : 'Sign Up'}
+              // title="Register"
+              title={user.loading ? 'loading' : 'Sign Up'}
             />
           </Form>
           <View style={tw`lg:hidden mb-8 text-center`}>
