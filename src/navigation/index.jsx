@@ -1,17 +1,17 @@
 import React from 'react';
-// import { useSelector, useDispatch } from 'react-redux'
-// import { getCurrentUser } from '../store/auth'
+import { useSelector } from 'react-redux';
 
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './Auth.navigation';
-// import AppNavigation from './Drawer'
+import AppNavigation from './Drawer';
+import { getCurrentUser } from '../store/auth';
 
 // import AppTheme from './theme'
 // import storage from '../utility/secureCache'
 // import { logged } from '../store/auth'
 
 function Routes() {
-  //   const auth = useSelector(getCurrentUser)
+  const auth = useSelector(getCurrentUser);
   //   const dispatch = useDispatch()
   //   const restoreUser = async () => {
   // const token = await storage.get('auth')
@@ -24,8 +24,7 @@ function Routes() {
   //   }, [])
   return (
     <NavigationContainer>
-      {/* {auth.user ? <AppNavigation /> : */}
-      <AuthNavigator />
+      {auth.user ? <AppNavigation /> : <AuthNavigator />}
     </NavigationContainer>
   );
 }
