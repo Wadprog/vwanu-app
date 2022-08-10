@@ -6,7 +6,13 @@ import PropTypes from 'prop-types';
 
 // Custom dependencies
 import tw from '../../lib/tailwind';
-import { Form, Submit, Select, DateInput } from '../../components/form';
+import {
+  Form,
+  Submit,
+  Select,
+  DateInput,
+  MultiSelector,
+} from '../../components/form';
 
 const items = [
   { id: 1, name: 'item-1' },
@@ -26,7 +32,6 @@ const items = [
   { id: 1, name: 'item-1' },
   { id: 2, name: 'item-2' },
 ];
-
 
 const ValidationSchema = Yup.object().shape({
   country: Yup.string().required().label('Country'),
@@ -55,7 +60,6 @@ const PersonalInfo = ({ handleSubmit }) => (
     initialValues={initialValues}
     onSubmit={handleSubmit}
   >
-
     <View style={tw`flex-1`}>
       <Text
         style={tw`text-cs-primary text-left text-2xl font-semibold mb-5 mt-3`}
@@ -65,7 +69,6 @@ const PersonalInfo = ({ handleSubmit }) => (
       <View style={tw`flex  flex-1 justify-between  p-2`}>
         <View style={tw`flex max-h-5/6`}>
           <DateInput name="birthday" />
-
 
           <Select name="gender" items={['Male', 'Female']} />
           <Select name="country" items={['RD', 'HT']} />
