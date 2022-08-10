@@ -1,11 +1,16 @@
 import React from 'react';
 import { View, Image, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector, useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux'
 import StepIndicator from 'react-native-step-indicator';
 
 // Core components
 import tw from '../../lib/tailwind';
 import { image } from '../../config';
+import { getCurrentUser, UpdateUser } from '../../store/auth';
+
+// import { Register } from '../../store/auth'
 import { PersonalInfo, ProfilePicture, FindFriends } from '.';
 
 const steps = [
@@ -45,12 +50,17 @@ const customStyles = {
 };
 
 const RegistrationStepsContainer = () => {
+  const dispatch = useDispatch();
+  const user = useSelector(getCurrentUser);
+  console.log('users', user);
   const [currentPosition, setCurrentPosition] = React.useState(1);
   const Step = steps[currentPosition - 1].component;
   const { log } = console;
   const handleSubmit = (data) => {
     if (data) {
+      log('\n\nI have received the data below \n\n');
       log(data);
+      dispatch(UpdateUser(data));
     }
     if (currentPosition < labels.length) {
       setCurrentPosition((position) => position + 1);

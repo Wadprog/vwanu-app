@@ -6,7 +6,7 @@ export { default as colors } from './colors';
 export { default as text } from './text';
 
 export const endpoints = {
-  REGISTER: '/register',
+  REGISTER: '/users',
   LOG_IN: '/auth',
   MARKET: '/market',
   STORE: '/store/',
@@ -15,7 +15,7 @@ export const endpoints = {
 };
 const environment = {
   development: {
-    BASE_URL: 'localhost:4000/',
+    BASE_URL: 'http://localhost:4000/',
     endpoints,
   },
   staging: {
