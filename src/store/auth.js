@@ -1,9 +1,18 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
-import { endpoints } from '../config';
-import * as action from './api';
-import { setHeader } from '../middleware/api';
+import { createSlice } from "@reduxjs/toolkit";
+import { endpoints } from "../config";
+import * as action from "./api";
+import { setHeader } from "../middleware/api";
+
+const registrationProcess = (user) => {
+  if (user === null) return 0;
+  if (user.ProfilePicture) return 3;
+  if (user.dob) return 2;
+  if (user.email) return 1;
+  return 0;
+};
 
 const url = endpoints.LOG_IN;
 const registerUrl = endpoints.REGISTER;
@@ -16,21 +25,37 @@ const initialState = {
   lastFetch: null,
   token: null,
   error: null,
+  boarded: false,
+  registrationProcess: 0,
 };
 
 export const Auth = createSlice({
-  name: 'authentication',
+  name: "authentication",
   initialState,
   reducers: {
     loginRequested: (state) => {
       state.loading = true;
     },
+    boarded: (state) => {
+      state.boarded = true;
+    },
+
+    fullRes: (state) => {
+      state.user = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "email@mail.com",
+        ProfilePicture: "",
+      };
+    },
     loginSucceed: (state, action) => {
       state.loading = false;
-      state.token = action.payload.accessToken;
-      setHeader('authorization', action.payload.accessToken);
+      // state.token = action.payload.accessToken
+      // setHeader('authorization', action.payload.accessToken)
       state.user = action.payload;
       state.lastFetch = Date.now();
+      state.error = null;
+      state.registrationProcess = registrationProcess(action.payload);
       // storage.set('auth', action.payload.token)
     },
 
@@ -38,6 +63,7 @@ export const Auth = createSlice({
       state.loading = false;
       state.token = null;
       state.error = action.payload;
+      state.registrationProcess = 0;
     },
     LogOut: (state) => {
       state.loading = false;
@@ -52,6 +78,7 @@ export const Auth = createSlice({
       state.loading = false;
       state.user = action.payload;
       state.lastFetch = Date.now();
+      state.registrationProcess = registrationProcess(action.payload);
     },
     updateFailed: (state, action) => {
       state.loading = false;
@@ -61,13 +88,13 @@ export const Auth = createSlice({
 });
 
 export const Register = (newUser) => (dispatch) => {
-  log('Register');
+  log("Register");
   table({ ...newUser });
   dispatch(
     action.apiCallBegan({
       url: registerUrl,
       data: newUser,
-      method: 'POST',
+      method: "POST",
       onSuccess: Auth.actions.loginSucceed.type,
       onStart: Auth.actions.loginRequested.type,
       onError: Auth.actions.LoginFailed.type,
@@ -85,19 +112,20 @@ export const Login = (credentials) => (dispatch) => {
     action.apiCallBegan({
       url,
       data: credentials,
-      method: 'POST',
+      method: "POST",
       onSuccess: Auth.actions.loginSucceed.type,
       onStart: Auth.actions.loginRequested.type,
       onError: Auth.actions.LoginFailed.type,
     })
   );
 };
-export const UpdateUser = (changes) => (dispatch) => {
+export const updateUser = (changes) => (dispatch, state) => {
+  const { user } = state().authentication;
   dispatch(
     action.apiCallBegan({
-      url: '/users',
+      url: `/users/${user.id}`,
       data: changes,
-      method: 'PATCH',
+      method: "PATCH",
       onSuccess: Auth.actions.updateSucceed.type,
       onStart: Auth.actions.updateRequested.type,
       onError: Auth.actions.updateFailed.type,
@@ -108,3 +136,6 @@ export const logout = () => (dispatch) => dispatch(Auth.actions.LogOut());
 export const getCurrentUser = (state) => state.authentication;
 export const logged = Auth.actions.loginSucceed.type;
 export default Auth.reducer;
+
+export const boarded = () => (dispatch) => dispatch(Auth.actions.boarded());
+export const fullLogin = () => (dispatch) => dispatch(Auth.actions.fullRes());

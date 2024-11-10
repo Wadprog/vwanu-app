@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "jsx": "react"
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "extends": "expo/tsconfig.base",
+  "extends": "expo/tsconfig.base"
 }

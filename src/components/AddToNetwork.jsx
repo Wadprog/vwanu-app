@@ -1,23 +1,29 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { View, Text, TouchableWithoutFeedback } from 'react-native';
+import React from "react";
+import PropTypes from "prop-types";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, TouchableWithoutFeedback, ImageBackground } from "react-native";
 // Custom Imports
-import ImageInput from './ImageInput';
-import tw from '../lib/tailwind';
+
+import tw from "../lib/tailwind";
+import Text from "./Text";
 
 const AddToNetwork = ({ user, onRemove, onAdd, selected }) => (
-  <View style={tw`relative`}>
+  <View style={tw` w-[106px] h-[118px] rounded-2xl overflow-hidden m-1`}>
     {selected ? (
       <TouchableWithoutFeedback onPress={() => onRemove(user)}>
         <View
-          style={tw`flex items-center justify-center bg-gray-900 w-30 h-30 rounded-[45px]  z-10 absolute top-2 left-2 opacity-60`}
+          style={tw`flex items-center justify-center bg-blue-200 w-full h-full z-2 absolute opacity-70`}
         >
-          <MaterialCommunityIcons
-            name="check"
-            size={60}
-            color={tw.color('text-green-500')}
-          />
+          <View
+            style={tw`bg-primary w-8 h-8 rounded-full border-4 border-white flex items-center justify-center`}
+          >
+            <MaterialCommunityIcons
+              name="check"
+              size={24}
+              color={tw.color("text-white font-bold")}
+              selectionColor={tw`bg-red-500`}
+            />
+          </View>
         </View>
       </TouchableWithoutFeedback>
     ) : (
@@ -27,26 +33,25 @@ const AddToNetwork = ({ user, onRemove, onAdd, selected }) => (
         />
       </TouchableWithoutFeedback>
     )}
-
-    <View>
-      <ImageInput
-        disableChangeImage
-        uri={user?.profilePicture}
-        style={tw`mb-0`}
-      />
-    </View>
-
-    <Text
-      style={tw`text-center text-cs-primary capitalize text-md font-semibold`}
+    <ImageBackground
+      source={{ uri: user?.profilePicture }}
+      style={tw`h-full flex flex-1 `}
     >
-      some one else
-    </Text>
+      <View style={tw`flex-1`} />
+      <Text
+        style={tw`bottom-3 text-right mr-2 leading-6 font-light text-lg truncate text-nowrap z-3`}
+      >
+        Namee
+      </Text>
+    </ImageBackground>
   </View>
 );
+
+export default AddToNetwork;
+
 AddToNetwork.propTypes = {
   selected: PropTypes.bool,
   onAdd: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
   onRemove: PropTypes.func.isRequired,
 };
-export default AddToNetwork;

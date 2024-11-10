@@ -1,10 +1,10 @@
-import { View, Image, TouchableWithoutFeedback } from 'react-native';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
+import { View, Image, TouchableWithoutFeedback } from "react-native";
+import React from "react";
+import PropTypes from "prop-types";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 // Custom  dependencies
-import tw from '../lib/tailwind';
+import tw from "../lib/tailwind";
 
 const ImageInput = ({
   uri,
@@ -31,7 +31,7 @@ const ImageInput = ({
     <TouchableWithoutFeedback onPress={handleChange}>
       <View
         style={[
-          tw`bg-blue-200 p-4 rounded-[45px] w-30 h-30 flex justify-center items-center m-2 overflow-hidden drop-shadow-sm`,
+          tw`bg-gray-200 p-4 rounded-2xl w-[106px] h-[118px] p-10 flex justify-center items-center m-2 overflow-hidden drop-shadow-sm`,
           style,
         ]}
       >
@@ -41,7 +41,7 @@ const ImageInput = ({
             source={{
               uri,
             }}
-            style={tw`object-scale-down w-30 h-30`}
+            style={tw` w-full h-full`}
             {...otherProps}
           />
         )}

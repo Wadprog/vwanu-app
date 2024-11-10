@@ -1,8 +1,8 @@
 /* eslint-disable no-return-assign */
-import axios from 'axios';
-import { Alert } from 'react-native';
-import * as actions from '../store/api';
-import env from '../config';
+import axios from "axios";
+import { Alert } from "react-native";
+import * as actions from "../store/api";
+import env from "../config/environnement";
 
 // eslint-disable-next-line consistent-return
 const api = (store) => (next) => async (action) => {
@@ -13,8 +13,9 @@ const api = (store) => (next) => async (action) => {
   if (onStart) store.dispatch({ type: onStart });
   next(action);
   try {
+    console.log({ url: env.apiUrl, apiCallBegan: action.payload });
     const response = await axios({
-      baseURL: env.BASE_URL,
+      baseURL: env.apiUrl,
       ...action.payload,
     });
 
@@ -29,13 +30,13 @@ const api = (store) => (next) => async (action) => {
       payload: error.message,
     });
     if (onError) store.dispatch({ type: onError, payload: error.message });
-    Alert.alert('Error', error.message, [
+    Alert.alert("Error", error.message, [
       {
-        text: 'Cancel',
+        text: "Cancel",
         onPress: () => {},
-        style: 'cancel',
+        style: "cancel",
       },
-      { text: 'OK', onPress: () => {} },
+      { text: "OK", onPress: () => {} },
     ]);
   }
 };

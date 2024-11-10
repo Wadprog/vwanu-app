@@ -1,27 +1,29 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React from "react";
+import PropTypes from "prop-types";
+import { View, TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // Custom import
-import tw from '../lib/tailwind';
+import tw from "../lib/tailwind";
+import Text from "./Text";
 
-const select = tw`flex flex-row  items-center bg-gray-400`;
-const notSelect = tw`flex flex-row  items-center bg-gray-300`;
+const select = tw`flex flex-row  items-center bg-gr0`;
+const notSelect = tw`flex flex-row  items-center `;
 
 const SelecTableItems = ({ item, onSelect, onDeselect, selected, type }) => {
   const design = selected ? select : notSelect;
   switch (type) {
-    case 'word':
+    case "word":
       return (
         <View
           style={[
             design,
-            tw`my-1 mx-1 bg-gray-200 rounded-full overflow-hidden`,
+            tw`my-1 mx-1 py-1 bg-gray-200 rounded-full overflow-hidden`,
           ]}
         >
+          <Text style={tw`text-black  ml-2  pr-1`}>{item}</Text>
           <TouchableOpacity
-            style={tw`bg-gray-300`}
+            style={tw`bg-gray-300 rounded-full  items-center justify-center`}
             onPress={() => onDeselect(item)}
           >
             <MaterialCommunityIcons
@@ -29,40 +31,31 @@ const SelecTableItems = ({ item, onSelect, onDeselect, selected, type }) => {
               style={tw`m-2 text-white text-md font-bold `}
             />
           </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              onSelect(item);
-            }}
-          >
-            <Text style={tw`text-cs-primary text-lg ml-2 font-bold  pr-1`}>
-              {item.name}
-            </Text>
-          </TouchableOpacity>
         </View>
       );
     default:
       return (
-        <View style={[design, tw`my-1 mx-1 rounded-2 overflow-hidden`]}>
-          <TouchableOpacity
-            style={tw`bg-gray-500`}
-            onPress={() => onDeselect(item)}
-          >
-            <MaterialCommunityIcons
-              name="close"
-              style={tw`m-2 text-white text-lg `}
-            />
-          </TouchableOpacity>
-
+        <View
+          style={[design, tw`my-1 mx-1 rounded-2 justify-between items-center`]}
+        >
           <TouchableOpacity
             onPress={() => {
               onSelect(item);
             }}
           >
-            <Text style={tw`m-2 text-white text-lg ml-2 font-bold w-full `}>
-              {item.name}
-            </Text>
+            <Text style={tw`m-2 text-primary w-full `}>{item}</Text>
           </TouchableOpacity>
+          {selected && (
+            <TouchableOpacity
+              style={tw`bg-gray-500 rounded-full  items-center justify-center`}
+              onPress={() => onDeselect(item)}
+            >
+              <MaterialCommunityIcons
+                name="close"
+                style={tw`m-1 text-white rounded-full  `}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       );
   }
