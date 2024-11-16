@@ -1,20 +1,22 @@
-import { View, Image, TouchableWithoutFeedback } from "react-native";
 import React from "react";
-import PropTypes from "prop-types";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, Image, TouchableWithoutFeedback } from "react-native";
+import { TextInputProps } from "react-native";
+
 // Custom  dependencies
 import tw from "../lib/tailwind";
 
-const ImageInput = ({
-  uri,
-  onChangeImage,
-  style,
-  disableChangeImage = false,
-  ...otherProps
-}) => {
+interface ImageInputProps extends TextInputProps {
+  uri: string;
+  onChangeImage: (uri: string) => void;
+  style?: object;
+  disableChangeImage?: boolean;
+  otherProps?: React.ComponentProps<typeof Image>;
+}
+const ImageInput: React.FC<ImageInputProps> = (props) => {
   const handleChange = async () => {
-    if (disableChangeImage) return;
+    if (props.disableChangeImage) return;
     // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -24,7 +26,7 @@ const ImageInput = ({
     });
 
     if (!result.cancelled) {
-      onChangeImage(result.uri);
+      props.onChangeImage(result.uri);
     }
   };
   return (
@@ -32,17 +34,15 @@ const ImageInput = ({
       <View
         style={[
           tw`bg-gray-200 p-4 rounded-2xl w-[106px] h-[118px] p-10 flex justify-center items-center m-2 overflow-hidden drop-shadow-sm`,
-          style,
+          props.style,
         ]}
       >
-        {!uri && <MaterialCommunityIcons name="camera" size={30} />}
-        {uri && (
+        {!props.uri && <MaterialCommunityIcons name="camera" size={30} />}
+        {props.uri && (
           <Image
-            source={{
-              uri,
-            }}
+            source={{ uri: props.uri }}
             style={tw` w-full h-full`}
-            {...otherProps}
+            {...props.otherProps}
           />
         )}
       </View>
@@ -50,10 +50,4 @@ const ImageInput = ({
   );
 };
 
-ImageInput.propTypes = {
-  uri: PropTypes.string,
-  onChangeImage: PropTypes.func.isRequired,
-  disableChangeImage: PropTypes.bool,
-  style: PropTypes.object,
-};
 export default ImageInput;

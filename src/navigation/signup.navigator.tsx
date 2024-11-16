@@ -3,25 +3,34 @@ import { useSelector } from "react-redux";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { getCurrentUser } from "../store/auth";
-import MoreInfo from "../screens/MoreInfo.screen";
-import FindFriends from "../screens/FindFriends";
-import ProfilePicture from "../screens/ProfilePicture";
-import RegisterScreen from "../screens/Register.screen";
+import {
+  FindFriendScreen,
+  MoreInfoScreen,
+  RegisterScreen,
+  ProfilePictureScreen,
+} from "../screens/registrations";
 
 const { Navigator, Screen } = createStackNavigator();
 
 const RegisterNavigator = () => {
   const { registrationProcess } = useSelector(getCurrentUser);
-  const screens = [MoreInfo, FindFriends, RegisterScreen, ProfilePicture];
+  const screens = [
+    RegisterScreen,
+    MoreInfoScreen,
+    FindFriendScreen,
+    ProfilePictureScreen,
+  ];
 
   return (
     <Navigator screenOptions={{ headerShown: false }}>
       <Screen
         name="SignUp-"
-        component={() =>
-          React.createElement(screens[registrationProcess], {
-            handleSubmit: () => {},
-          })
+        // @ts-ignore
+        component={
+          // @ts-ignore
+          screens[registrationProcess]
+          //React.createElement(screens[registrationProcess], {
+          // handleSubmit: () => {},
         }
       />
     </Navigator>

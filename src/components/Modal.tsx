@@ -33,7 +33,7 @@ const AppModal: React.FC<AppModalProps> = ({
   <Modal transparent animationType="slide" {...otherProps}>
     <View style={tw`flex-1 bg-black bg-opacity-50 `}>
       <TouchableOpacity style={tw`flex-1 w-full`} onPress={onClose} />
-      <View style={tw`bg-white  w-full  overflow-hidden`}>
+      <View style={tw`bg-white  w-full  overflow-hidden max-h-100`}>
         <View style={tw`items-center `}>
           {withMenu ? (
             <View style={tw` w-full flex justify-items-center items-center`}>

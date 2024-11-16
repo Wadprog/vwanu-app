@@ -1,19 +1,17 @@
 import React from "react";
 import { useFormikContext } from "formik";
+
 // Custom dependencies
 import Error from "./Error";
-import Select from "../Select";
+import MultiSelect from "../MultiSelect";
 import FieldParams from "./fieldParams";
 
-interface FormSelectProps extends FieldParams {
-  items: Array<{ label: string; value: string }>;
-  whenSelect?: (arg: string) => void;
+interface MultiSelectorProps extends FieldParams {
+  items: ListItem[];
 }
-
-const FormSelect: React.FC<FormSelectProps> = ({
+const MultiSelector: React.FC<MultiSelectorProps> = ({
   name,
   items,
-  whenSelect,
   ...otherProps
 }) => {
   const { setFieldTouched, setFieldValue, errors, touched } =
@@ -21,13 +19,12 @@ const FormSelect: React.FC<FormSelectProps> = ({
 
   return (
     <>
-      <Select
+      <MultiSelect
         items={items}
         onBlur={() => setFieldTouched(name)}
-        onSelect={(value) => {
-          whenSelect && whenSelect(value);
-          setFieldValue(name, value);
-        }}
+        onSelect={(values: Pick<ListItem, "value">[]) =>
+          setFieldValue(name, values)
+        }
         {...otherProps}
       />
 
@@ -39,4 +36,4 @@ const FormSelect: React.FC<FormSelectProps> = ({
   );
 };
 
-export default FormSelect;
+export default MultiSelector;
