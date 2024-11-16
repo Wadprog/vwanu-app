@@ -45,7 +45,7 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
           </View>
           {props.iconRight && (
             <TouchableOpacity
-              onPress={props.disabled ? () => {} : props.onIconRightPress}
+              onPress={props.disabled ? undefined : props.onIconRightPress}
             >
               {props.iconRight}
             </TouchableOpacity>

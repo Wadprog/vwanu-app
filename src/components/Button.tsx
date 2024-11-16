@@ -7,10 +7,9 @@ import { Button, ButtonProps } from "@ui-kitten/components";
 import Text from "./Text";
 import tw from "../lib/tailwind";
 
-interface BtnProps extends ButtonProps {
+export interface BtnProps extends ButtonProps {
   title: string;
   textStyle?: object;
-  onPress: () => void;
 }
 
 const Btn: React.FC<BtnProps> = ({

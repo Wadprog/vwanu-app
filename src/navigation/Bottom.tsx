@@ -1,36 +1,24 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-// // Importing the App Navigators.
-import AccountNavigator from './Account';
-import ChatNavigator from './Chat';
-import FeedNavigator from './Feed';
-
-// import MiddleButton from './MainButton'
-import routes from './routes';
+import routes from "./routes";
+import ChatNavigator from "./Chat";
+import FeedNavigator from "./Feed";
+import AccountNavigator from "./Account";
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabNavigator = () => (
-  <Tab.Navigator>
-    {/*
-
-<Tab.Screen
-        name={routes.HOME}
-        component={MiddleNavigator}
-        options={({ navigation }) => ({
-          tabBarButton: ({ size, color }) => (
-            <MiddleButton
-              size={size}
-              color={color}
-              onPress={() => navigation.navigate(routes.HOME)}
-            />
-          ),
-        })}
-      />
-*/}
+const BottomTabNavigator: React.FC<{}> = () => (
+  <Tab.Navigator
+    screenOptions={{
+      headerShown: false,
+      tabBarShowLabel: false,
+      tabBarActiveTintColor: "tomato",
+      tabBarInactiveTintColor: "gray",
+    }}
+  >
     <Tab.Screen
       name={routes.TIMELINE}
       component={FeedNavigator}

@@ -22,13 +22,9 @@ const Option: React.FC<OptionProps> = ({ label, onPress }) => (
   </TouchableOpacity>
 );
 
-interface Item {
-  label: string;
-  value: string;
-}
 interface SelectProps extends InputProps {
   style?: object;
-  items: Item[];
+  items: ListItem[];
   placeholder?: string;
   label?: string;
   otherProps?: WrapperProps;
@@ -50,7 +46,7 @@ const Select: React.FC<SelectProps> = ({
   ...otherProps
 }) => {
   const [modalVisible, toggleModalVisible] = useToggle(false);
-  const [selectedItem, setSelectedItem] = React.useState<Item | null>(null);
+  const [selectedItem, setSelectedItem] = React.useState<ListItem | null>(null);
 
   return (
     <Wrapper

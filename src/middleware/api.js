@@ -1,11 +1,12 @@
 /* eslint-disable no-return-assign */
 import axios from "axios";
 import { Alert } from "react-native";
-import * as actions from "../store/api";
+import * as actions from "../store/apiAction";
 import env from "../config/environnement";
 
 // eslint-disable-next-line consistent-return
 const api = (store) => (next) => async (action) => {
+  console.log("api middleware", env.apiUrl);
   if (action.type !== actions.apiCallBegan.type) return next(action);
 
   const { onSuccess, onError, onStart } = action.payload;

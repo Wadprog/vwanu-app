@@ -3,12 +3,12 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from "@reduxjs/toolkit";
 import { endpoints } from "../config";
-import * as action from "./api";
+import * as action from "./apiAction";
 import { setHeader } from "../middleware/api";
 
 const registrationProcess = (user) => {
   if (user === null) return 0;
-  if (user.ProfilePicture) return 3;
+  if (user.users) return 3;
   if (user.dob) return 2;
   if (user.email) return 1;
   return 0;
@@ -17,7 +17,6 @@ const registrationProcess = (user) => {
 const url = endpoints.LOG_IN;
 const registerUrl = endpoints.REGISTER;
 // const { EXPECTED_HEADER } = endpoints
-const { log, table } = console;
 
 const initialState = {
   loading: false,
@@ -87,9 +86,7 @@ export const Auth = createSlice({
   },
 });
 
-export const Register = (newUser) => (dispatch) => {
-  log("Register");
-  table({ ...newUser });
+export const register = (newUser) => (dispatch) => {
   dispatch(
     action.apiCallBegan({
       url: registerUrl,

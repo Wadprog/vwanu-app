@@ -20,9 +20,7 @@ export default function NavigatorIndicators({ selected, total }) {
     <Dots key={i} selected={selected === i} style={tw`mx-2`} />
   ));
   return (
-    <View
-      style={tw`flex flex-row  w-full bg--300 justify-center items-center mt-5`}
-    >
+    <View style={tw`flex flex-row  w-full justify-center items-center mt-5`}>
       {Nav}
     </View>
   );
