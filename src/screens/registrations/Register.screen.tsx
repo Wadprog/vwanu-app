@@ -102,15 +102,21 @@ const RegisterScreen: React.FC<{}> = () => {
               name="passwordConfirmation"
             />
 
-            <View
-              style={tw`ml-2 my-2 flex flex-row items-center justify-left mb-9`}
-            >
+            <View style={tw`ml-2 my-2 flex flex-row items-center mb-9`}>
               <Switch name="termOfUse" value={false} />
-              <View style={tw` ml-2 flex flex-row items-center justify-left`}>
+              <View style={tw` ml-2 flex flex-row items-center`}>
                 <Text style={tw`text-black mr-1`}>I agree to the</Text>
-                <Link text="Privacy" to="privacy" style={tw`text-secondary`} />
+                <Link
+                  text="Privacy terms"
+                  to="privacy"
+                  style={tw`text-secondary`}
+                />
                 <Text style={tw`text-black mx-1`}>and</Text>
-                <Link text="Terms" to="privacy" style={tw`text-secondary`} />
+                <Link
+                  text="Community guidelines"
+                  to="privacy"
+                  style={tw`text-secondary`}
+                />
               </View>
             </View>
             <Submit title="Register" />

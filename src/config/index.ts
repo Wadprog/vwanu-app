@@ -13,6 +13,10 @@ export enum endpoints {
   CITIES = "/cities",
   INTERESTS = "/interests",
   USERS = "/users",
+  POSTS = "/posts",
+  COMMUNITY = "/commmunities",
+  BANNER = "/banners",
+  COMMENTS = "/comments",
 }
 
 export const HttpMethods = {

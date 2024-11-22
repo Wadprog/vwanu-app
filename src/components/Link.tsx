@@ -1,16 +1,22 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import PropTypes from "prop-types";
 
 import Text from "./Text";
 import tw from "../lib/tailwind";
 
-const Link = ({ text, to, style = {} }) => {
+interface LinkProps {
+  text: string;
+  to: string;
+  style?: object;
+}
+
+const Link: React.FC<LinkProps> = ({ text, to, style = {} }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
       onPress={() => {
+        // @ts-ignore
         navigation.navigate(to);
       }}
     >
@@ -19,12 +25,6 @@ const Link = ({ text, to, style = {} }) => {
       </Text>
     </TouchableOpacity>
   );
-};
-
-Link.propTypes = {
-  text: PropTypes.string.isRequired,
-  to: PropTypes.string.isRequired,
-  style: PropTypes.object,
 };
 
 export default Link;

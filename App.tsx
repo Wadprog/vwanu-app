@@ -8,6 +8,8 @@ import Routes from "./src/navigation";
 import { store } from "./src/store";
 import theme from "./tailwind.config";
 import mapping from "./src/mapping.json";
+// import Timeline from "./src/screens/timeline/Timeline.screen";
+// import ImageGalery from "./src/screens/timeline/imageGallery";
 
 const App: React.FC = () => (
   <Provider store={store}>
@@ -19,6 +21,7 @@ const App: React.FC = () => (
     >
       <NavigationContainer>
         <Routes />
+        {/* <Timeline /> */}
       </NavigationContainer>
     </ApplicationProvider>
   </Provider>

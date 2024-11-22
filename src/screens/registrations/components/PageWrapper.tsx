@@ -12,14 +12,14 @@ interface PageWrapperProps {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
-  pageNumber: number;
+  pageNumber?: number;
 }
 
 const PageWrapper: React.FC<PageWrapperProps> = ({
   title,
   subtitle,
   children,
-  pageNumber,
+  pageNumber = null,
 }) => {
   return (
     <Screen>
@@ -32,9 +32,11 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
         </View>
         {children}
 
-        <View style={tw`mb-10`}>
-          <NavigationDots selected={pageNumber} total={4} />
-        </View>
+        {pageNumber ? (
+          <View style={tw`mb-10`}>
+            <NavigationDots selected={pageNumber} total={4} />
+          </View>
+        ) : null}
       </ImageBackground>
     </Screen>
   );

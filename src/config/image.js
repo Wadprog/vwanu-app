@@ -14,4 +14,7 @@ export default Object.freeze({
   ],
   onBoardBg: require("../assets/images/onboard-bg-1.png"),
   regiterBg: require("../assets/images/bg-sign-up.png"),
+  imageIcon: require("../assets/images/image-icon.svg"),
+  imageGroup: require("../assets/images/group.png"),
+  imageVertical: require("../assets/images/vertical-dots.png"),
 });

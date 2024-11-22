@@ -16,6 +16,7 @@ const registrationProcess = (user) => {
 
 const url = endpoints.LOG_IN;
 const registerUrl = endpoints.REGISTER;
+const userUrl = endpoints.USER;
 // const { EXPECTED_HEADER } = endpoints
 
 const initialState = {
@@ -52,6 +53,18 @@ export const Auth = createSlice({
       // state.token = action.payload.accessToken
       // setHeader('authorization', action.payload.accessToken)
       state.user = action.payload;
+      state.lastFetch = Date.now();
+      state.error = null;
+      state.registrationProcess = registrationProcess(action.payload);
+      // storage.set('auth', action.payload.token)
+    },
+
+    tLoginSucceed: (state, action) => {
+      console.log(`\n\n\n\n\n ********* \n\n\n\n\n`);
+      console.log(action.payload);
+      console.log(`\n\n\n\n\n ********* \n\n\n\n\n`);
+      state.loading = false;
+      state.user = action.payload[0];
       state.lastFetch = Date.now();
       state.error = null;
       state.registrationProcess = registrationProcess(action.payload);
@@ -98,7 +111,7 @@ export const register = (newUser) => (dispatch) => {
     })
   );
 };
-export const Login = (credentials) => (dispatch) => {
+export const login = (credentials) => (dispatch) => {
   // const { lastFetch } = getState().authentication
   // if (lastFetch) {
   //   const diff = moment().diff(moment(lastFetch), 'minutes')
@@ -107,10 +120,10 @@ export const Login = (credentials) => (dispatch) => {
 
   dispatch(
     action.apiCallBegan({
-      url,
-      data: credentials,
-      method: "POST",
-      onSuccess: Auth.actions.loginSucceed.type,
+      url: `http://192.168.1.227:3000/users/?id=de5b`,
+      // data: credentials,
+      method: "GET",
+      onSuccess: Auth.actions.tLoginSucceed.type,
       onStart: Auth.actions.loginRequested.type,
       onError: Auth.actions.LoginFailed.type,
     })
