@@ -7,7 +7,6 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
 import tw from "../lib/tailwind";
 export interface Medias {
@@ -19,25 +18,26 @@ export interface Medias {
 interface ImageGridProps {
   medias: Medias[];
   style?: any;
+  onImageTouch?: (id: number) => void;
 }
 
 const ImageGrid: React.FC<ImageGridProps> = (props) => {
-  const navigation = useNavigation();
   const { leftColumn, rightColumn } = splitImages(props.medias);
   return (
-    <TouchableOpacity
-      onPress={() => {
-        // @ts-ignore
-        navigation.navigate("gallery", { medias: props.medias });
-      }}
-    >
+    <View>
       <ScrollView
         contentContainerStyle={tw` flex flex-row`}
         showsVerticalScrollIndicator={false}
       >
         <View>
           {leftColumn.map((image) => (
-            <View key={image.id} style={styles.imageContainer}>
+            <TouchableOpacity
+              key={image.id}
+              style={styles.imageContainer}
+              onPress={() => {
+                props?.onImageTouch && props?.onImageTouch(image.id);
+              }}
+            >
               <Image
                 source={{ uri: image.url }}
                 style={{
@@ -45,12 +45,18 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
                   height: image.height,
                 }}
               />
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
         <View>
           {rightColumn.map((image) => (
-            <View key={image.id} style={styles.imageContainer}>
+            <TouchableOpacity
+              key={image.id}
+              style={styles.imageContainer}
+              onPress={() => {
+                props?.onImageTouch && props?.onImageTouch(image.id);
+              }}
+            >
               <Image
                 source={{ uri: image.url }}
                 style={{
@@ -58,11 +64,11 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
                   height: image.height,
                 }}
               />
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
-    </TouchableOpacity>
+    </View>
   );
 };
 

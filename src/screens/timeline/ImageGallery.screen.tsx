@@ -9,12 +9,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { string, object } from "yup";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 
 import tw from "../../lib/tailwind";
 import Kore from "../../assets/svg/Kore";
 import { Medias } from "../../components/ImageGrid";
 import { useFetchPostsQuery } from "../../store/post";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import useToggle from "../../hooks/useToggle";
 import { Form, Field, Submit } from "../../components/form";
 import AnimationLoader from "../../components/AnimationLoader";
@@ -28,10 +29,31 @@ const validationSchema = object().shape({
   comment: string().required("Comment is required"),
 });
 
+interface User {
+  firstName: string;
+  lastName: string;
+  profilePicture: string;
+}
+
+interface PostProps {
+  postText: string;
+  medias: Medias[];
+  createdAt: string;
+  likes: number;
+  comments: number;
+  likers: User[];
+  user: User;
+}
+
 const ImageGallery: React.FC<{}> = () => {
-  const { data = [] } = useFetchPostsQuery();
-  const images = data[2]?.medias || [];
-  const [activeIndex, setActiveIndex] = React.useState(0);
+  const route = useRoute();
+  const navigation = useNavigation();
+  // @ts-ignore
+  const images = route?.params?.medias || [];
+  const [activeIndex, setActiveIndex] = React.useState(
+    //@ts-ignore
+    route?.params?.initialSlide || 0
+  );
 
   const topRef = React.useRef<FlatList>(null);
   const thumbRef = React.useRef<FlatList>(null);
@@ -173,6 +195,15 @@ const ImageGallery: React.FC<{}> = () => {
           ref={animationRef}
         />
       </View>
+
+      <TouchableOpacity
+        onPress={() => {
+          navigation.goBack();
+        }}
+        style={tw`absolute bg-white rounded-full p-2 bg-opacity-50 top-2 left-2 `}
+      >
+        <MaterialCommunityIcons name="close" style={tw`text-black`} size={24} />
+      </TouchableOpacity>
     </View>
   );
 };

@@ -20,7 +20,7 @@ const Timeline: React.FC = () => {
   const { data: communities = [] } = useFetchCommunityQuery();
   return (
     <Screen>
-      <View style={tw`bg-white p-3`}>
+      <View style={tw`bg-white p-3 relative`}>
         <Banner />
         <View style={tw`mt-3`}>
           <PostInput />

@@ -10,9 +10,8 @@ interface User {
 }
 export interface CommunityInterface {
   name: string;
-  bacgroundImage: string;
+  backgroundImage: string;
   createdAt: string;
-  members: User[];
   id: number;
 }
 
@@ -20,7 +19,7 @@ const community = apiSlice.injectEndpoints({
   endpoints: (build) => ({
     fetchCommunity: build.query<CommunityInterface[], void>({
       query: () => ({
-        url: endpoints.POSTS,
+        url: endpoints.COMMUNITY,
         method: HttpMethods.GET,
       }),
     }),
