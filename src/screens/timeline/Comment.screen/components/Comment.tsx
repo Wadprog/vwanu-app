@@ -38,9 +38,9 @@ const Comment: React.FC<CommentInterface> = (props) => {
         appearance="hint"
         style={tw`text-black text-center text-wrap font-thin ml-1 w-10`}
       >
-        {formatDistanceToNowStrict(new Date(props.createdAt), {
+        {/* {formatDistanceToNowStrict(new Date(props.createdAt), {
           addSuffix: false,
-        })}
+        })} */}
       </Text>
     </View>
   );

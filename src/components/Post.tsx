@@ -40,9 +40,9 @@ const Post: React.FC<Props> = ({ showViewComment = true, ...props }) => {
             {`${props.user.firstName} ${props.user.lastName}`}
           </Text>
           <Text appearance="hint" style={tw`text-black font-thin`}>
-            {formatDistanceToNow(new Date(props.createdAt), {
+            {/* {formatDistanceToNow(new Date(props.createdAt), {
               addSuffix: true,
-            })}
+            })} */}
           </Text>
         </View>
       </View>

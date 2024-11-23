@@ -1,0 +1,11 @@
+{
+  "build": {
+    "production": {
+      "channel": "production"
+    },
+    "preview": {
+      "channel": "staging",
+      "distribution": "internal"
+    }
+  }
+}
