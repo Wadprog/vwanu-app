@@ -40,3 +40,18 @@ export type BottomTabParms = {
   [routes.INBOX]: undefined;
   [routes.COMMUNITY]: undefined;
 };
+
+export interface Message {
+  id: number;
+  content: string;
+  createdAt: string;
+  user: User;
+}
+
+export interface Conversation {
+  id: number;
+  users: User[] | User;
+  messages: Message[];
+  lastMessage: Message;
+  amountOfUnreadMessages: number;
+}

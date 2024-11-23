@@ -1,9 +1,7 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 
-import { Text } from 'react-native';
-
-const ChatScreen = () => <Text>My Chat screen</Text>;
+import ChatScreen from "../screens/Chat";
 
 const Stack = createStackNavigator();
 
