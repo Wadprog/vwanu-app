@@ -5,7 +5,7 @@ interface Profiles {
   id: "string";
   firstName: "string";
   lastName: "string";
-  profilePictrue: "string";
+  profilePicture: "string";
 }
 
 const Profiles = apiSlice.injectEndpoints({
@@ -16,9 +16,15 @@ const Profiles = apiSlice.injectEndpoints({
         method: HttpMethods.GET,
       }),
     }),
+    fetchProfile: build.query<Profiles[], string>({
+      query: (profileId) => ({
+        url: `${endpoints.USERS}?id=${profileId}`,
+        method: HttpMethods.GET,
+      }),
+    }),
   }),
 });
 
-const { useFetchProfilesQuery } = Profiles;
+const { useFetchProfilesQuery, useFetchProfileQuery } = Profiles;
 
-export { useFetchProfilesQuery };
+export { useFetchProfilesQuery, useFetchProfileQuery };

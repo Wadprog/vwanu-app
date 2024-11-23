@@ -1,25 +1,11 @@
 import apiSlice from "./api-slice";
 import { endpoints, HttpMethods } from "../config";
-import { Medias } from "../components/ImageGrid";
 
-interface User {
-  firstName: string;
-  lastName: string;
-  profilePicture: string;
-}
-interface Post {
-  postText: string;
-  medias: Medias[];
-  createdAt: string;
-  likes: number;
-  comments: number;
-  likers: User[];
-  user: User;
-}
+import { PostProps } from "../../types";
 
 const post = apiSlice.injectEndpoints({
   endpoints: (build) => ({
-    fetchPosts: build.query<Post[], void>({
+    fetchPosts: build.query<PostProps[], void>({
       query: () => ({
         url: endpoints.POSTS,
         method: HttpMethods.GET,

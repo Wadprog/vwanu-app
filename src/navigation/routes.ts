@@ -1,4 +1,5 @@
 enum routes {
+  COMMUNITY = "COMMUNITY",
   MARKET = "MARKET",
   MARKET_STORE = "MARKET_STORE",
   MARKET_ITEM = "MARKET_ITEM",
@@ -19,6 +20,7 @@ enum routes {
   TAXI_HOME = "taxi",
   TAXI_MAP = "TAXI_MAP",
   LOGIN_OR_CREATE_ACCOUNT = "GET_STARTED",
+  PROFILE = "PROFILE",
 }
 
 export default routes;
