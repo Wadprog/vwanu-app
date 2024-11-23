@@ -66,7 +66,7 @@ module.exports = {
         "color-danger-700": "#B71500",
         "color-danger-800": "#930700",
         "color-danger-900": "#7A0002",
-        "text-basic-color": "$color-basic-400",
+        "text-basic-color": "#000",
       },
       screens: {
         "3xl": "2000px",

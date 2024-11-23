@@ -1,3 +1,4 @@
+import routes from "./src/navigation/routes";
 interface ListItem {
   label: string;
   value: string;
@@ -27,4 +28,15 @@ export type FeedStackParams = {
   Timeline: undefined;
   Gallery: undefined;
   Comment: PostProps;
+};
+
+export type ProfileStackParams = {
+  [routes.PROFILE]: { profileId: string } | undefined;
+};
+
+export type BottomTabParms = {
+  [routes.TIMELINE]: undefined;
+  [routes.ACCOUNT]: undefined | { profileId: string };
+  [routes.INBOX]: undefined;
+  [routes.COMMUNITY]: undefined;
 };

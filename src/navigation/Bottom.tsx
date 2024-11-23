@@ -1,22 +1,26 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import routes from "./routes";
+import tw from "../lib/tailwind";
 import ChatNavigator from "./Chat";
 import FeedNavigator from "./Feed";
 import AccountNavigator from "./Account";
+import { BottomTabParms } from "../../types";
+import CommunityIcon from "assets/svg/Community";
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<BottomTabParms>();
 
 const BottomTabNavigator: React.FC<{}> = () => (
   <Tab.Navigator
     screenOptions={{
       headerShown: false,
-      tabBarShowLabel: false,
-      tabBarActiveTintColor: "tomato",
-      tabBarInactiveTintColor: "gray",
+      headerTransparent: true,
+      tabBarShowLabel: true,
+      tabBarActiveTintColor: tw.color("primary"),
+      tabBarInactiveTintColor: tw.color("gray-300"),
     }}
   >
     <Tab.Screen
@@ -48,6 +52,16 @@ const BottomTabNavigator: React.FC<{}> = () => (
       options={{
         tabBarIcon: ({ size, color }) => (
           <MaterialCommunityIcons name="chat" size={size} color={color} />
+        ),
+      }}
+    />
+
+    <Tab.Screen
+      name={routes.COMMUNITY}
+      component={ChatNavigator}
+      options={{
+        tabBarIcon: ({ size, color }) => (
+          <CommunityIcon size={size} color={color} />
         ),
       }}
     />

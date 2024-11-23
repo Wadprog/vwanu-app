@@ -13,7 +13,8 @@ const DrawerNav = () => (
   <Drawer.Navigator
     drawerContent={(props) => <DrawerContent {...props} />}
     screenOptions={{
-      title: "",
+      headerTransparent: false,
+      headerTitle: "",
     }}
   >
     <Drawer.Screen name={routes.BOTTOM_TAB} component={BottomTabNavigator} />
