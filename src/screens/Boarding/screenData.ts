@@ -10,7 +10,7 @@ export default [
   {
     title: "Make new connections with ease",
     description:
-      "Helpiing you connect wit h your community is our number one priority...",
+      "Helping you connect with your community is our number one priority...",
     image: images.connectedPeople[1],
   },
   {
