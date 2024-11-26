@@ -5,6 +5,7 @@ import { useFormikContext } from "formik";
 import Error from "./Error";
 import MultiSelect from "../MultiSelect";
 import FieldParams from "./fieldParams";
+import { ListItem } from "../../../types";
 
 interface MultiSelectorProps extends FieldParams {
   items: ListItem[];

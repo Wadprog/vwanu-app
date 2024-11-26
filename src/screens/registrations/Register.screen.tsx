@@ -19,10 +19,10 @@ const ValidationSchema = object().shape({
   passwordConfirmation: string()
     .required()
     .oneOf([ref("password"), ""], "Passwords must be match"),
-  // termOfUse: bool().oneOf(
-  //   [true],
-  //   'You must accept the terms of use and the policy privacy'
-  // ),
+  // termOfUse: bool(),
+  termOfUse: bool()
+    .required()
+    .oneOf([true], "You must accept the terms of use and the policy privacy"),
 });
 
 const initialValues = {
@@ -31,7 +31,7 @@ const initialValues = {
   email: "wad@df.lo",
   password: "1234567890",
   passwordConfirmation: "1234567890",
-  // termOfUse: false,
+  termOfUse: false,
 };
 
 const RegisterScreen: React.FC<{}> = () => {
@@ -50,10 +50,10 @@ const RegisterScreen: React.FC<{}> = () => {
           // @ts-ignore
           dispatch(register(values));
         }}
-        style={tw`flex-1 flex justify-between justify-items-center`}
+        style={tw`flex-1 flex justify-between items-center`}
       >
         <>
-          <View style={tw`mb-5 flex-1`}>
+          <View style={tw`mb-5 flex-1 items-stretch`}>
             <Field
               label="First Name"
               style={tw`mb-5 rounded-lg`}
@@ -102,23 +102,27 @@ const RegisterScreen: React.FC<{}> = () => {
               name="passwordConfirmation"
             />
 
-            <View style={tw`ml-2 my-2 flex flex-row items-center mb-9`}>
-              <Switch name="termOfUse" value={false} />
-              <View style={tw` ml-2 flex flex-row items-center`}>
-                <Text style={tw`text-black mr-1`}>I agree to the</Text>
-                <Link
-                  text="Privacy terms"
-                  to="privacy"
-                  style={tw`text-secondary`}
-                />
-                <Text style={tw`text-black mx-1`}>and</Text>
-                <Link
-                  text="Community guidelines"
-                  to="privacy"
-                  style={tw`text-secondary`}
-                />
-              </View>
-            </View>
+            <Switch
+              name="termOfUse"
+              value={false}
+              accesoryRight={
+                <View style={tw` ml-2 flex flex-row items-center`}>
+                  <Text style={tw`text-black mr-1`}>I agree to the</Text>
+                  <Link
+                    text="Privacy terms"
+                    to="privacy"
+                    style={tw`text-secondary`}
+                  />
+                  <Text style={tw`text-black mx-1`}>and</Text>
+                  <Link
+                    text="Community guidelines"
+                    to="privacy"
+                    style={tw`text-secondary`}
+                  />
+                </View>
+              }
+            />
+
             <Submit title="Register" />
           </View>
         </>

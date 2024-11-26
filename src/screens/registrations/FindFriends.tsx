@@ -40,7 +40,7 @@ const FindFriends: React.FC<{}> = () => {
           validationSchema={ValidationSchema}
           initialValues={initialValues}
           onSubmit={handleSubmit}
-          style={tw`flex-1 flex justify-between justify-items-center`}
+          style={tw`flex-1 flex justify-between items-center`}
         >
           <View />
           <View style={tw`flex-1`}>

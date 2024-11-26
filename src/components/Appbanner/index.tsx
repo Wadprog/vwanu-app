@@ -21,7 +21,6 @@ const Banner: React.FC<Banner> = (props) => {
   // change the slide every 5 secs
   /*
   const handleSlice = () => {
-    console.log({ currentSlide })
     if (currentSlide === data.length) setCurrentSlide(0)
     bannerRef.current?.scrollToIndex({
       index: currentSlide,

@@ -23,9 +23,7 @@ const PostInput = () => {
       validationSchema={ValidationSchema}
       initialValues={{ post: "" }}
       //@ts-ignore
-      onSubmit={(values) => {
-        console.log(values);
-      }}
+      onSubmit={(values) => {}}
       style={tw`bg-white`}
     >
       <View style={tw`flex flex-row overflow-hidden my-2`}>

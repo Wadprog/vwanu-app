@@ -70,7 +70,6 @@ const ImageGallery: React.FC<{}> = () => {
     animationRef.current?.play();
   };
   const scrollToActiveIndex = (index: number) => {
-    console.log("I have been called");
     setActiveIndex(index);
 
     topRef?.current?.scrollToOffset({
@@ -86,9 +85,7 @@ const ImageGallery: React.FC<{}> = () => {
     }
   };
 
-  const handleSubmit = (values: any) => {
-    console.log("values", values);
-  };
+  const handleSubmit = (values: any) => {};
   return (
     <View style={tw`flex-1 relative`}>
       <FlatList
@@ -116,13 +113,11 @@ const ImageGallery: React.FC<{}> = () => {
         contentContainerStyle={{ paddingHorizontal: 20 }}
         onMomentumScrollEnd={(ev) => {
           const index = Math.floor(ev.nativeEvent.contentOffset.x / width);
-          console.log("calling scrollToActiveIndex");
           scrollToActiveIndex(index);
         }}
         renderItem={({ item, index }) => (
           <TouchableOpacity
             onPress={() => {
-              console.log("calling scrollToActiveIndex");
               scrollToActiveIndex(index);
             }}
           >

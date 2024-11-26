@@ -10,19 +10,16 @@ import tw from "../lib/tailwind";
 import Wrapper, { WrapperProps } from "./InputsWrapper";
 import { SelecTableItems, PillSelect } from "./SelectedItems";
 import useToggle from "../hooks/useToggle";
+import { ListItem } from "../../types";
 
 interface SelectProps extends InputProps {
   style?: object;
-  items: Item[];
+  items: ListItem[];
   placeholder?: string;
   label?: string;
   otherProps?: WrapperProps;
   isLoading?: boolean;
   onSelect: (items: Pick<ListItem, "value">[]) => void; // onOptionSelect
-}
-interface Item {
-  label: string;
-  value: string;
 }
 
 const LoadingIndicator: React.FC<{}> = () => (
@@ -39,14 +36,14 @@ const MultiSelect: React.FC<SelectProps> = ({
   ...otherProps
 }) => {
   const [modalVisible, toggleModalVisible] = useToggle(false);
-  const [selectedItems, setSelectedItems] = React.useState<Item[]>([]);
+  const [selectedItems, setSelectedItems] = React.useState<ListItem[]>([]);
 
-  const removeItem = (item: Item) => {
+  const removeItem = (item: ListItem) => {
     const itemSelected = selectedItems.filter((i) => i !== item);
     setSelectedItems(itemSelected);
   };
 
-  const addItem = (item: Item) => {
+  const addItem = (item: ListItem) => {
     const itemSelected = [...selectedItems, item];
     setSelectedItems(itemSelected);
   };
@@ -75,6 +72,7 @@ const MultiSelect: React.FC<SelectProps> = ({
           <View style={tw`flex flex-row flex-wrap`}>
             {selectedItems.map((item) => (
               <PillSelect
+                key={item.value}
                 item={item}
                 onDeselect={removeItem}
                 selected={selectedItems.includes(item)}
@@ -103,6 +101,7 @@ const MultiSelect: React.FC<SelectProps> = ({
                 />
               )}
               ItemSeparatorComponent={() => <Divider />}
+              keyExtractor={(item) => item.value.toString()}
             />
           </View>
         </Modal>

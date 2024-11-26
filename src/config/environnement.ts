@@ -5,7 +5,7 @@ type ReleaseChannel = "development" | "staging" | "production";
 
 const environnements: { [key in ReleaseChannel]: { apiUrl: string } } = {
   development: {
-    apiUrl: "http://192.168.1.227:3000/",
+    apiUrl: "http://192.168.1.142:3000/",
   },
   staging: {
     apiUrl: "https://staging-api.com",

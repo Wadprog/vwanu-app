@@ -5,14 +5,13 @@ import { TouchableOpacity } from "react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { Ionicons } from "@expo/vector-icons";
+import { View } from "react-native";
 
-const Icon = () => (
-  <MaterialCommunityIcons name="calendar" size={24} color="black" />
-);
+const Icon = () => <Ionicons name="calendar" size={24} color="black" />;
 // Custom dependencies
 import Error from "./Error";
 import tw from "../../lib/tailwind";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Modal from "../Modal";
 import Wrapper from "../InputsWrapper";
 import useToggle from "../../hooks/useToggle";
@@ -45,19 +44,25 @@ const DateInput: React.FC<DateInputProps> = ({
         onBlur={() => setFieldTouched(name)}
         onPress={toggleModal}
       >
-        <Wrapper iconLeft={<Icon />} label={label} style={style}>
+        <Wrapper
+          iconLeft={<Icon />}
+          label={label}
+          style={style}
+          {...otherProps}
+        >
           <Text style={tw`text-black`}>{date.toDateString()}</Text>
         </Wrapper>
       </TouchableOpacity>
 
       <Modal visible={showModal} onClose={toggleModal} onConfirm={toggleModal}>
-        <DateTimePicker
-          display="spinner"
-          value={date}
-          mode="date"
-          onChange={handleDateChange}
-          {...otherProps}
-        />
+        <View style={tw`items-center`}>
+          <DateTimePicker
+            display="spinner"
+            value={date}
+            mode="date"
+            onChange={handleDateChange}
+          />
+        </View>
       </Modal>
 
       <Error

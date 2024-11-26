@@ -1,31 +1,35 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // Custom core imports
 import TimelineScreen from "../screens/timeline/Timeline.screen";
 import ImageGallery from "../screens/timeline/ImageGallery.screen";
 import CommentScreen from "../screens/timeline/Comment.screen";
-
 import { FeedStackParams } from "../../types";
 
+const options = {
+  headerTitle: "",
+  headerShown: true,
+  headerTransparent: false,
+  headerStyle: { height: 100 },
+};
 const Stack = createStackNavigator<FeedStackParams>();
 
 const TimelineNavigator = () => (
   <Stack.Navigator
     screenOptions={{
       headerShown: false,
-      headerTransparent: true,
+      headerTransparent: false,
     }}
   >
-    <Stack.Screen name="Timeline" component={TimelineScreen} />
     <Stack.Screen
-      name="Gallery"
-      options={{
-        title: "just",
-      }}
-      component={ImageGallery}
+      name="Timeline"
+      component={TimelineScreen}
+      options={options}
     />
-    <Stack.Screen name="Comment" component={CommentScreen} />
+    <Stack.Screen name="Gallery" component={ImageGallery} />
+    <Stack.Screen name="Comment" options={options} component={CommentScreen} />
   </Stack.Navigator>
 );
 
