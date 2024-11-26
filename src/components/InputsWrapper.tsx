@@ -56,10 +56,4 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
   );
 };
 
-Wrapper.defaultProps = {
-  iconLeft: null,
-  iconRight: null,
-  onIconRightPress: () => {},
-  onIconLeftPress: () => {},
-};
 export default Wrapper;

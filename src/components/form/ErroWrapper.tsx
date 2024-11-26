@@ -1,15 +1,29 @@
 import React from "react";
+import { FormikErrors, FormikTouched } from "formik";
 
-import Error from "./Error";
-const ErrorWrapper: React.FC<{
-  error?: string;
-  visible?: boolean;
+interface ErrorProps {
+  errors: FormikErrors<any>;
+  visible: FormikTouched<any>;
+  name: string;
   children: JSX.Element;
-}> = (props): JSX.Element => {
+}
+import Error from "./Error";
+
+const ErrorWrapper: React.FC<ErrorProps> = ({
+  visible,
+  errors,
+  name,
+  children,
+}): JSX.Element => {
   return (
     <>
-      {props.children}
-      <Error error={props.error || undefined} visible={props.visible} />
+      {children}
+      {/* <Error error={props.error || undefined} visible={props.visible} /> */}
+
+      <Error
+        error={typeof errors === "string" ? errors[name] : undefined}
+        visible={typeof visible[name] === "boolean" ? visible[name] : false}
+      />
     </>
   );
 };

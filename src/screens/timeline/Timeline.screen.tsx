@@ -54,6 +54,8 @@ const Timeline: React.FC = () => {
   );
 };
 
+// createe a class the represent a car and it has a method that can drive the car
+
 export default Timeline;
 
 // const styles = StyleSheet.create({})

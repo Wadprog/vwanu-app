@@ -60,9 +60,6 @@ export const Auth = createSlice({
     },
 
     tLoginSucceed: (state, action) => {
-      console.log(`\n\n\n\n\n ********* \n\n\n\n\n`);
-      console.log(action.payload);
-      console.log(`\n\n\n\n\n ********* \n\n\n\n\n`);
       state.loading = false;
       state.user = action.payload[0];
       state.lastFetch = Date.now();

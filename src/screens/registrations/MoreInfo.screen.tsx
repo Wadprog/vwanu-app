@@ -99,7 +99,7 @@ const RegisterScreen: React.FC<{}> = () => {
             // @ts-ignore
             dispatch(updateUser(value));
           }}
-          style={tw`flex-1  flex justify-between justify-items-center`}
+          style={tw`flex-1 flex`}
         >
           <View style={tw`mb-5 flex-1`}>
             <DateInput

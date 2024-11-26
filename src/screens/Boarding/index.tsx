@@ -29,8 +29,12 @@ const BoardingScreen: React.FC<{}> = () => {
       onSelect={(index) => setCurrentScreen(index)}
       style={tw`flex-1`}
     >
-      {onBordingScreen.map((screen) => (
-        <ImageBackground style={tw`px-5 flex-1`} source={images.onBoardBg}>
+      {onBordingScreen.map((screen, index) => (
+        <ImageBackground
+          style={tw`px-5 flex-1`}
+          source={images.onBoardBg}
+          key={index.toString()}
+        >
           <View style={tw`flex-1 flex items-center mt-[30%] pt-5`}>
             <Image source={screen.image} style={tw``} />
           </View>

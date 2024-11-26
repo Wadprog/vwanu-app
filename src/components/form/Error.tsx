@@ -9,7 +9,7 @@ interface FormErrorProps {
 }
 const FormError: React.FC<FormErrorProps> = ({ error, visible }) => {
   if (!visible || !error) return null;
-  return <Text style={tw`text-red-500`}>{error}</Text>;
+  return <Text style={tw`text-danger -mt-5 mb-3`}>{error}</Text>;
 };
 
 export default FormError;

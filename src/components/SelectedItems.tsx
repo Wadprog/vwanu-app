@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 // Custom import
 import Text from "./Text";
 import tw from "../lib/tailwind";
+import { ListItem } from "../../types";
 
 interface SelecTableItemsProps {
   item: ListItem;
@@ -34,19 +35,17 @@ const PillSelect: React.FC<Omit<SelecTableItemsProps, "onSelect">> = (
   </TouchableOpacity>
 );
 const SelecTableItems: React.FC<SelecTableItemsProps> = (props) => (
-  <View style={tw`flex flex-row items-center justify-between w-full px-1`}>
-    <TouchableOpacity
-      style={tw`flex-1`}
-      onPress={() => {
-        props.selected
-          ? props.onDeselect(props.item)
-          : props.onSelect(props.item);
-      }}
-    >
-      <Text style={tw`m-2 text-primary w-full`}>{props.item.label}</Text>
-    </TouchableOpacity>
+  <TouchableOpacity
+    onPress={() => {
+      props.selected
+        ? props.onDeselect(props.item)
+        : props.onSelect(props.item);
+    }}
+    style={tw`flex flex-row items-center justify-between w-full px-1 py-2`}
+  >
+    <Text style={tw`m-2 text-primary`}>{props.item.label}</Text>
     {props.selected && <Icon />}
-  </View>
+  </TouchableOpacity>
 );
 
 export { SelecTableItems, PillSelect };

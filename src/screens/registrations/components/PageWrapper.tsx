@@ -33,7 +33,7 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
         {children}
 
         {pageNumber ? (
-          <View style={tw`mb-10`}>
+          <View style={tw`mb-4`}>
             <NavigationDots selected={pageNumber} total={4} />
           </View>
         ) : null}

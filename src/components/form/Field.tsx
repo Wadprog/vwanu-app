@@ -4,7 +4,6 @@ import { useFormikContext } from "formik";
 import Input, { P } from "../Input";
 import Error from "./Error";
 import FieldParams from "./fieldParams";
-import { WrapperProps } from "components/InputsWrapper";
 
 type Props = FieldParams & P;
 

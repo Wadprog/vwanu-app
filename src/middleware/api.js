@@ -6,7 +6,6 @@ import env from "../config/environnement";
 
 // eslint-disable-next-line consistent-return
 const api = (store) => (next) => async (action) => {
-  console.log("api middleware", env.apiUrl);
   if (action.type !== actions.apiCallBegan.type) return next(action);
 
   const { onSuccess, onError, onStart } = action.payload;
@@ -14,7 +13,6 @@ const api = (store) => (next) => async (action) => {
   if (onStart) store.dispatch({ type: onStart });
   next(action);
   try {
-    console.log({ url: env.apiUrl, apiCallBegan: action.payload });
     const response = await axios({
       baseURL: env.apiUrl,
       ...action.payload,

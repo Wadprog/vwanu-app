@@ -13,7 +13,7 @@ const DrawerNav = () => (
   <Drawer.Navigator
     drawerContent={(props) => <DrawerContent {...props} />}
     screenOptions={{
-      headerTransparent: false,
+      headerTransparent: true,
       headerTitle: "",
     }}
   >

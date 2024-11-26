@@ -16,10 +16,6 @@ const CommentScreen: React.FC<Props> = ({ route }) => {
     route.params.id
   );
 
-  console.log("\n\n\n\n ***** \n\n\n");
-  console.log({ comments });
-  console.log("\n\n\n\n ***** \n\n\n");
-
   return (
     <ScrollView style={tw`px-2 flex-1 bg-white w-screen`}>
       <Post {...post} />

@@ -1,4 +1,6 @@
 import routes from "./src/navigation/routes";
+
+type Id = string | number;
 interface ListItem {
   label: string;
   value: string;
