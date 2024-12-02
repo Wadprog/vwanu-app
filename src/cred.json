@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "provisioningProfilePath": "relative/path/to/provisioning/profile.mobileprovision",
+    "distributionCertificate": {
+      "path": "relative/path/to/distribution/certificate.p12",
+      "password": "<MYPASSWORD>"
+    }
+  }
+}

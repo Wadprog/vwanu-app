@@ -34,7 +34,9 @@ const Timeline: React.FC = () => {
         <View style={tw`mb-3`}>
           <FlatList
             data={communities}
-            renderItem={({ item }) => <Community {...item} />}
+            renderItem={({ item }) => (
+              <Community {...item} size="small" style={tw`w-50`} />
+            )}
             keyExtractor={(_, index) => index.toString()}
             horizontal
             ItemSeparatorComponent={Separator}

@@ -1,19 +1,6 @@
 import apiSlice from "./api-slice";
 import { endpoints, HttpMethods } from "../config";
-import { Medias } from "../components/ImageGrid";
-
-interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  profilePicture: string;
-}
-export interface CommunityInterface {
-  name: string;
-  backgroundImage: string;
-  createdAt: string;
-  id: number;
-}
+import { CommunityInterface } from "../../types";
 
 const community = apiSlice.injectEndpoints({
   endpoints: (build) => ({
@@ -23,9 +10,15 @@ const community = apiSlice.injectEndpoints({
         method: HttpMethods.GET,
       }),
     }),
+    fetchCommunityById: build.query<CommunityInterface, string>({
+      query: (id) => ({
+        url: `${endpoints.COMMUNITY}/${id}`,
+        method: HttpMethods.GET,
+      }),
+    }),
   }),
 });
 
-const { useFetchCommunityQuery } = community;
+const { useFetchCommunityQuery, useFetchCommunityByIdQuery } = community;
 
-export { useFetchCommunityQuery };
+export { useFetchCommunityQuery, useFetchCommunityByIdQuery };

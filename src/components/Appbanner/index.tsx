@@ -35,41 +35,43 @@ const Banner: React.FC<Banner> = (props) => {
   }, [currentSlide]) */
 
   return (
-    <FlatList
-      ref={bannerRef}
-      data={data}
-      horizontal
-      pagingEnabled
-      showsHorizontalScrollIndicator={false}
-      renderItem={({ item, index }) => (
-        <View
-          style={tw`rounded-lg overflow-hidden w-[${width - 24}px] h-[${
-            height / 4 + 24
-          }px] mb-1 bg-red-500`}
-        >
-          <ImageBackground
-            source={{ uri: item.backgroundImage }}
-            style={tw`h-[162px] `}
+    <>
+      <FlatList
+        ref={bannerRef}
+        data={data}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item, index }) => (
+          <View
+            style={tw`rounded-lg overflow-hidden w-[${width - 24}px] h-[${
+              height / 4 + 24
+            }px] mb-1 bg-red-500`}
           >
-            <View
-              style={tw`bg-black bg-opacity-30 h-full flex justify-center items-center`}
+            <ImageBackground
+              source={{ uri: item.backgroundImage }}
+              style={tw`h-[162px] `}
             >
-              <View style={tw`relative`}>
-                <Text category="h3" style={tw`text-center`}>
-                  {item.title}
-                </Text>
-                <Text category="s1" style={tw`text-center mt-4 mb-5`}>
-                  {item.tagLine}
-                </Text>
-                <View style={tw` flex self-end mt-3  `}>
-                  <NavigatorIndicators selected={index} total={4} />
+              <View
+                style={tw`bg-black bg-opacity-30 h-full flex justify-center items-center`}
+              >
+                <View style={tw`relative`}>
+                  <Text category="h3" style={tw`text-center`}>
+                    {item.title}
+                  </Text>
+                  <Text category="s1" style={tw`text-center mt-4 mb-5`}>
+                    {item.tagLine}
+                  </Text>
+                  <View style={tw` flex self-end mt-3  `}>
+                    <NavigatorIndicators selected={index} total={4} />
+                  </View>
                 </View>
               </View>
-            </View>
-          </ImageBackground>
-        </View>
-      )}
-    />
+            </ImageBackground>
+          </View>
+        )}
+      />
+    </>
   );
 };
 

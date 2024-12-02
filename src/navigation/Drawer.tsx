@@ -3,9 +3,9 @@ import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
 // Custom imports
-import DrawerContent from "../screens/DrawerContent";
-import BottomTabNavigator from "./Bottom";
 import routes from "./routes";
+import BottomTabNavigator from "./Bottom";
+import DrawerContent from "../screens/DrawerContent";
 
 const Drawer = createDrawerNavigator();
 

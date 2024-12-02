@@ -9,7 +9,9 @@ import ChatNavigator from "./Chat";
 import FeedNavigator from "./Feed";
 import AccountNavigator from "./Account";
 import { BottomTabParms } from "../../types";
+import BlogsNavigator from "./blogs.navigator";
 import CommunityIcon from "assets/svg/Community";
+import CommunityNavigator from "./community.navigation";
 
 const Tab = createBottomTabNavigator<BottomTabParms>();
 
@@ -58,7 +60,16 @@ const BottomTabNavigator: React.FC<{}> = () => (
 
     <Tab.Screen
       name={routes.COMMUNITY}
-      component={ChatNavigator}
+      component={CommunityNavigator}
+      options={{
+        tabBarIcon: ({ size, color }) => (
+          <CommunityIcon size={size} color={color} />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name={routes.BLOGS}
+      component={BlogsNavigator}
       options={{
         tabBarIcon: ({ size, color }) => (
           <CommunityIcon size={size} color={color} />

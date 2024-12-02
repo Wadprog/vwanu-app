@@ -17,7 +17,7 @@ const Screen: React.FC<ScreenProps> = ({
   error = false,
 }) => {
   return (
-    <Layout style={{ flex: 1 }}>
+    <Layout style={{ flex: 1, paddingHorizontal: 15 }}>
       <SafeAreaView style={{ flex: 1 }}>
         {loading ? (
           <ActivityIndicator animating={loading} />

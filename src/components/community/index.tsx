@@ -1,63 +1,81 @@
-import { View, ImageBackground, FlatList } from "react-native";
 import React from "react";
+import { View, ImageBackground, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import Text from "../Text";
-import tw from "../../lib/tailwind";
+import tw from "lib/tailwind";
 import Button from "../Button";
-
-interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  profilePicture: string;
-}
-
-interface Interest {
-  id: number;
-  name: string;
-}
-export interface CommunityInterface {
-  id: number;
-  name: string;
-  createdAt: string;
-  backgroundImage: string;
-  interests: Interest[];
-}
+import { CommunityInterface } from "../../../types";
+import AvatarGroup from "components/AvatarGroups";
+import routes from "navigation/routes";
 
 const Community: React.FC<CommunityInterface> = (props) => {
+  const navigation = useNavigation();
+  const height =
+    props.size === "large"
+      ? 260
+      : props.size === "medium"
+      ? 176
+      : props.size === "small"
+      ? 65
+      : 260;
   return (
-    <View style={tw`rounded-2xl overflow-hidden w-[150px]`}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate(routes.COMMUNITY_DETAILS, { id: props.id })
+      }
+      style={[
+        tw`rounded-lg overflow-hidden min-h-[130px] h-[${height}px] `,
+        props.style || null,
+      ]}
+    >
       <ImageBackground
         source={{ uri: props.backgroundImage }}
-        style={tw`w-full h-[100px] rounded-lg`}
+        resizeMode="cover"
+        fadeDuration={300}
       >
-        <View
-          style={tw`bg-black bg-opacity-50 h-full flex justify-between py-2 px-1`}
-        >
-          <View style={tw`flex flex-row overflow-hidden`}>
-            {props.interests.map((item) => (
-              <View style={tw`bg-white bg-opacity-50 mx-1 p-1 rounded`}>
-                <Text>{item.name}</Text>
+        <View style={tw`h-full px-3 py-5 justify-end`}>
+          <View>
+            <View style={tw`flex flex-row overflow-hidden`}>
+              {props.interests.map((item) => (
+                <Label key={item.id} name={item.name} />
+              ))}
+            </View>
+            <View style={tw`flex flex-row items-center justify-between`}>
+              <View>
+                <Text category="h6" style={tw`text-wrap w-[95px] text-white`}>
+                  {props.name}
+                </Text>
+                <AvatarGroup avatars={props.members || []} extras={20} />
               </View>
-            ))}
-          </View>
-          <View style={tw`flex flex-row items-center justify-between`}>
-            <Text
-              category="p1"
-              style={tw`text-[16px] font-bold text-wrap w-[95px]`}
-            >
-              {props.name}
-            </Text>
-            <View
-              style={tw`bg-white bg-opacity-40 p-1 rounded flex-1 justify-center items-center mx-1`}
-            >
-              <Text style={tw`text-primary font-bold`}>Join</Text>
+
+              {props.size === "large" && (
+                <View style={tw`flex-1 items-end mx-1`}>
+                  <Label name="Join" />
+                </View>
+              )}
             </View>
           </View>
         </View>
       </ImageBackground>
-    </View>
+    </TouchableOpacity>
   );
 };
 
+const Label: React.FC<{
+  name: string;
+  onPress?: () => void;
+}> = ({ name, onPress }) => {
+  return (
+    <>
+      {onPress ? (
+        <Button title={name} onPress={onPress} style={tw`mx-1`} />
+      ) : (
+        <View style={tw`bg-white bg-opacity-50 mx-1 p-1 rounded`}>
+          <Text style={tw`mx-1`}>{name}</Text>
+        </View>
+      )}
+    </>
+  );
+};
 export default Community;

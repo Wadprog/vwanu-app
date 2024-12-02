@@ -12,6 +12,7 @@ const api = (store) => (next) => async (action) => {
 
   if (onStart) store.dispatch({ type: onStart });
   next(action);
+  console.log("env.apiUrl", env.apiUrl);
   try {
     const response = await axios({
       baseURL: env.apiUrl,

@@ -5,7 +5,9 @@ type ReleaseChannel = "development" | "staging" | "production";
 
 const environnements: { [key in ReleaseChannel]: { apiUrl: string } } = {
   development: {
-    apiUrl: "http://192.168.1.142:3000/",
+    apiUrl: "http://".concat(
+      (constant.expoConfig?.hostUri?.split(`:`).shift() ?? "").concat(":3000/")
+    ),
   },
   staging: {
     apiUrl: "https://staging-api.com",
@@ -14,8 +16,8 @@ const environnements: { [key in ReleaseChannel]: { apiUrl: string } } = {
     apiUrl: "https://my-api.com",
   },
 };
-const releaseChannel =
-  (constant.manifest?.releaseChannel as ReleaseChannel) || "staging";
+const releaseChannel = "development";
+// (constant.manifest?.releaseChannel as ReleaseChannel) || "staging";
 
 const getCurrentEnvironnement = (): { apiUrl: string } =>
   __DEV__ ? environnements.development : environnements[releaseChannel];

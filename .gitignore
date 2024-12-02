@@ -15,3 +15,5 @@ db.json
 
 # macOS
 .DS_Store
+/ios
+/android

@@ -1,5 +1,11 @@
 {
   "build": {
+    "development": {
+      "distribution": "internal"
+    },
+    "ios": {
+      "credentialsSource": "local"
+    },
     "production": {
       "channel": "production"
     },

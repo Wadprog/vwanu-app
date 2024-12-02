@@ -31,6 +31,10 @@ export type FeedStackParams = {
   Gallery: undefined;
   Comment: PostProps;
 };
+export type BlogStackParams = {
+  [route.BLOG_LIST]: undefined;
+  [route.BLOG_DETAILS]: undefined;
+};
 
 export type ProfileStackParams = {
   [routes.PROFILE]: { profileId: string } | undefined;
@@ -41,6 +45,7 @@ export type BottomTabParms = {
   [routes.ACCOUNT]: undefined | { profileId: string };
   [routes.INBOX]: undefined;
   [routes.COMMUNITY]: undefined;
+  [routes.BLOGS]: undefined;
 };
 
 export interface Message {
@@ -56,4 +61,30 @@ export interface Conversation {
   messages: Message[];
   lastMessage: Message;
   amountOfUnreadMessages: number;
+}
+
+interface Interest {
+  id: number;
+  name: string;
+}
+export interface CommunityInterface {
+  id: number;
+  name: string;
+  createdAt: string;
+  backgroundImage: string;
+  interests: Interest[];
+  size?: "small" | "medium" | "large";
+  style: Object;
+  members: User[];
+}
+
+interface BlogsInterface {
+  id: number;
+  title: string;
+  createdAt: string;
+  content: string;
+  updatedAt: string;
+  creator: User;
+  backgroundImage: string;
+  interests: Interest[];
 }
