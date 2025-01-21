@@ -1,88 +1,88 @@
-import React from "react";
-import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from 'react'
+import * as Yup from 'yup'
+import { useDispatch } from 'react-redux'
+import { View } from 'react-native'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 // Core components
-import tw from "../../lib/tailwind";
-import { updateUser } from "../../store/auth";
+import tw from '../../lib/tailwind'
+import { updateUser } from '../../store/auth'
 import {
   Form,
   Submit,
   DateInput,
   Select,
   MultiSelector,
-} from "../../components/form";
-import PageWrapper from "./components/PageWrapper";
+} from '../../components/form'
+import PageWrapper from './components/PageWrapper'
 
 import {
   useFetchCountriesQuery,
   useFetchCityQuery,
   useFetchStatesQuery,
-} from "../../store/add";
-import { useFetchInterestsQuery } from "../../store/interests";
+} from '../../store/add'
+import { useFetchInterestsQuery } from '../../store/interests'
 
 const ValidationSchema = Yup.object().shape({
-  city: Yup.string().required().label("City"),
-  country: Yup.string().required().label("Country"),
-  interests: Yup.array().required().label("Interest"),
-  state: Yup.string().required().label("State"),
-  dob: Yup.date().required().label("Date of Birth"),
-  gender: Yup.string().required().oneOf(["male", "female"]).label("Gender"),
-});
+  city: Yup.string().required().label('City'),
+  country: Yup.string().required().label('Country'),
+  interests: Yup.array().required().label('Interest'),
+  state: Yup.string().required().label('State'),
+  dob: Yup.date().required().label('Date of Birth'),
+  gender: Yup.string().required().oneOf(['m', 'f']).label('Gender'),
+})
 
 const initialValues = {
-  dob: "",
-  gender: "",
-  state: "",
-  country: "",
-  city: "",
+  dob: '',
+  gender: '',
+  state: '',
+  country: '',
+  city: '',
   interests: [],
-};
+}
 
 const Icon = () => (
   <MaterialCommunityIcons name="gender-male-female" size={24} color="black" />
-);
+)
 
 const genders = [
   {
-    label: "male",
-    value: "male",
+    label: 'male',
+    value: 'm',
   },
 
   {
-    label: "female",
-    value: "female",
+    label: 'female',
+    value: 'f',
   },
-];
+]
 
 const RegisterScreen: React.FC<{}> = () => {
-  const dispatch = useDispatch();
-  const [selectedCountry, setSelectedCountry] = React.useState(undefined);
-  const [selectedState, setSelectedState] = React.useState(undefined);
+  const dispatch = useDispatch()
+  const [selectedCountry, setSelectedCountry] = React.useState(undefined)
+  const [selectedState, setSelectedState] = React.useState(undefined)
 
   const {
     data: countries = [],
     isFetching,
     isLoading,
-  } = useFetchCountriesQuery();
+  } = useFetchCountriesQuery()
   const { data: interests = [], isFetching: interestFetching } =
-    useFetchInterestsQuery();
+    useFetchInterestsQuery()
 
   const { data: states = [], isFetching: stateFetching } = useFetchStatesQuery(
-    selectedCountry || "",
+    selectedCountry || '',
     {
       skip: !selectedCountry,
     }
-  );
+  )
 
   const { data: cities = [], isFetching: citiFetching } = useFetchCityQuery(
     selectedState,
     {
       skip: !selectedState,
     }
-  );
+  )
 
   return (
     <PageWrapper
@@ -97,7 +97,7 @@ const RegisterScreen: React.FC<{}> = () => {
           // @ts-ignore
           onSubmit={(value) => {
             // @ts-ignore
-            dispatch(updateUser(value));
+            dispatch(updateUser(value))
           }}
           style={tw`flex-1 flex`}
         >
@@ -199,8 +199,8 @@ const RegisterScreen: React.FC<{}> = () => {
         </Form>
       </>
     </PageWrapper>
-  );
-};
+  )
+}
 
 // RegisterScreen.propTypes = {}
-export default RegisterScreen;
+export default RegisterScreen

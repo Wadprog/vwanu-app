@@ -1,150 +1,69 @@
-import React from "react";
-import { TouchableOpacity, View, Dimensions } from "react-native";
-import { Avatar } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import React from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { View, Dimensions } from 'react-native'
 
-import Text from "./Text";
-import tw from "../lib/tailwind";
-import ImageGrid from "./ImageGrid";
-import Kore from "../assets/svg/Kore";
-import CommentForm from "./CommentFrom";
-import AvatarGroup from "./AvatarGroups";
-import useToggle from "../hooks/useToggle";
-import { abbreviateNumber } from "../lib/numberFormat";
+import Text from './Text'
+import tw from '../lib/tailwind'
+import ImageGrid from './ImageGrid'
+import CommentForm from './CommentFrom'
+import AvatarGroup from './AvatarGroups'
+import useToggle from '../hooks/useToggle'
+import { useFetchLikesQuery, useUpdatePostMutation } from '../store/post'
+import PostHeader from './PostHeader'
+import PostFooter from './PostFooter'
+import { PostProps } from '../../types'
 
-import { PostProps } from "../../types";
-
-const { height } = Dimensions.get("screen");
+const { height, width } = Dimensions.get('screen')
 interface Props extends PostProps {
-  showViewComment?: boolean;
+  showViewComment?: boolean
 }
 const Post: React.FC<Props> = ({ showViewComment = true, ...props }) => {
-  const navigation = useNavigation();
-  const [commenting, toggleCommenting] = useToggle(false);
+  const navigation = useNavigation()
+  const [commenting, toggleCommenting] = useToggle(false)
+  const [modifying, toggleModifying] = useToggle(false)
+  const [seeLikers, toggleLikerPopover] = useToggle(false)
+  const likers = useFetchLikesQuery(props.id, { skip: seeLikers })
+  const [updatePost, updatePostMeta] = useUpdatePostMutation()
+
   return (
     <View style={tw`static`}>
-      <View style={tw`flex flex-row items-center`}>
-        {props?.user?.profilePicture && (
-          <Avatar.Image
-            source={{
-              uri: props?.user?.profilePicture,
-            }}
-            size={50}
-          />
-        )}
-
-        <View style={tw`ml-2`}>
-          <Text style={tw`text-black`}>
-            {`${props.user.firstName} ${props.user.lastName}`}
-          </Text>
-          <Text appearance="hint" style={tw`text-black font-thin`}>
-            {/* {formatDistanceToNow(new Date(props.createdAt), {
-              addSuffix: true,
-            })} */}
-          </Text>
-        </View>
-      </View>
+      <PostHeader
+        {...props}
+        updatePostMeta={updatePostMeta}
+        onDeletePress={toggleModifying}
+        toggleDeleting={toggleModifying}
+        deletingVisible={modifying}
+        updatePost={updatePost}
+      />
 
       <Text category="p2" style={tw`text-gray-500 mb-2`}>
         {props.postText}
       </Text>
 
-      {props.medias.length > 0 && (
+      {props?.Media && props.Media.length > 0 && (
         <ImageGrid
-          medias={props.medias || []}
+          medias={props.Media || []}
           style={tw`mb-2`}
           onImageTouch={(id) => {
-            const index = props.medias.findIndex(
-              (media) => media.id === id.toString()
-            );
+            const index = props.Media?.findIndex(
+              (media) => media?.id === id.toString()
+            )
             //@ts-ignore
-            navigation.navigate("Gallery", { ...props, initialSlide: index });
+            navigation.navigate('Gallery', { ...props, initialSlide: index })
           }}
         />
       )}
 
-      <AvatarGroup avatars={props.likers || []} style={tw`mt-2`} />
+      <AvatarGroup avatars={props.reactors || []} style={tw`mt-2`} />
 
-      <View style={tw`flex flex-row items-center justify-between`}>
-        <View>
-          {props.likers.length ? (
-            <View style={tw`flex flex-row items-center `}>
-              <Text style={tw`text-black font-thin`}>Liked by</Text>
-              <Text style={tw`text-black`}> {props.likers[0].firstName} </Text>
-              <Text style={tw`text-black font-thin`}>and</Text>
-              <Text style={tw`text-black`}>
-                {" "}
-                {abbreviateNumber(props.likes)}+{" "}
-              </Text>
-              <Text style={tw`text-black font-thin`}>others</Text>
-            </View>
-          ) : (
-            <Text style={tw`text-black font-thin`}>Be the first to Kore</Text>
-          )}
-
-          {showViewComment && (
-            <TouchableOpacity
-              onPress={() => {
-                //@ts-ignore
-                navigation.navigate("Comment", {
-                  ...props,
-                  showViewComment: false,
-                });
-              }}
-            >
-              <View style={tw`flex flex-row items-center`}>
-                <Text style={tw`text-primary font-thin text-sm`}>
-                  View all{" "}
-                </Text>
-                <Text style={tw`text-primary text-sm`}>
-                  {abbreviateNumber(props.comments)}
-                </Text>
-
-                <Text style={tw`text-primary font-thin text-sm`}>
-                  {" "}
-                  comments
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={tw`flex flex-row items-center justify-between`}>
-          <View style={tw`self-end`}>
-            <Ionicons name="share-outline" size={24} color="black" />
-          </View>
-          <View style={tw`mx-2`}>
-            <Text
-              category="c1"
-              appearance="hint"
-              style={tw`text-black text-sm font-thin`}
-            >
-              {abbreviateNumber(props.likes)}
-            </Text>
-
-            <Kore />
-
-            {/* <Svg /> */}
-          </View>
-          <View>
-            <Text
-              category="c1"
-              appearance="hint"
-              style={tw`text-black text-sm font-thin`}
-            >
-              {abbreviateNumber(props.comments)}
-            </Text>
-            <TouchableOpacity onPress={toggleCommenting}>
-              <Ionicons
-                name="chatbubble-ellipses-outline"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+      <PostFooter
+        {...props}
+        toggleCommenting={toggleCommenting}
+        toggleLikerPopover={toggleLikerPopover}
+        seeLikers={seeLikers}
+        likers={likers}
+        showViewComment={showViewComment}
+      />
 
       {commenting && (
         <View
@@ -154,7 +73,7 @@ const Post: React.FC<Props> = ({ showViewComment = true, ...props }) => {
         </View>
       )}
     </View>
-  );
-};
+  )
+}
 
-export default Post;
+export default Post

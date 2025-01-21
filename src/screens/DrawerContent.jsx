@@ -2,21 +2,21 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unstable-nested-components */
 // Dependencies
-import React from "react";
-import { useSelector } from "react-redux";
-import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import { StyleSheet, View, Text } from "react-native";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { Avatar, Drawer, TouchableRipple } from "react-native-paper";
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer'
+import { StyleSheet, View, Text } from 'react-native'
+import Icon from '@expo/vector-icons/MaterialCommunityIcons'
+import { Avatar, Drawer, TouchableRipple } from 'react-native-paper'
 
-import { Toggle } from "@ui-kitten/components";
+import { Toggle } from '@ui-kitten/components'
 // import { ThemeContext } from '../config/theme-context'
 
-import Screen from "../components/screen";
+import Screen from '../components/screen'
 // Customs imports
 // import Screen from '../components/Screen'
-import { getCurrentUser } from "../store/auth";
-import routes from "../navigation/routes";
+import { getCurrentUser } from '../store/auth'
+import routes from '../navigation/routes'
 // Main Function to Return
 
 // Styles
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     marginTop: 3,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   caption: {
     fontSize: 14,
@@ -38,16 +38,16 @@ const styles = StyleSheet.create({
   },
   row: {
     marginTop: 20,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   section: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginRight: 15,
   },
   paragraph: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginRight: 3,
   },
   drawerSection: {
@@ -55,19 +55,19 @@ const styles = StyleSheet.create({
   },
   bottomDrawerSection: {
     marginBottom: 15,
-    borderTopColor: "#f4f4f4",
+    borderTopColor: '#f4f4f4',
     borderTopWidth: 1,
   },
   preference: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
-});
+})
 const DrawerContent = (props) => {
   // Hooks
-  const auth = useSelector(getCurrentUser);
+  const auth = useSelector(getCurrentUser)
   //   const dispatch = useDispatch()
   //   const themeContext = React.useContext(ThemeContext)
   // Main Object
@@ -76,19 +76,19 @@ const DrawerContent = (props) => {
       <DrawerContentScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
-            <View style={{ flexDirection: "row", marginTop: 15 }}>
+            <View style={{ flexDirection: 'row', marginTop: 15 }}>
               <Avatar.Image
                 source={{
-                  uri: auth.user.profilePicture,
+                  uri: auth.profile.profilePicture,
                 }}
                 size={50}
               />
-              <View style={{ marginLeft: 15, flexDirection: "column" }}>
+              <View style={{ marginLeft: 15, flexDirection: 'column' }}>
                 <Text category="h6">{auth.user.firstName}</Text>
                 <Text category="s1">{auth.user.lastName}</Text>
               </View>
             </View>
-            <View style={{ marginTop: 10, flexDirection: "row" }}>
+            <View style={{ marginTop: 10, flexDirection: 'row' }}>
               <Text> 79 </Text>
               <Text> Following</Text>
               <Text> 23 </Text>
@@ -103,7 +103,7 @@ const DrawerContent = (props) => {
               )}
               label="My account"
               onPress={() => {
-                props.navigation.navigate(routes.ACCOUNT);
+                props.navigation.navigate(routes.ACCOUNT)
               }}
             />
             <DrawerItem
@@ -112,7 +112,7 @@ const DrawerContent = (props) => {
               )}
               label="Timeline"
               onPress={() => {
-                props.navigation.navigate(routes.TIMELINE);
+                props.navigation.navigate(routes.TIMELINE)
               }}
             />
             <DrawerItem
@@ -121,7 +121,7 @@ const DrawerContent = (props) => {
               )}
               label="Inbox"
               onPress={() => {
-                props.navigation.navigate(routes.INBOX);
+                props.navigation.navigate(routes.INBOX)
               }}
             />
 
@@ -131,7 +131,7 @@ const DrawerContent = (props) => {
               )}
               label="Groups"
               onPress={() => {
-                props.navigation.navigate(routes.GROUP);
+                props.navigation.navigate(routes.GROUP)
               }}
             />
 
@@ -141,7 +141,7 @@ const DrawerContent = (props) => {
               )}
               label="Network"
               onPress={() => {
-                props.navigation.navigate(routes.NETWORK);
+                props.navigation.navigate(routes.NETWORK)
               }}
             />
 
@@ -151,7 +151,7 @@ const DrawerContent = (props) => {
               )}
               label="Pages"
               onPress={() => {
-                props.navigation.navigate(routes.PAGE);
+                props.navigation.navigate(routes.PAGE)
               }}
             />
           </Drawer.Section>
@@ -186,7 +186,7 @@ const DrawerContent = (props) => {
         />
       </Drawer.Section>
     </Screen>
-  );
-};
+  )
+}
 
-export default DrawerContent;
+export default DrawerContent

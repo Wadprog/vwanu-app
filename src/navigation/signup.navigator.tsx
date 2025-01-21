@@ -1,40 +1,38 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { createStackNavigator } from "@react-navigation/stack";
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { createStackNavigator } from '@react-navigation/stack'
 
-import { getCurrentUser } from "../store/auth";
-import {
-  FindFriendScreen,
-  MoreInfoScreen,
-  RegisterScreen,
-  ProfilePictureScreen,
-} from "../screens/registrations";
+import { getCurrentUser, getProfile } from '../store/auth'
+import { RegisterScreen } from '../screens/registrations'
+import UpdateProfileNavigator from './updateuser.navigator'
 
-const { Navigator, Screen } = createStackNavigator();
+const { Navigator, Screen } = createStackNavigator()
 
 const RegisterNavigator = () => {
-  const { registrationProcess } = useSelector(getCurrentUser);
-  const screens = [
-    RegisterScreen,
-    MoreInfoScreen,
-    FindFriendScreen,
-    ProfilePictureScreen,
-  ];
+  const dispatch = useDispatch()
+  const auth = useSelector(getCurrentUser)
 
-  return (
-    <Navigator screenOptions={{ headerShown: false }}>
-      <Screen
-        name="SignUp-"
-        // @ts-ignore
-        component={
-          // @ts-ignore
-          screens[registrationProcess]
-          //React.createElement(screens[registrationProcess], {
-          // handleSubmit: () => {},
-        }
-      />
-    </Navigator>
-  );
-};
+  React.useEffect(() => {
+    console.log('\n\n\n**********')
+    console.log({ auth })
+    console.log('************\n\n\n')
+    if (!auth.user) return
+    console.log('\n\n\n')
+    console.log('****getingProfile****')
+    console.log('\n\n\n')
 
-export default RegisterNavigator;
+    // @ts-ignore
+    dispatch(getProfile())
+  }, [auth.user])
+
+  // if(auth.loading) return null;
+  if (!auth.user)
+    return (
+      <Navigator screenOptions={{ headerShown: false }}>
+        <Screen name="SignUp-" component={RegisterScreen} />
+      </Navigator>
+    )
+  if (auth.profile) return <UpdateProfileNavigator />
+}
+
+export default RegisterNavigator

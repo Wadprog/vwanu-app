@@ -1,19 +1,20 @@
-import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import React from 'react'
+import { View, TouchableOpacity } from 'react-native'
 
 // Custom import
-import Text from "./Text";
-import tw from "../lib/tailwind";
+import Text from './Text'
+import tw from '../lib/tailwind'
 
 export interface WrapperProps {
-  label?: string;
-  style?: object;
-  children?: React.ReactNode;
-  iconLeft?: React.ReactNode;
-  iconRight?: React.ReactNode;
-  onIconRightPress?: () => void;
-  onIconLeftPress?: () => void;
-  disabled?: boolean;
+  label?: string
+  style?: object
+  children?: React.ReactNode
+  iconLeft?: React.ReactNode
+  iconRight?: React.ReactNode
+  onIconRightPress?: () => void
+  onIconLeftPress?: () => void
+  disabled?: boolean
+  isFocus?: boolean
 }
 
 const Wrapper: React.FC<WrapperProps> = (props) => {
@@ -26,13 +27,17 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
       )}
       <View
         style={[
-          tw` p-2 mb-1  border flex  bg-[#F2F2F2] border-[#006175]${
-            props.disabled ? "border-opacity-400 bg-opacity-50" : ""
-          }`,
+          tw` p-2 mb-1 border flex  bg-[#F2F2F2] border-[#006175] ${
+            props.disabled ? 'border-opacity-400 bg-opacity-50' : ''
+          }
+          border-red-500
+          `,
+
           props.style,
+          tw`${props.isFocus ? 'border-[#006175]' : ''}`,
         ]}
       >
-        <View style={tw`flex py-1 flex-row items-center justify-between `}>
+        <View style={tw`flex py-1 flex-row items-center justify-between`}>
           <View style={tw`flex flex-row items-center justify-between `}>
             {props.iconLeft && (
               <TouchableOpacity
@@ -53,7 +58,7 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
         </View>
       </View>
     </View>
-  );
-};
+  )
+}
 
-export default Wrapper;
+export default Wrapper

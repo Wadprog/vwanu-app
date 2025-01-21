@@ -28,6 +28,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
+    
     },
     "android": {
       "adaptiveIcon": {

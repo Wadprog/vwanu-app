@@ -1,36 +1,38 @@
-import React from "react";
-import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from 'react'
+import { View } from 'react-native'
+import * as Yup from 'yup'
+import { useNavigation } from '@react-navigation/native'
+import { useDispatch } from 'react-redux'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 // Custom dependencies
-import tw from "../../lib/tailwind";
-import Text from "../../components/Text";
-import Button from "../../components/Button";
-import { updateUser } from "../../store/auth";
-import { Form, Submit, ImageField } from "../../components/form";
-import PageWrapper from "./components/PageWrapper";
+import tw from '../../lib/tailwind'
+import Text from '../../components/Text'
+import Button from '../../components/Button'
+import { updateUser } from '../../store/auth'
+import PageWrapper from './components/PageWrapper'
+import { Form, Submit, ImageField } from '../../components/form'
 
 const ValidationSchema = Yup.object().shape({
-  profilePicture: Yup.string().required().label("Profile Picture").nullable(),
-});
+  profilePicture: Yup.string().required().label('Profile Picture').nullable(),
+})
 
 const initialValues = {
   profilePicture: null,
-};
+}
 
 const IconWithArrow: React.FC<{}> = () => (
   <MaterialCommunityIcons
     name="chevron-right"
     size={24}
-    color={tw.color("text-primary font-bold")}
+    color={tw.color('text-primary font-bold')}
     style={tw`-ml-4`}
   />
-);
+)
 
 const ProfilePictureForm: React.FC<{ profilePicture: string }> = (props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
+  const navigator = useNavigation()
 
   return (
     <PageWrapper
@@ -45,7 +47,7 @@ const ProfilePictureForm: React.FC<{ profilePicture: string }> = (props) => {
           // @ts-ignore
           onSubmit={(val) => {
             // @ts-ignore
-            dispatch(updateUser(val));
+            dispatch(updateUser(val))
           }}
           style={tw`flex-1 flex justify-between`}
         >
@@ -70,9 +72,12 @@ const ProfilePictureForm: React.FC<{ profilePicture: string }> = (props) => {
                 style={tw`text-black`}
                 textStyle={tw`text-black`}
                 onPress={() => {
-                  const { profilePicture } = props;
+                  const profilePicture =
+                    'https://ui-avatars.com/api/?name=John+Doe' // @ts-ignore
                   // @ts-ignore
-                  dispatch(updateUser({ profilePicture }));
+                  dispatch(updateUser({ profilePicture }))
+                  // @ts-ignore
+                  navigator.navigate('find')
                 }}
               />
               <Submit
@@ -88,10 +93,7 @@ const ProfilePictureForm: React.FC<{ profilePicture: string }> = (props) => {
         </Form>
       </>
     </PageWrapper>
-  );
-};
+  )
+}
 
-ProfilePictureForm.defaultProps = {
-  profilePicture: "https://i.pravatar.cc/300",
-};
-export default ProfilePictureForm;
+export default ProfilePictureForm

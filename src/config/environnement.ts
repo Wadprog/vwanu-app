@@ -1,23 +1,24 @@
 /* eslint-disable no-undef */
-import constant from "expo-constants";
+import constant from 'expo-constants'
 
-type ReleaseChannel = "development" | "staging" | "production";
+type ReleaseChannel = 'development' | 'staging' | 'production'
 
 const environnements: { [key in ReleaseChannel]: { apiUrl: string } } = {
   development: {
-    apiUrl: "http://192.168.1.142:3000/",
+    apiUrl: 'http://api.vwanu.local/api/v1/',
+    // apiUrl: "http://192.168.1.143/api/v1/",
   },
   staging: {
-    apiUrl: "https://staging-api.com",
+    apiUrl: 'https://staging-api.com',
   },
   production: {
-    apiUrl: "https://my-api.com",
+    apiUrl: 'https://my-api.com',
   },
-};
+}
 const releaseChannel =
-  (constant.manifest?.releaseChannel as ReleaseChannel) || "staging";
+  (constant.manifest?.releaseChannel as ReleaseChannel) || 'staging'
 
 const getCurrentEnvironnement = (): { apiUrl: string } =>
-  __DEV__ ? environnements.development : environnements[releaseChannel];
+  __DEV__ ? environnements.development : environnements[releaseChannel]
 
-export default getCurrentEnvironnement();
+export default getCurrentEnvironnement()

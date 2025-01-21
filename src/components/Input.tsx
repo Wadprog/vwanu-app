@@ -1,19 +1,20 @@
-import React from "react";
-import { Input, InputProps } from "@ui-kitten/components";
-import { TextInput } from "react-native";
+import React from 'react'
+import { Input, InputProps } from '@ui-kitten/components'
+import { TextInput } from 'react-native'
 
-import Wrapper, { WrapperProps } from "./InputsWrapper";
+import Wrapper, { WrapperProps } from './InputsWrapper'
 
 interface Props extends InputProps {
-  label?: string;
-  required?: boolean;
+  label?: string
+  required?: boolean
 }
 
-export type P = React.ComponentProps<typeof TextInput> & WrapperProps;
+export type P = React.ComponentProps<typeof TextInput> & WrapperProps
 
 // type P = WrapperProps & Props
 
 const AppInput: React.FC<P> = (props) => {
+  const [isfocus, setIsFocus] = React.useState(false)
   const {
     label,
     iconLeft,
@@ -21,8 +22,10 @@ const AppInput: React.FC<P> = (props) => {
     style,
     onIconLeftPress,
     onIconRightPress,
+    onFocus,
     ...rest
-  } = props;
+  } = props
+
   return (
     <Wrapper
       label={label}
@@ -31,10 +34,17 @@ const AppInput: React.FC<P> = (props) => {
       style={style}
       onIconLeftPress={onIconLeftPress}
       onIconRightPress={onIconLeftPress}
+      isFocus={isfocus}
     >
-      <TextInput {...rest} />
+      <TextInput
+        {...rest}
+        onFocus={(e) => {
+          setIsFocus(true)
+          onFocus && onFocus(e)
+        }}
+      />
     </Wrapper>
-  );
-};
+  )
+}
 
-export default AppInput;
+export default AppInput

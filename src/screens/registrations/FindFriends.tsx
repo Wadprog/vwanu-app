@@ -1,33 +1,34 @@
-import React from "react";
-import * as Yup from "yup";
-import { View } from "react-native";
+import React from 'react'
+import * as Yup from 'yup'
+import { View } from 'react-native'
 
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux'
 
 // Core components
-import tw from "../../lib/tailwind";
-import Button from "../../components/Button";
-import { updateUser } from "../../store/auth";
-import IconRight from "./components/RightIcon";
-import PageWrapper from "./components/PageWrapper";
-import { useFetchProfilesQuery } from "../../store/profiles";
-import { Form, MultiImageSelector, Submit } from "../../components/form";
+import tw from '../../lib/tailwind'
+import Button from '../../components/Button'
+import { updateUser, registered } from '../../store/auth'
+import IconRight from './components/RightIcon'
+import PageWrapper from './components/PageWrapper'
+import { useFetchProfilesQuery } from '../../store/profiles'
+import { Form, MultiImageSelector, Submit } from '../../components/form'
 
 const initialValues = {
   users: [],
-};
+}
 const ValidationSchema = Yup.object().shape({
-  users: Yup.array().required().label("users"),
-});
+  users: Yup.array().required().label('users'),
+})
 
 const FindFriends: React.FC<{}> = () => {
-  const dispatch = useDispatch();
-  const { data: users, isFetching } = useFetchProfilesQuery();
+  const dispatch = useDispatch()
+  const { data: users, isFetching } = useFetchProfilesQuery()
 
   const handleSubmit = async (values: typeof ValidationSchema) => {
     // @ts-ignore
-    dispatch(updateUser(values));
-  };
+    // dispatch(updateUser(values));
+    dispatch(registered())
+  }
 
   return (
     <PageWrapper
@@ -69,6 +70,6 @@ const FindFriends: React.FC<{}> = () => {
         </Form>
       </>
     </PageWrapper>
-  );
-};
-export default FindFriends;
+  )
+}
+export default FindFriends
