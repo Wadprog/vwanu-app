@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
+    "jsx": "react-native",
     "forceConsistentCasingInFileNames": true,
+      "allowSyntheticDefaultImports": true,
+      "skipLibCheck": true,
     "strict": true,
     "baseUrl": "src",
     "paths": {

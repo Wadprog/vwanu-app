@@ -30,7 +30,6 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
           tw` p-2 mb-1 border flex  bg-[#F2F2F2] border-[#006175] ${
             props.disabled ? 'border-opacity-400 bg-opacity-50' : ''
           }
-          border-red-500
           `,
 
           props.style,

@@ -1,27 +1,30 @@
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { Popover, Layout, Divider } from '@ui-kitten/components'
 import { TouchableOpacity, View } from 'react-native'
+import { Popover, Layout, Divider } from '@ui-kitten/components'
 
 import Text from './Text'
 import tw from '../lib/tailwind'
+import { Notice } from '../../types'
 import useToggle from '../hooks/useToggle'
 import { ActivityIndicator } from 'react-native-paper'
-import { Notice } from '../../types'
 
 type IconNotice = keyof typeof Ionicons.glyphMap
 
 interface PrivacyNotice {
   privacyType: Notice
   canEdit: Boolean
-  onEdit?: (newPrivacy: Notice) => Promise<void>
+  onEdit?: (newPrivacy: Notice) => void
   isEditing?: Boolean
+  displayLong?: Boolean
+  onBlur?: () => void
 }
 
 const notices: Notice[] = ['private', 'network', 'public']
 const Separator = () => <Divider style={tw`my-2`} />
 
 const PrivacyNotice: React.FC<PrivacyNotice> = ({
+  displayLong = false,
   isEditing = false,
   ...props
 }) => {
@@ -31,17 +34,26 @@ const PrivacyNotice: React.FC<PrivacyNotice> = ({
   const [modifying, toggleModifying] = useToggle(false)
   return (
     <View style={tw`flex flex-row items-center justify-center`}>
-      <Ionicons
-        name={mapPrivacyNoticeToIcon(props.privacyType)}
-        style={tw`self-end mb-2`}
-        size={15}
-        color={props.canEdit ? tw.color(`gray-500`) : tw.color(`gray-400`)}
-      />
+      <View style={tw`flex flex-row items-center mb-1 self-end`}>
+        <Ionicons
+          name={mapPrivacyNoticeToIcon(props.privacyType)}
+          size={15}
+          color={props.canEdit ? tw.color(`gray-500`) : tw.color(`gray-400`)}
+        />
+        {displayLong && (
+          <Text style={tw`capitalize ml-1 font-thin`}>{props.privacyType}</Text>
+        )}
+      </View>
       {props.canEdit && (
         <Popover
           visible={modifying}
           anchor={() => (
-            <TouchableOpacity onPress={toggleModifying} style={tw`mt-5`}>
+            <TouchableOpacity
+              onPress={() => {
+                props?.onBlur && props.onBlur()
+                toggleModifying()
+              }}
+            >
               <Ionicons
                 name="chevron-down-outline"
                 size={15}
@@ -64,9 +76,8 @@ const PrivacyNotice: React.FC<PrivacyNotice> = ({
                       <>
                         <TouchableOpacity
                           onPress={() => {
-                            console.log('Editting')
                             props.onEdit!(notice)
-                            // toggleModifying()
+                            toggleModifying()
                           }}
                           style={tw`flex flex-row items-center px-1`}
                         >
