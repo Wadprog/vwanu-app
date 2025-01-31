@@ -1,107 +1,88 @@
-import { View, ActivityIndicator, useWindowDimensions } from 'react-native'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { string, object } from 'yup'
-import { useFormikContext } from 'formik'
 import { Avatar } from 'react-native-paper'
+import { View, Platform } from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+import { useNavigation } from '@react-navigation/native'
 
-import tw from '../lib/tailwind'
-import Img from '../assets/svg/Image'
-import { Form, Field, Submit } from './form'
-import { getCurrentUser } from '../store/auth'
-import VerticalIcons from '../assets/svg/Vertical'
-import Modal from './Modal'
-import { Text } from 'react-native-paper'
+import Input from './Input'
+import tw from 'lib/tailwind'
+import Img from 'assets/svg/Image'
+import useToggle from 'hooks/useToggle'
+import PostInputModal from './PostInputModal'
+import { getCurrentUser } from 'store/auth'
 
-const ValidationSchema = object().shape({
-  postText: string().required('Post is required'),
-})
-
-import { useCreatePostMutation } from '../store/post'
+const shadowStyle = {
+  ...Platform.select({
+    ios: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+    },
+    android: {
+      elevation: 4,
+    },
+  }),
+}
 
 const PostInput = () => {
-  const { width } = useWindowDimensions()
-
   const user = useSelector(getCurrentUser)
-  const [createPost, result] = useCreatePostMutation()
-  const [input, setInput] = React.useState<number>(width - 200)
+  const [creatingPost, toggleCreatingPost] = useToggle(false)
+  const [openBottomSheet, toggleOpenBottomSheet] = useToggle(false)
+  // const navigation = useNavigation()
+  const handleIconRightPress = async () => {
+    console.log('I will try now man')
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
 
-  const ref = React.useRef<View>(null)
-
-  const handleWidth = (w: number) => {
-    console.log({ w })
-    setInput(width - w - 20)
+      if (status === 'granted') {
+        toggleCreatingPost()
+        toggleOpenBottomSheet()
+      } else {
+        // If permission is not granted, handle accordingly
+        console.log(
+          'We will navigate to a permission request page or show a prompt'
+        )
+        // navigation.navigate('PermissionRequestPage')
+      }
+    } catch (error) {
+      console.error('Error requesting media library permission:', error)
+    }
   }
 
-  React.useEffect(() => {
-    console.log({ result })
-  }, [result])
-
   return (
-    <View style={tw`bg-red-500`}>
-      <Form
-        validationSchema={ValidationSchema}
-        initialValues={{ postText: '' }}
-        // @ts-ignore
-        onSubmit={async (values) => {
-          await createPost(values)
-        }}
-        style={[tw`bg-green-500`, { width: width / 2 }]}
-      >
-        <View style={tw`flex flex-row  my-2 bg-yellow-400`}>
-          <Avatar.Image
-            source={{
-              uri:
-                user?.profile?.profilePicture ||
-                'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D',
+    <View style={[tw`px-1`, shadowStyle]}>
+      <View style={tw`flex flex-row  my-2`}>
+        <Avatar.Image
+          source={{
+            uri:
+              user?.profile?.profilePicture ||
+              `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}`,
+          }}
+          size={50}
+        />
+        <View style={tw`flex-1 ml-2`}>
+          <Input
+            disabled
+            editable={false}
+            autoFocus
+            placeholder="What's on your mind?"
+            onPressIn={toggleCreatingPost}
+            style={tw`border-[#F2F3F5] border-[1px] bg-white rounded-2xl mb-0`}
+            iconRight={<Img />}
+            onIconRightPress={() => {
+              handleIconRightPress()
             }}
-            size={50}
-            ref={ref}
-            onLayout={(e) => handleWidth(e.nativeEvent.layout.width)}
-          />
-
-          <InPut
-            width={248}
-            disabled={result.isLoading}
-            elementRight={result.isLoading && <ActivityIndicator />}
           />
         </View>
-      </Form>
-      {/* <Modal>
-      <View style={tw`flex flex-row`}>
-        <Text>Post Created</Text>
       </View>
-    </Modal> */}
+      <PostInputModal
+        visible={creatingPost}
+        onClose={toggleCreatingPost}
+        openBottomSheet={openBottomSheet}
+      />
     </View>
-  )
-}
-
-interface InPutProps {
-  elementRight?: React.ReactNode
-  disabled?: boolean
-}
-const InPut: React.FC<InPutProps> = ({ elementRight, ...rest }) => {
-  const { handleSubmit } = useFormikContext()
-
-  return (
-    <Field
-      name="postText"
-      placeholder="What's on your mind?"
-      style={tw`border-[#F2F3F5] border-[1px] bg-white ml-2 rounded-2xl mb-0 `}
-      autoFocus
-      iconRight={
-        elementRight || (
-          <View style={tw`flex flex-row`}>
-            <Img />
-            <VerticalIcons />
-          </View>
-        )
-      }
-      {...rest}
-      onSubmitEditing={(e) => {
-        handleSubmit()
-      }}
-    />
   )
 }
 

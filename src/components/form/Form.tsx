@@ -1,26 +1,33 @@
-import React from "react";
-import { Formik, FormikValues } from "formik";
-import { View } from "react-native";
+import React from 'react'
+import { Formik, FormikValues } from 'formik'
+import { View, StyleProp, ViewStyle } from 'react-native'
+import { AnyObjectSchema, InferType } from 'yup'
 
-interface Props {
-  initialValues: any;
-  onSubmit: (values: any) => Promise<void>;
-  validationSchema: any;
-  children: React.ReactNode;
-  style?: object;
+interface FormProps<S extends AnyObjectSchema> {
+  validationSchema: S
+  initialValues: InferType<S>
+  onSubmit: (values: InferType<S>) => Promise<void> | void
+  children: React.ReactNode
+  style?: StyleProp<ViewStyle>
 }
 
-const Form: React.FC<Props> = (props: Props) => {
-  const { initialValues, onSubmit, validationSchema, children, style } = props;
+// Use a generic function component instead of React.FC so we can pass <T extends FormikValues>
+function Form<S extends AnyObjectSchema>({
+  initialValues,
+  onSubmit,
+  validationSchema,
+  children,
+  style,
+}: FormProps<S>) {
   return (
-    <Formik
+    <Formik<InferType<S>>
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
     >
-      <View style={style}>{children}</View>
+      {() => <View style={style}>{children}</View>}
     </Formik>
-  );
-};
+  )
+}
 
-export default Form;
+export default Form

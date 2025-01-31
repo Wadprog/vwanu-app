@@ -1,13 +1,7 @@
 import React from 'react'
-import { Input, InputProps } from '@ui-kitten/components'
 import { TextInput } from 'react-native'
 
 import Wrapper, { WrapperProps } from './InputsWrapper'
-
-interface Props extends InputProps {
-  label?: string
-  required?: boolean
-}
 
 export type P = React.ComponentProps<typeof TextInput> & WrapperProps
 

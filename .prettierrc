@@ -1,17 +1,14 @@
 {
-
-  "printWidth": 80,                
-  "tabWidth": 2,                  
-  "singleQuote": true,          
-  "semi": false,                   
-  "trailingComma": "es5",        
-  "bracketSameLine": false,        
-  "endOfLine": "auto",            
-
-
+  "printWidth": 80,
+  "tabWidth": 2,
+  "singleQuote": true,
+  "semi": false,
+  "trailingComma": "es5",
+  "jsxBracketSameLine": false,  
+  "endOfLine": "auto",
   "overrides": [
     {
-      "files": "*.tsx",
+      "files": ["*.ts", "*.tsx"],
       "options": {
         "parser": "typescript"
       }
