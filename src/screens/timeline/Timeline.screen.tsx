@@ -12,6 +12,7 @@ import routes from '../../navigation/routes'
 import Screen from '../../components/screen'
 import { useFetchPostsQuery } from '../../store/post'
 import { useFetchCommunityQuery } from '../../store/community'
+import TimelineSkeletone from './TimelineSkeletone'
 
 const Separator = () => <View style={tw`m-1`} />
 
@@ -34,7 +35,20 @@ const Timeline: React.FC = () => {
     )
 
   return (
-    <Screen>
+    <Screen
+      loading={posts.isLoading || posts.isFetching}
+      loadinScreen={<TimelineSkeletone />}
+      error={
+        posts.error
+          ? {
+              message: posts.error as string,
+              onRetry: () => {
+                posts.refetch()
+              },
+            }
+          : null
+      }
+    >
       <View style={tw`bg-white p-3 relative`}>
         {/* <Banner /> */}
         <View style={tw`mt-3`}>

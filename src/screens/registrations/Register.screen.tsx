@@ -1,13 +1,13 @@
 import React from 'react'
 import { View } from 'react-native'
 import { string, ref, bool, object } from 'yup'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // Core components
 import tw from '../../lib/tailwind'
 import Text from '../../components/Text'
 import Link from '../../components/Link'
-import { register } from '../../store/auth'
+import { register, getCurrentUser } from '../../store/auth'
 import { Form, Field, Submit, Switch } from '../../components/form'
 import PageWrapper from './components/PageWrapper'
 
@@ -36,11 +36,21 @@ const initialValues = {
 
 const RegisterScreen: React.FC<{}> = () => {
   const dispatch = useDispatch()
+  const user = useSelector(getCurrentUser)
   return (
     <PageWrapper
       title="Personal Information"
       subtitle="Please fill the following"
       pageNumber={0}
+      loading={user.loading}
+      error={
+        user.error
+          ? {
+              message: user.error.message,
+              onDismiss: () => {},
+            }
+          : null
+      }
     >
       <Form
         validationSchema={ValidationSchema}

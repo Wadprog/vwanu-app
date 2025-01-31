@@ -1,12 +1,12 @@
 import React from 'react'
 import * as Yup from 'yup'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 // Core components
 import tw from '../../lib/tailwind'
-import { updateUser } from '../../store/auth'
+import { updateUser, getCurrentUser } from '../../store/auth'
 import {
   Form,
   Submit,
@@ -26,15 +26,15 @@ import { useFetchInterestsQuery } from '../../store/interests'
 const ValidationSchema = Yup.object().shape({
   city: Yup.string().required().label('City'),
   country: Yup.string().required().label('Country'),
-  interests: Yup.array().required().label('Interest'),
+  interests: Yup.array().required().label('Interests'),
   state: Yup.string().required().label('State'),
   dob: Yup.date().required().label('Date of Birth'),
   gender: Yup.string().required().oneOf(['m', 'f']).label('Gender'),
 })
 
-const initialValues = {
-  dob: '',
-  gender: '',
+const initialValues: Yup.InferType<typeof ValidationSchema> = {
+  dob: new Date(),
+  gender: 'm',
   state: '',
   country: '',
   city: '',
@@ -59,6 +59,7 @@ const genders = [
 
 const RegisterScreen: React.FC<{}> = () => {
   const dispatch = useDispatch()
+  const user = useSelector(getCurrentUser)
   const [selectedCountry, setSelectedCountry] = React.useState(undefined)
   const [selectedState, setSelectedState] = React.useState(undefined)
 
@@ -78,7 +79,7 @@ const RegisterScreen: React.FC<{}> = () => {
   )
 
   const { data: cities = [], isFetching: citiFetching } = useFetchCityQuery(
-    selectedState,
+    selectedState || '',
     {
       skip: !selectedState,
     }
@@ -89,6 +90,15 @@ const RegisterScreen: React.FC<{}> = () => {
       title="More Personal Information"
       subtitle="Let's get to know you better"
       pageNumber={1}
+      loading={user.loading}
+      error={
+        user.error
+          ? {
+              message: user.error.message,
+              onDismiss: () => {},
+            }
+          : null
+      }
     >
       <>
         <Form
