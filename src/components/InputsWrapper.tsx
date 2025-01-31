@@ -27,13 +27,13 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
       )}
       <View
         style={[
-          tw` p-2 mb-1 border flex  bg-[#F2F2F2] border-[#006175] ${
+          tw` p-2 mb-1 border flex  bg-[#F2F2F2] border-accent ${
             props.disabled ? 'border-opacity-400 bg-opacity-50' : ''
           }
           `,
 
           props.style,
-          tw`${props.isFocus ? 'border-[#006175]' : ''}`,
+          tw`${props.isFocus ? 'border-accent' : ''}`,
         ]}
       >
         <View style={tw`flex py-1 flex-row items-center justify-between`}>

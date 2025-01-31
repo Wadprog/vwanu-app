@@ -4,9 +4,6 @@ import { TextInput } from 'react-native'
 import Wrapper, { WrapperProps } from './InputsWrapper'
 
 export type P = React.ComponentProps<typeof TextInput> & WrapperProps
-
-// type P = WrapperProps & Props
-
 const AppInput: React.FC<P> = (props) => {
   const [isfocus, setIsFocus] = React.useState(false)
   const {
