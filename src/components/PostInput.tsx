@@ -6,13 +6,11 @@ import * as ImagePicker from 'expo-image-picker'
 import { useNavigation } from '@react-navigation/native'
 
 import Input from './Input'
-import tw from '../lib/tailwind'
-import Img from '../assets/svg/Image'
+import tw from 'lib/tailwind'
+import Img from 'assets/svg/Image'
 import useToggle from 'hooks/useToggle'
 import PostInputModal from './PostInputModal'
-import { getCurrentUser } from '../store/auth'
-import VerticalIcons from '../assets/svg/Vertical'
-import { useCreatePostMutation } from '../store/post'
+import { getCurrentUser } from 'store/auth'
 
 const shadowStyle = {
   ...Platform.select({
@@ -30,7 +28,6 @@ const shadowStyle = {
 
 const PostInput = () => {
   const user = useSelector(getCurrentUser)
-  const [createPost, result] = useCreatePostMutation()
   const [creatingPost, toggleCreatingPost] = useToggle(false)
   const [openBottomSheet, toggleOpenBottomSheet] = useToggle(false)
   // const navigation = useNavigation()

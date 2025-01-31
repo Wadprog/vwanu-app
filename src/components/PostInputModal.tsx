@@ -1,15 +1,17 @@
 import React from 'react'
-import { string, object } from 'yup'
+import { string, object, mixed, InferType, array } from 'yup'
 import { useSelector } from 'react-redux'
 import { Ionicons } from '@expo/vector-icons'
 import { formatDistanceToNow } from 'date-fns'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { View, Text, Modal, TouchableOpacity, Platform } from 'react-native'
 
-import tw from '../lib/tailwind'
+import tw from 'lib/tailwind'
 import ProfAvatar from './ProfAvatar'
-import { getCurrentUser } from '../store/auth'
-import { Field, Form, Submit, ImageField, PrivacyNoticeField } from './form'
+import { getCurrentUser } from 'store/auth'
+import { Field, Form, Submit, ImageFields, PrivacyNoticeField } from './form'
+import { useCreatePostMutation } from 'store/post'
+import { Notice } from '../../types'
 
 interface PostInputModalInterface {
   visible: boolean
@@ -18,13 +20,15 @@ interface PostInputModalInterface {
 }
 
 const ValidationSchema = object().shape({
-  postText: string().label('Post Text'),
-  privacyType: string().label('Privacy Type'),
+  postText: string().label('Content'),
+  privacyType: mixed<Notice>().required().label('Privacy Type'),
+  postImage: array().of(string()).label('Images'),
 })
 
-const initialValues = {
+const initialValues: InferType<typeof ValidationSchema> = {
   postText: '',
   privacyType: 'public',
+  postImage: [],
 }
 
 const shadowStyle = {
@@ -50,6 +54,11 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
   const bottomSheetRef = React.useRef<BottomSheet>(null)
   const snapPoints = React.useMemo(() => [40, 100], [])
   const iniTialsnapPointIndex = openBottomSheet ? 1 : 0
+  const [createPost, result] = useCreatePostMutation()
+
+  if (result.isError) {
+    console.error(result.error)
+  }
 
   const handleClose = () => {
     if (onClose) onClose()
@@ -61,7 +70,9 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
         validationSchema={ValidationSchema}
         initialValues={initialValues}
         onSubmit={async (values) => {
-          console.log(values)
+          // console.log({values})
+          //@ts-ignore
+          await createPost(values)
           handleClose()
         }}
         style={tw`flex-1`}
@@ -127,7 +138,7 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
               Add Media
             </Text>
             <View style={tw`h-[1px] bg-gray-500 rounded mb-5`} />
-            <ImageField name="medias" />
+            <ImageFields name="postImage" />
           </BottomSheetView>
         </BottomSheet>
       </Form>

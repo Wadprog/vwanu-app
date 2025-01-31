@@ -1,53 +1,68 @@
-import React from "react";
-import * as ImagePicker from "expo-image-picker";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, Image, TouchableWithoutFeedback } from "react-native";
-import { TextInputProps } from "react-native";
+import React from 'react'
+import { TextInputProps } from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+import { Image, TouchableOpacity } from 'react-native'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
-// Custom  dependencies
-import tw from "../lib/tailwind";
+import tw from '../lib/tailwind'
 
-interface ImageInputProps extends TextInputProps {
-  uri: string;
-  onChangeImage: (uri: string) => void;
-  style?: object;
-  disableChangeImage?: boolean;
-  otherProps?: React.ComponentProps<typeof Image>;
+export interface ImageInputProps extends TextInputProps {
+  uri?: string
+  onChangeImage: (uri: string) => void
+  style?: object
+  disableChangeImage?: boolean
+  otherProps?: React.ComponentProps<typeof Image>
+  InitialImage?: React.ReactNode
 }
-const ImageInput: React.FC<ImageInputProps> = (props) => {
+const ImageInput: React.FC<ImageInputProps> = ({ InitialImage, ...props }) => {
+  const [loadingImageGalerry, setLoadingImageGallery] =
+    React.useState<boolean>(false)
   const handleChange = async () => {
-    if (props.disableChangeImage) return;
-    // No permissions request is necessary for launching the image library
+    if (props.disableChangeImage || loadingImageGalerry) return
+    setLoadingImageGallery(true)
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: 'images',
       allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      props.onChangeImage(result.uri);
+      aspect: [1, 1],
+      quality: 0.1,
+    })
+    setLoadingImageGallery(false)
+    if (!result.canceled) {
+      props.onChangeImage(result.assets[0].uri)
     }
-  };
+  }
   return (
-    <TouchableWithoutFeedback onPress={handleChange}>
-      <View
-        style={[
-          tw`bg-gray-200 p-4 rounded-2xl w-[106px] h-[118px] p-10 flex justify-center items-center m-2 overflow-hidden drop-shadow-sm`,
-          props.style,
-        ]}
-      >
-        {!props.uri && <MaterialCommunityIcons name="camera" size={30} />}
-        {props.uri && (
-          <Image
-            source={{ uri: props.uri }}
-            style={tw` w-full h-full`}
-            {...props.otherProps}
-          />
-        )}
-      </View>
-    </TouchableWithoutFeedback>
-  );
-};
+    <TouchableOpacity
+      onPress={handleChange}
+      style={[
+        tw`bg-gray-200 rounded-2xl w-[106px] h-[118px] flex justify-center items-center m-2 overflow-hidden `,
+        props.style,
+      ]}
+    >
+      {loadingImageGalerry ? (
+        <MaterialCommunityIcons name="loading" size={30} />
+      ) : (
+        <>
+          {!props.uri && (
+            <>
+              {InitialImage ? (
+                InitialImage
+              ) : (
+                <MaterialCommunityIcons name="camera" size={30} />
+              )}
+            </>
+          )}
+          {props.uri && (
+            <Image
+              source={{ uri: props.uri }}
+              style={tw` w-full h-full`}
+              {...props.otherProps}
+            />
+          )}
+        </>
+      )}
+    </TouchableOpacity>
+  )
+}
 
-export default ImageInput;
+export default ImageInput
