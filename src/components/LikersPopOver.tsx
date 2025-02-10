@@ -29,8 +29,6 @@ const LikerPopover: React.FC<LikerPopoverProps> = ({
 }) => {
   const likers = useFetchLikesQuery(props.id)
 
-  console.log({ likers, visible })
-
   return (
     <Popover
       visible={visible}

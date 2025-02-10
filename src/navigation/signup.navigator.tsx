@@ -13,13 +13,7 @@ const RegisterNavigator = () => {
   const auth = useSelector(getCurrentUser)
 
   React.useEffect(() => {
-    console.log('\n\n\n**********')
-    console.log({ auth })
-    console.log('************\n\n\n')
     if (!auth.user) return
-    console.log('\n\n\n')
-    console.log('****getingProfile****')
-    console.log('\n\n\n')
 
     // @ts-ignore
     dispatch(getProfile())

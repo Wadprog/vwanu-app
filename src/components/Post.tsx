@@ -13,7 +13,7 @@ import PostHeader from './PostHeader'
 import PostFooter from './PostFooter'
 import { PostProps } from '../../types'
 
-const { height, width } = Dimensions.get('screen')
+const { height } = Dimensions.get('screen')
 interface Props extends PostProps {
   showViewComment?: boolean
 }

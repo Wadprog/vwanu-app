@@ -2,16 +2,16 @@ import React from 'react'
 
 import { View, ImageBackground } from 'react-native'
 
-import tw from '../../../lib/tailwind'
-import images from '../../../config/image'
-import Screen, { ScreenProps } from '../../../components/screen'
-import PageTitles from '../../../components/PageTitles'
-import NavigationDots from '../../../components/NavigationDots'
+import tw from '../lib/tailwind'
+import images from '../config/image'
+import Screen, { ScreenProps } from './screen'
+import PageTitles from './PageTitles'
+import NavigationDots from './NavigationDots'
 
 interface PageWrapperProps extends Omit<ScreenProps, 'children'> {
   title: string
   subtitle?: string
-  children: React.ReactNode
+  children?: React.ReactNode
   pageNumber?: number
 }
 
@@ -31,7 +31,7 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
         <View style={tw`mb-5 mt-10`}>
           <PageTitles title={title} subtitle={subtitle} />
         </View>
-        {children}
+        {children && children}
 
         {pageNumber ? (
           <View style={tw`mb-4`}>

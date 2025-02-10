@@ -24,10 +24,6 @@ const api = (store) => (next) => async (action) => {
     })
     if (onSuccess) store.dispatch({ type: onSuccess, payload: response.data })
   } catch (error) {
-    console.log('\n\n\n\n\n uuiiuuuu')
-    console.log(error.response)
-    console.log('\n\n\n\n\n')
-    console.log(error)
     store.dispatch({
       type: actions.apiCallFailed.type,
       payload: error.message,

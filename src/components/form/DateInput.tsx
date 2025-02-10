@@ -1,26 +1,26 @@
 /* eslint-disable operator-linebreak */
-import React from "react";
-import { useFormikContext } from "formik";
-import { TouchableOpacity } from "react-native";
+import React from 'react'
+import { useFormikContext } from 'formik'
+import { TouchableOpacity } from 'react-native'
 import DateTimePicker, {
   DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
-import { Ionicons } from "@expo/vector-icons";
-import { View } from "react-native";
+} from '@react-native-community/datetimepicker'
+import { Ionicons } from '@expo/vector-icons'
+import { View } from 'react-native'
 
-const Icon = () => <Ionicons name="calendar" size={24} color="black" />;
+const Icon = () => <Ionicons name="calendar" size={24} color="black" />
 // Custom dependencies
-import Error from "./Error";
-import tw from "../../lib/tailwind";
-import Modal from "../Modal";
-import Wrapper from "../InputsWrapper";
-import useToggle from "../../hooks/useToggle";
-import Text from "../Text";
-import FieldParams from "./fieldParams";
+import Error from './Error'
+import tw from '../../lib/tailwind'
+import Modal from '../Modal'
+import Wrapper from '../InputsWrapper'
+import useToggle from '../../hooks/useToggle'
+import Text from '../Text'
+import FieldParams from './fieldParams'
 
 interface DateInputProps extends FieldParams {
-  name: string;
-  style?: object;
+  name: string
+  style?: object
 }
 const DateInput: React.FC<DateInputProps> = ({
   name,
@@ -28,31 +28,32 @@ const DateInput: React.FC<DateInputProps> = ({
   style,
   ...otherProps
 }) => {
-  const [showModal, toggleModal] = useToggle(false);
-  const [date, setDate] = React.useState(new Date());
+  const [showModal, toggleModal] = useToggle(false)
+  const [date, setDate] = React.useState(new Date())
   const { setFieldTouched, setFieldValue, errors, touched, values } =
-    useFormikContext<any>();
+    useFormikContext<any>()
 
   const handleDateChange = (_: DateTimePickerEvent, new_date?: Date) => {
-    if (!new_date) return;
-    setDate(new Date(new_date));
-    setFieldValue(name, new_date);
-  };
+    if (!new_date) return
+    setDate(new Date(new_date))
+    setFieldValue(name, new_date)
+  }
   return (
     <>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onBlur={() => setFieldTouched(name)}
         onPress={toggleModal}
+      > */}
+      <Wrapper
+        iconLeft={<Icon />}
+        label={label}
+        style={style}
+        {...otherProps}
+        onPress={toggleModal}
       >
-        <Wrapper
-          iconLeft={<Icon />}
-          label={label}
-          style={style}
-          {...otherProps}
-        >
-          <Text style={tw`text-black`}>{date.toDateString()}</Text>
-        </Wrapper>
-      </TouchableOpacity>
+        <Text style={tw`text-black`}>{date.toDateString()}</Text>
+      </Wrapper>
+      {/* </TouchableOpacity> */}
 
       <Modal visible={showModal} onClose={toggleModal} onConfirm={toggleModal}>
         <View style={tw`items-center`}>
@@ -66,11 +67,11 @@ const DateInput: React.FC<DateInputProps> = ({
       </Modal>
 
       <Error
-        error={typeof errors[name] === "string" ? errors[name] : undefined}
-        visible={typeof touched[name] === "boolean" ? touched[name] : false}
+        error={typeof errors[name] === 'string' ? errors[name] : undefined}
+        visible={typeof touched[name] === 'boolean' ? touched[name] : false}
       />
     </>
-  );
-};
+  )
+}
 
-export default DateInput;
+export default DateInput

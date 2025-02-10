@@ -48,7 +48,7 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
                     : 'bg-green-800'
                 } `,
                 {
-                  width: rightColumn.length ? width / 2 - 24 : width - 24,
+                  width: !!rightColumn.length ? width / 2 - 24 : width - 24,
                 },
               ]}
               onPress={() => {
@@ -58,7 +58,7 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
               <Image
                 source={{ uri: image.original }}
                 style={{
-                  width: rightColumn.length ? width / 2 - 4 : width - 8,
+                  width: !!rightColumn.length ? width / 2 - 4 : width - 8,
                   height: image.height,
                 }}
               />
@@ -67,7 +67,7 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
         </View>
 
         {/* Right Column */}
-        {rightColumn.length && (
+        {!!rightColumn.length && (
           <View
             style={[
               tw`rounded-r-lg overflow-hidden `,

@@ -16,7 +16,7 @@ interface Rep {
 }
 
 type PostCreationProps = PostProps & { postImage: string[] }
-
+type CommentType = Partial<PostProps> & { postId: number }
 const _toFormData = (values: Partial<PostCreationProps>): FormData => {
   const formData = new FormData()
   formData.append('postText', values.postText || '')
@@ -49,6 +49,14 @@ const post = apiSlice.injectEndpoints({
         method: HttpMethods.GET,
       }),
       // transformResponse: (response: { data: PostProps[] }) => response.data,
+    }),
+
+    createComment: build.mutation<PostProps, CommentType>({
+      query: (data) => ({
+        url: endpoints.COMMENTS,
+        method: HttpMethods.POST,
+        body: data,
+      }),
     }),
     createPost: build.mutation<PostProps, Partial<PostCreationProps>>({
       query: (values) => ({
@@ -109,6 +117,7 @@ const {
   useCreatePostMutation,
   useFetchLikesQuery,
   useUpdatePostMutation,
+  useCreateCommentMutation,
 } = post
 
 export {
@@ -116,4 +125,5 @@ export {
   useCreatePostMutation,
   useFetchLikesQuery,
   useUpdatePostMutation,
+  useCreateCommentMutation,
 }

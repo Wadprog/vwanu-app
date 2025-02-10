@@ -34,9 +34,6 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
     ? (props.amountOfKorems ?? 0) - 1
     : (props.amountOfKorems ?? 0) - (props.reactors?.length - 2 || 0)
 
-  console.log({ moreReactors, id: props.id, r: props.reactors?.length })
-  console.log('ok')
-
   return (
     <View style={tw`flex flex-row items-center justify-between`}>
       <View>

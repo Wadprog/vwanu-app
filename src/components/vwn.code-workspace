@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../../vwn"
+		},
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../vwanu_api/micro-common"
+		}
+	],
+	"settings": {}
+}

@@ -1,35 +1,38 @@
-import React from "react";
-import { View } from "react-native";
-import { string, object } from "yup";
-import { useDispatch } from "react-redux";
+import React from 'react'
+import { View } from 'react-native'
+import { string, object } from 'yup'
+import { useDispatch } from 'react-redux'
 
-import tw from "../../lib/tailwind";
-import { login } from "../../store/auth";
-import Text from "../../components/Text";
-import Link from "../../components/Link";
-import PageWrapper from "./components/PageWrapper";
-import { Form, Field, Submit } from "../../components/form";
+import tw from 'lib/tailwind'
+import Text from 'components/Text'
+import Link from 'components/Link'
+import routes from 'navigation/routes'
+import { forgotPassword } from 'store/auth'
+import PageWrapper from 'components/PageWrapper'
+import { Form, Field, Submit } from 'components/form'
 
 const ValidationSchema = object().shape({
-  password: string().required().min(8).label("Password"),
-  email: string().required().min(6).email().label("Email"),
-});
+  password: string().required().min(8).label('Password'),
+  email: string().required().min(6).email().label('Email'),
+})
 
-const LoginScreen: React.FC = () => {
-  const dispatch = useDispatch();
+const ForgotPasswordScreen: React.FC = () => {
+  const dispatch = useDispatch()
 
   return (
-    <PageWrapper title="Login" subtitle="Enter your credentials to continue">
+    <PageWrapper
+      title="ForgotPassword"
+      subtitle="Enter your credentials to continue"
+    >
       <Form
         validationSchema={ValidationSchema}
         initialValues={{
-          email: "",
-          password: "",
+          email: '',
+          password: '',
         }}
-        // @ts-ignore
         onSubmit={(values) => {
           // @ts-ignore
-          dispatch(login(values));
+          dispatch(forgotPassword(values))
         }}
       >
         <Field
@@ -51,17 +54,17 @@ const LoginScreen: React.FC = () => {
           style={tw`mb-5 rounded-lg`}
         />
 
-        <Submit title="Login" />
+        <Submit title="Submit" />
       </Form>
       <View style={tw`h-[70px] bg-green-50 bg-opacity-0`}>
         <View style={tw`flex flex-row justify-center`}>
           <Text category="c1" appearance="hint" style={tw`text-black mr-2`}>
             Do not have an account
           </Text>
-          <Link text="Create one" to="Login" />
+          <Link text="Create one" to={routes.SIGN_UP} />
         </View>
       </View>
     </PageWrapper>
-  );
-};
-export default LoginScreen;
+  )
+}
+export default ForgotPasswordScreen

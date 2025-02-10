@@ -70,7 +70,6 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
         validationSchema={ValidationSchema}
         initialValues={initialValues}
         onSubmit={async (values) => {
-          // console.log({values})
           //@ts-ignore
           await createPost(values)
           handleClose()

@@ -32,9 +32,6 @@ interface PostHeaderProps extends PostProps {
 
 const PostHeader: React.FC<PostHeaderProps> = (props) => {
   const user = useSelector(getCurrentUser)
-  console.log(Object.keys(user))
-
-  const navigation = useNavigation()
 
   return (
     <View style={tw`flex flex-row justify-between items-center mb-2`}>

@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>AmplifyRTNCore.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>BVLinearGradient.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -154,6 +159,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>RNCAsyncStorage-RNCAsyncStorage_resources.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>RNCAsyncStorage.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>RNDateTimePicker.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -185,6 +200,11 @@
 			<false/>
 		</dict>
 		<key>ReachabilitySwift.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>React-Codegen.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -515,6 +535,16 @@
 			<false/>
 		</dict>
 		<key>lottie-react-native.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>react-native-get-random-values.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>react-native-netinfo.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

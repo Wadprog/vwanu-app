@@ -1,8 +1,6 @@
 import React from 'react'
 import { View } from 'react-native'
 import * as Yup from 'yup'
-import { useNavigation } from '@react-navigation/native'
-import { useDispatch } from 'react-redux'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 // Custom dependencies
@@ -10,8 +8,9 @@ import tw from '../../lib/tailwind'
 import Text from '../../components/Text'
 import Button from '../../components/Button'
 import { updateUser } from '../../store/auth'
-import PageWrapper from './components/PageWrapper'
+import PageWrapper from '../../components/PageWrapper'
 import { Form, Submit, ImageField } from '../../components/form'
+import useProfileContext from 'hooks/useProfileContext'
 
 const ValidationSchema = Yup.object().shape({
   profilePicture: Yup.string().required().label('Profile Picture').nullable(),
@@ -30,24 +29,28 @@ const IconWithArrow: React.FC<{}> = () => (
   />
 )
 
-const ProfilePictureForm: React.FC<{ profilePicture: string }> = (props) => {
-  const dispatch = useDispatch()
-  const navigator = useNavigation()
+const ProfilePictureForm: React.FC<{}> = () => {
+  const { updateProfile, loading, user } = useProfileContext()
 
   return (
     <PageWrapper
       title="Personal Information"
       subtitle="Please fill the following"
       pageNumber={3}
+      loading={loading}
     >
       <>
         <Form
           validationSchema={ValidationSchema}
           initialValues={initialValues}
-          // @ts-ignore
-          onSubmit={(val) => {
-            // @ts-ignore
-            dispatch(updateUser(val))
+          onSubmit={async (val) => {
+            if (val.profilePicture)
+              await updateProfile({ profilePicture: val.profilePicture })
+            else {
+              await updateProfile({
+                profilePicture: `https://ui-avatars.com/api/?name=${user?.firstName}+{user?.lastName}`,
+              })
+            }
           }}
           style={tw`flex-1 flex justify-between`}
         >
@@ -71,13 +74,10 @@ const ProfilePictureForm: React.FC<{ profilePicture: string }> = (props) => {
                 appearance="ghost"
                 style={tw`text-black`}
                 textStyle={tw`text-black`}
-                onPress={() => {
-                  const profilePicture =
-                    'https://ui-avatars.com/api/?name=John+Doe' // @ts-ignore
-                  // @ts-ignore
-                  dispatch(updateUser({ profilePicture }))
-                  // @ts-ignore
-                  navigator.navigate('find')
+                onPress={async () => {
+                  await updateProfile({
+                    profilePicture: `https://ui-avatars.com/api/?name=${user?.firstName}+{user?.lastName}`,
+                  })
                 }}
               />
               <Submit
