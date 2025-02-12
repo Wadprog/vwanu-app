@@ -1,5 +1,5 @@
-import { View, FlatList } from 'react-native'
-
+import { View, FlatList, ActivityIndicator } from 'react-native'
+import React, { useState } from 'react'
 import Text from '../../components/Text'
 import Post from '../../components/Post'
 import PostInput from '../../components/PostInput'
@@ -17,22 +17,20 @@ import TimelineSkeletone from './TimelineSkeletone'
 const Separator = () => <View style={tw`m-1`} />
 
 const Timeline: React.FC = () => {
+  const [page, setPage] = useState({ skip: 0, limit: 10 })
   const posts = useFetchPostsQuery()
+  const loadMore = () => {
+    if (!posts.isFetching) {
+      setPage((prev) => ({ ...prev, skip: prev.skip + 10 }))
+    }
+  }
+  console.log({ posts: posts.data, p: posts })
+
   const {
     data: communities = [],
     isFetching,
     refetch,
   } = useFetchCommunityQuery()
-  console.log(posts.data)
-  // posts.refetch()
-  console.log(posts.error)
-
-  if (posts.data === undefined)
-    return (
-      <View>
-        <Text> No data</Text>
-      </View>
-    )
 
   return (
     <Screen
@@ -79,11 +77,18 @@ const Timeline: React.FC = () => {
             )}
             refreshing={posts.isFetching}
             onRefresh={() => posts.refetch()}
-            data={posts.data.data}
+            data={posts.data?.data}
             renderItem={(post) => <Post {...post.item} />}
-            keyExtractor={(_, index) => index.toString()}
+            keyExtractor={({ id }) => id.toString()}
             ItemSeparatorComponent={Separator}
             showsVerticalScrollIndicator={false}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.1}
+            ListFooterComponent={() =>
+              posts.isFetching ? (
+                <ActivityIndicator size="small" color="#0000ff" />
+              ) : null
+            }
           />
         </View>
       </View>
@@ -91,8 +96,4 @@ const Timeline: React.FC = () => {
   )
 }
 
-// createe a class the represent a car and it has a method that can drive the car
-
 export default Timeline
-
-// const styles = StyleSheet.create({})

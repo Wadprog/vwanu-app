@@ -1,27 +1,31 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React from 'react'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 
-import routes from "./routes";
-import tw from "../lib/tailwind";
-import ChatNavigator from "./Chat";
-import FeedNavigator from "./Feed";
-import AccountNavigator from "./Account";
-import { BottomTabParms } from "../../types";
-import CommunityIcon from "assets/svg/Community";
+import routes from './routes'
+import tw from '../lib/tailwind'
+import ChatNavigator from './Chat'
+import FeedNavigator from './Feed'
+import AccountNavigator from './Account'
+import { BottomTabParms } from '../../types'
+import CommunityIcon from 'assets/svg/Community'
 
-const Tab = createBottomTabNavigator<BottomTabParms>();
+const Tab = createBottomTabNavigator<BottomTabParms>()
 
 const BottomTabNavigator: React.FC<{}> = () => (
   <Tab.Navigator
-    screenOptions={{
+    screenOptions={({ route }) => ({
       headerShown: false,
       headerTransparent: true,
       tabBarShowLabel: true,
-      tabBarActiveTintColor: tw.color("primary"),
-      tabBarInactiveTintColor: tw.color("gray-300"),
-    }}
+      tabBarActiveTintColor: tw.color('primary'),
+      tabBarInactiveTintColor: tw.color('gray-300'),
+      tabBarStyle: {
+        display: getTabBarVisibility(route) ? 'none' : 'flex',
+      },
+    })}
   >
     <Tab.Screen
       name={routes.TIMELINE}
@@ -66,6 +70,11 @@ const BottomTabNavigator: React.FC<{}> = () => (
       }}
     />
   </Tab.Navigator>
-);
+)
 
-export default BottomTabNavigator;
+export default BottomTabNavigator
+
+const getTabBarVisibility = (route: any) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Timeline'
+  return routeName === 'Gallery'
+}

@@ -1,15 +1,14 @@
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
-import { View, Image, ImageBackground } from "react-native";
+import React from 'react'
+import { View, Image, ImageBackground } from 'react-native'
 
-import tw from "../lib/tailwind";
-import images from "../config/image";
-import Text from "../components/Text";
-import Button from "../components/Button";
-import routes from "../navigation/routes";
+import tw from 'lib/tailwind'
+import images from 'config/image'
+import Text from 'components/Text'
+import Button from 'components/Button'
+import useAuthContext, { AuthState } from 'hooks/useAuthContext'
 
 const LogSignup: React.FC<{}> = () => {
-  const navigation = useNavigation();
+  const { dispatch } = useAuthContext()
 
   return (
     <ImageBackground style={tw`px-5 flex-1`} source={images.onBoardBg}>
@@ -30,8 +29,7 @@ const LogSignup: React.FC<{}> = () => {
           <Button
             title="Create account"
             onPress={() => {
-              // @ts-ignore
-              navigation.navigate(routes.SIGN_UP);
+              dispatch({ type: AuthState.SIGNED_UP })
             }}
             style={tw`  mb-6`}
           />
@@ -40,15 +38,14 @@ const LogSignup: React.FC<{}> = () => {
             title="Login"
             appearance="outline"
             onPress={() => {
-              // @ts-ignore
-              navigation.navigate(routes.LOGIN);
+              dispatch({ type: AuthState.SIGNED_IN })
             }}
             style={tw`border-black bg-white`}
           />
         </View>
       </View>
     </ImageBackground>
-  );
-};
+  )
+}
 
-export default LogSignup;
+export default LogSignup

@@ -1,27 +1,25 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { ViewPager } from "@ui-kitten/components";
-import { View, Image, ImageBackground } from "react-native";
+import React from 'react'
+import { ViewPager } from '@ui-kitten/components'
+import { View, Image, ImageBackground } from 'react-native'
 
-import tw from "../../lib/tailwind";
-import images from "../../config/image";
-import Text from "../../components/Text";
-import Button from "../../components/Button";
-import onBordingScreen from "./screenData";
-import { boarded } from "../../store/auth";
+import tw from '../../lib/tailwind'
+import images from '../../config/image'
+import Text from '../../components/Text'
+import onBordingScreen from './screenData'
+import Button from '../../components/Button'
+import useAuthContext, { AuthState } from 'hooks/useAuthContext'
 
 const BoardingScreen: React.FC<{}> = () => {
-  const dispatch = useDispatch();
-  const [currentScreen, setCurrentScreen] = React.useState<number>(0);
+  const { dispatch } = useAuthContext()
+  const [currentScreen, setCurrentScreen] = React.useState<number>(0)
 
   const handleNext = (screenCount: number, screens: number) => {
     if (screenCount < screens - 1) {
-      setCurrentScreen(currentScreen + 1);
-      return;
+      setCurrentScreen(currentScreen + 1)
+      return
     }
-    // @ts-ignore
-    dispatch(boarded());
-  };
+    dispatch({ type: AuthState.SIGNED_IN_SIGNED_UP })
+  }
 
   return (
     <ViewPager
@@ -51,7 +49,7 @@ const BoardingScreen: React.FC<{}> = () => {
               <Button
                 title="Next"
                 onPress={() => {
-                  handleNext(currentScreen, onBordingScreen.length);
+                  handleNext(currentScreen, onBordingScreen.length)
                 }}
                 style={tw`  mb-6`}
               />
@@ -61,13 +59,12 @@ const BoardingScreen: React.FC<{}> = () => {
                 title="Skip"
                 appearance="outline"
                 onPress={() => {
-                  // @ts-ignore
-                  dispatch(boarded());
+                  dispatch({ type: AuthState.SIGNED_IN_SIGNED_UP })
                 }}
                 style={tw`border-black bg-white ${
                   currentScreen === onBordingScreen.length - 1
-                    ? "opacity-0"
-                    : ""
+                    ? 'opacity-0'
+                    : ''
                 }`}
               />
             </View>
@@ -77,7 +74,7 @@ const BoardingScreen: React.FC<{}> = () => {
         </ImageBackground>
       ))}
     </ViewPager>
-  );
-};
+  )
+}
 
-export default BoardingScreen;
+export default BoardingScreen

@@ -2,16 +2,14 @@ import React from 'react'
 import * as Yup from 'yup'
 import { View } from 'react-native'
 
-import { useDispatch } from 'react-redux'
-
 // Core components
 import tw from '../../lib/tailwind'
 import Button from '../../components/Button'
-import { updateUser, registered } from '../../store/auth'
 import IconRight from './components/RightIcon'
-import PageWrapper from './components/PageWrapper'
+import PageWrapper from '../../components/PageWrapper'
 import { useFetchProfilesQuery } from '../../store/profiles'
 import { Form, MultiImageSelector, Submit } from '../../components/form'
+import useProfileContext from 'hooks/useProfileContext'
 
 const initialValues = {
   users: [],
@@ -21,14 +19,8 @@ const ValidationSchema = Yup.object().shape({
 })
 
 const FindFriends: React.FC<{}> = () => {
-  const dispatch = useDispatch()
   const { data: users, isFetching } = useFetchProfilesQuery()
-
-  const handleSubmit = async (values: typeof ValidationSchema) => {
-    // @ts-ignore
-    // dispatch(updateUser(values));
-    dispatch(registered())
-  }
+  const { followFriens } = useProfileContext()
 
   return (
     <PageWrapper
@@ -40,7 +32,9 @@ const FindFriends: React.FC<{}> = () => {
         <Form
           validationSchema={ValidationSchema}
           initialValues={initialValues}
-          onSubmit={handleSubmit}
+          onSubmit={async (values) => {
+            await followFriens(values.users)
+          }}
           style={tw`flex-1 flex justify-between items-center`}
         >
           <View />

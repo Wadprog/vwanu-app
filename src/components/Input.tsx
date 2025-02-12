@@ -17,6 +17,8 @@ const AppInput: React.FC<P> = (props) => {
     ...rest
   } = props
 
+  const inputRef = React.useRef<TextInput>(null)
+
   return (
     <Wrapper
       label={label}
@@ -26,8 +28,10 @@ const AppInput: React.FC<P> = (props) => {
       onIconLeftPress={onIconLeftPress}
       onIconRightPress={onIconLeftPress}
       isFocus={isfocus}
+      onPress={() => inputRef.current?.focus()}
     >
       <TextInput
+        ref={inputRef}
         {...rest}
         onFocus={(e) => {
           setIsFocus(true)

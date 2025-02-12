@@ -1,0 +1,29 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-vwanuapp-dev-830ec-authRole",
+      "UnauthRoleArn": "arn:aws:iam::058264272613:role/amplify-vwanuapp-dev-830ec-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::058264272613:role/amplify-vwanuapp-dev-830ec-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-vwanuapp-dev-830ec-deployment",
+      "UnauthRoleName": "amplify-vwanuapp-dev-830ec-unauthRole",
+      "StackName": "amplify-vwanuapp-dev-830ec",
+      "StackId": "arn:aws:cloudformation:us-east-1:058264272613:stack/amplify-vwanuapp-dev-830ec/eabc7650-e64b-11ef-baec-0affe6f5a7a9",
+      "AmplifyAppId": "d1rnrm0mjaqy4a",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-vwanuapp-dev-830ec-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "auth": {
+        "vwanuapp389851bb": {},
+        "vwanuappa93e59fc": {}
+      },
+      "function": {
+        "vwanuappa93e59fcPostConfirmation": {
+          "GROUP": "user",
+          "deploymentBucketName": "amplify-vwanuapp-dev-830ec-deployment",
+          "s3Key": "amplify-builds/vwanuappa93e59fcPostConfirmation-434d2b3663646e2b3948-build.zip"
+        }
+      }
+    }
+  }
+}

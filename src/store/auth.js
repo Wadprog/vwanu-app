@@ -19,6 +19,20 @@ const registerUrl = endpoints.REGISTER
 const userUrl = endpoints.USER
 // const { EXPECTED_HEADER } = endpoints
 
+// type SIGNUPSTEP= "CONFIRM_SIGN_UP" | "CONFIRM_EMAIL" | "CONFIRM_PHONE" | "CONFIRM_DOB" | "CONFIRM_USER" |"REGISTRATION_STEP"
+
+// interface StateInterface {
+//   loading: boolean
+//   user: User
+//   profile: Profile
+//   token: string | null
+//   boarded: boolean
+//   registered: boolean
+//   isSignUpComplete: boolean
+//   signUpStep: SIGNUPSTEP
+//   error: string | null
+//   lastFetch: number | null
+// }
 const initialState = {
   loading: false,
   user: null,
@@ -28,12 +42,19 @@ const initialState = {
   error: null,
   boarded: false,
   registered: false,
+  isSignUpComplete: false,
+  nextAction: 'BOARDED',
+  signUpStep: 'CONFIRM_SIGN_UP',
+  authInitialState: null,
 }
 
 export const Auth = createSlice({
   name: 'authentication',
   initialState,
   reducers: {
+    authInitialState: (state, action) => {
+      state.nextAction = action.payload
+    },
     loginRequested: (state) => {
       state.loading = true
     },
@@ -102,7 +123,7 @@ export const Auth = createSlice({
   },
 })
 
-export const register = (newUser) => (dispatch) => {
+export const signUp = (newUser) => (dispatch) => {
   dispatch(
     action.apiCallBegan({
       url: 'auth/users',
@@ -114,7 +135,7 @@ export const register = (newUser) => (dispatch) => {
     })
   )
 }
-export const login = (credentials) => (dispatch) => {
+export const signIn = (credentials) => (dispatch) => {
   // const { lastFetch } = getState().authentication
   // if (lastFetch) {
   //   const diff = moment().diff(moment(lastFetch), 'minutes')
@@ -160,7 +181,13 @@ export const updateUser = (changes) => (dispatch, state) => {
     })
   )
 }
+export const forgotPassword = (values) => (dispatch, state) => {
+  console.log({ values })
+  dispatch()
+}
 export const logout = () => (dispatch) => dispatch(Auth.actions.LogOut())
+export const nextAction = (changes) => (dispatch) =>
+  dispatch(Auth.actions.authInitialState(changes))
 export const getCurrentUser = (state) => state.authentication
 export const logged = Auth.actions.loginSucceed.type
 export default Auth.reducer

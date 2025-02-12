@@ -23,6 +23,9 @@ interface User {
   lastName: string
   profilePicture: string
 }
+interface Profile extends User {
+  dob?: string
+}
 type Notice = 'public' | 'private' | 'network'
 
 export interface PostProps {
@@ -34,7 +37,7 @@ export interface PostProps {
   likers?: User[]
   User?: User
   reactors: User[]
-  id: number
+  id: number | string
   canDelete?: Boolean
   isReactor?: Boolean
   createdAt: Date

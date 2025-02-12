@@ -1,15 +1,15 @@
 import React from 'react'
 import { View } from 'react-native'
 import { string, ref, bool, object } from 'yup'
-import { useDispatch, useSelector } from 'react-redux'
 
 // Core components
-import tw from '../../lib/tailwind'
-import Text from '../../components/Text'
-import Link from '../../components/Link'
-import { register, getCurrentUser } from '../../store/auth'
-import { Form, Field, Submit, Switch } from '../../components/form'
-import PageWrapper from './components/PageWrapper'
+import tw from 'lib/tailwind'
+import Text from 'components/Text'
+import Link from 'components/Link'
+import routes from 'navigation/routes'
+import PageWrapper from 'components/PageWrapper'
+import { Form, Field, Submit, Switch } from 'components/form'
+import useAuthContext, { AuthState } from 'hooks/useAuthContext'
 
 const ValidationSchema = object().shape({
   email: string().email().required().label('Email'),
@@ -25,44 +25,41 @@ const ValidationSchema = object().shape({
     .oneOf([true], 'You must accept the terms of use and the policy privacy'),
 })
 
-const initialValues = {
-  firstName: 'Wadson',
-  lastName: 'vav',
-  email: 'waldhdfpffoglfhgf@df.lo',
-  password: '1234567890',
-  passwordConfirmation: '1234567890',
-  termOfUse: false,
-}
-
 const RegisterScreen: React.FC<{}> = () => {
-  const dispatch = useDispatch()
-  const user = useSelector(getCurrentUser)
+  const { loading, error, dispatch, signup } = useAuthContext()
   return (
     <PageWrapper
       title="Personal Information"
       subtitle="Please fill the following"
       pageNumber={0}
-      loading={user.loading}
+      loading={loading}
       error={
-        user.error
+        error
           ? {
-              message: user.error.message,
-              onDismiss: () => {},
+              message: error.message,
+              onDismiss: () => {
+                dispatch({ type: 'SET_ERROR', payload: 'null' })
+              },
             }
           : null
       }
     >
-      <Form
-        validationSchema={ValidationSchema}
-        initialValues={initialValues}
-        // @ts-ignore
-        onSubmit={(values) => {
-          // @ts-ignore
-          dispatch(register(values))
-        }}
-        style={tw`flex-1 flex justify-between items-center`}
-      >
-        <>
+      <>
+        <Form
+          validationSchema={ValidationSchema}
+          initialValues={{
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            passwordConfirmation: '',
+            termOfUse: false,
+          }}
+          onSubmit={async (values) => {
+            await signup(values)
+          }}
+          style={tw`flex-1 flex justify-between items-center`}
+        >
           <View style={tw`mb-5 flex-1 items-stretch`}>
             <Field
               label="First Name"
@@ -133,18 +130,18 @@ const RegisterScreen: React.FC<{}> = () => {
               }
             />
 
-            <Submit title="Register" />
+            <Submit title="Sign up" />
           </View>
-        </>
-      </Form>
-      <View style={tw`h-[70px] bg-green-50 bg-opacity-0`}>
-        <View style={tw`flex flex-row justify-center`}>
-          <Text category="c1" appearance="hint" style={tw`text-black mr-2`}>
-            Already have an account
-          </Text>
-          <Link text="Log In" to="Login" />
+        </Form>
+        <View style={tw`h-[70px] bg-green-50 bg-opacity-0`}>
+          <View style={tw`flex flex-row justify-center`}>
+            <Text category="c1" appearance="hint" style={tw`text-black mr-1`}>
+              Already have an account
+            </Text>
+            <Link text="Sign in here" to={routes.SIGN_IN} />
+          </View>
         </View>
-      </View>
+      </>
     </PageWrapper>
   )
 }

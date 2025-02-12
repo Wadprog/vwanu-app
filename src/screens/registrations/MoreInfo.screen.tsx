@@ -1,12 +1,10 @@
 import React from 'react'
 import * as Yup from 'yup'
-import { useDispatch, useSelector } from 'react-redux'
 import { View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 // Core components
 import tw from '../../lib/tailwind'
-import { updateUser, getCurrentUser } from '../../store/auth'
 import {
   Form,
   Submit,
@@ -14,14 +12,16 @@ import {
   Select,
   MultiSelector,
 } from '../../components/form'
-import PageWrapper from './components/PageWrapper'
+import PageWrapper from '../../components/PageWrapper'
 
 import {
   useFetchCountriesQuery,
   useFetchCityQuery,
   useFetchStatesQuery,
 } from '../../store/add'
+
 import { useFetchInterestsQuery } from '../../store/interests'
+import useProfileContext from 'hooks/useProfileContext'
 
 const ValidationSchema = Yup.object().shape({
   city: Yup.string().required().label('City'),
@@ -58,8 +58,9 @@ const genders = [
 ]
 
 const RegisterScreen: React.FC<{}> = () => {
-  const dispatch = useDispatch()
-  const user = useSelector(getCurrentUser)
+  const { loading, error, updateAddressGenderAndInterests } =
+    useProfileContext()
+
   const [selectedCountry, setSelectedCountry] = React.useState(undefined)
   const [selectedState, setSelectedState] = React.useState(undefined)
 
@@ -90,11 +91,11 @@ const RegisterScreen: React.FC<{}> = () => {
       title="More Personal Information"
       subtitle="Let's get to know you better"
       pageNumber={1}
-      loading={user.loading}
+      loading={loading}
       error={
-        user.error
+        error
           ? {
-              message: user.error.message,
+              message: error.message,
               onDismiss: () => {},
             }
           : null
@@ -104,10 +105,8 @@ const RegisterScreen: React.FC<{}> = () => {
         <Form
           validationSchema={ValidationSchema}
           initialValues={initialValues}
-          // @ts-ignore
-          onSubmit={(value) => {
-            // @ts-ignore
-            dispatch(updateUser(value))
+          onSubmit={async (value) => {
+            await updateAddressGenderAndInterests(value)
           }}
           style={tw`flex-1 flex`}
         >

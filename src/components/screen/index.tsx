@@ -11,6 +11,7 @@ import isNil from 'lodash/isNil'
 
 import Text from '../Text'
 import tw from '../../lib/tailwind'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 interface ErrorProps {
   message: string
@@ -35,7 +36,6 @@ const Screen: React.FC<ScreenProps> = ({
   const bottomSheetRef = useRef<BottomSheet>(null)
   const snapPoints = ['25%']
   useEffect(() => {
-    console.log('error', error)
     if (!isNil(error)) {
       if (error && !error.onRetry && !error.onDismiss) {
         throw new Error(
@@ -66,40 +66,43 @@ const Screen: React.FC<ScreenProps> = ({
         )}
       </SafeAreaView>
       {/* Bottom Sheet for Error Display */}
-      {/* @ts-ignore */}
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        index={-1}
-        enablePanDownToClose={false}
-        // @ts-ignore
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            pressBehavior="none"
-          />
-        )}
-        handleComponent={null}
-      >
+      <GestureHandlerRootView style={{ backgroundColor: 'red' }}>
         {/* @ts-ignore */}
-        <BottomSheetView style={styles.bottomSheetContent}>
-          <Text style={styles.errorText}>{error?.message}</Text>
-
-          {/* Retry Button - only show if there's a retry function */}
-          {error?.onRetry && (
-            <TouchableOpacity
-              style={styles.retryButton}
-              onPress={error.onRetry}
-            >
-              <Text style={styles.retryButtonText}>
-                {error.retryText || 'Retry'}
-              </Text>
-            </TouchableOpacity>
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={snapPoints}
+          index={-1}
+          enablePanDownToClose={false}
+          // @ts-ignore
+          backdropComponent={(props) => (
+            // @ts-ignore
+            <BottomSheetBackdrop
+              {...props}
+              appearsOnIndex={0}
+              disappearsOnIndex={-1}
+              pressBehavior="none"
+            />
           )}
-        </BottomSheetView>
-      </BottomSheet>
+          handleComponent={null}
+        >
+          {/* @ts-ignore */}
+          <BottomSheetView style={styles.bottomSheetContent}>
+            <Text style={styles.errorText}>{error?.message}</Text>
+
+            {/* Retry Button - only show if there's a retry function */}
+            {error?.onRetry && (
+              <TouchableOpacity
+                style={styles.retryButton}
+                onPress={error.onRetry}
+              >
+                <Text style={styles.retryButtonText}>
+                  {error.retryText || 'Retry'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </BottomSheetView>
+        </BottomSheet>
+      </GestureHandlerRootView>
     </Layout>
   )
 }

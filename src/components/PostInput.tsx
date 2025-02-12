@@ -32,7 +32,6 @@ const PostInput = () => {
   const [openBottomSheet, toggleOpenBottomSheet] = useToggle(false)
   // const navigation = useNavigation()
   const handleIconRightPress = async () => {
-    console.log('I will try now man')
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
 

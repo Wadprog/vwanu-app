@@ -5,6 +5,7 @@ import env from '../config/environnement'
 
 const apiSlice = createApi({
   reducerPath: 'api',
+  tagTypes: ['Post'],
   baseQuery: fetchBaseQuery({
     baseUrl: env.apiUrl,
     prepareHeaders: (headers, { getState }) => {
