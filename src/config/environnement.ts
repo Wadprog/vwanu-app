@@ -1,24 +1,31 @@
 /* eslint-disable no-undef */
-import constant from 'expo-constants'
+import Constants from 'expo-constants'
 
 type ReleaseChannel = 'development' | 'staging' | 'production'
 
-const environnements: { [key in ReleaseChannel]: { apiUrl: string } } = {
+const environnement: { [key in ReleaseChannel]: { apiUrl: string } } = {
   development: {
-    apiUrl: 'https://devy.vwanu.com/api/v1/',
-    // apiUrl: "http://192.168.1.143/api/v1/",
+    apiUrl: 'https://dev.vwanu.com/api/v1/',
   },
   staging: {
-    apiUrl: 'https://staging-api.com',
+    apiUrl: 'https://staging.vwanu.com/api/v1/',
   },
   production: {
-    apiUrl: 'https://my-api.com',
+    apiUrl: 'https://api.vwanu.com/api/v1/',
   },
 }
-const releaseChannel =
-  (constant.manifest?.releaseChannel as ReleaseChannel) || 'staging'
 
-const getCurrentEnvironnement = (): { apiUrl: string } =>
-  __DEV__ ? environnements.development : environnements[releaseChannel]
+const getEnvironment = (): { apiUrl: string } => {
+  if (__DEV__) return environnement.development
 
-export default getCurrentEnvironnement()
+  // Get the release channel from Expo
+  const channel = Constants.expoConfig?.extra?.releaseChannel as ReleaseChannel
+
+  // If no release channel is set, default to staging
+  if (!channel) return environnement.development
+
+  // Return environment based on the release channel
+  return environnement[channel]
+}
+
+export default getEnvironment()

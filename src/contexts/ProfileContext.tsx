@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, ReactNode } from 'react'
 import { Profile } from '../../types'
-import { hasIn, has, isNil } from 'lodash'
+
+import { useFetchProfileQuery } from '../store/profiles'
 
 // **Enum for Profile Creation Steps**
 export enum ProfileCreateSteps {
@@ -18,7 +19,7 @@ interface ProfileContextProviderProps {
 // **State Type**
 export interface ProfileStateType {
   loading: boolean
-  user: Partial<Profile> | null
+  profile: Partial<Profile> | null
   nextAction: ProfileCreateSteps
   error: Error | null
 }
@@ -26,7 +27,7 @@ export interface ProfileStateType {
 // **Initial State**
 const initialState: ProfileStateType = {
   loading: false,
-  user: null,
+  profile: null,
   nextAction: ProfileCreateSteps.START,
   error: null,
 }
@@ -37,7 +38,8 @@ type ProfileAction =
   | { type: ProfileCreateSteps.FIND_FRIENDS }
   | { type: ProfileCreateSteps.PROFILE_PICTURE }
   | { type: ProfileCreateSteps.PROFILE_COMPLETE }
-
+  | { type: 'SET_PROFILE'; payload: Partial<Profile> }
+  | { type: 'SET_ERROR'; payload: Error }
 type AddressGenderAndInterests = {
   dob: Date
   gender: 'm' | 'f'
@@ -51,8 +53,7 @@ export interface ProfileContextType extends ProfileStateType {
   dispatch: React.Dispatch<ProfileAction>
   updateProfile: (user: Partial<Profile>) => Promise<void>
   getProfile: () => Promise<void>
-  followFriens: (friendsIds: string[]) => Promise<void>
-  inViteFriens: (phoneNumbers: string[]) => Promise<void>
+  followFriends: (friendsIds: string[]) => Promise<void>
   updateAddressGenderAndInterests: (
     values: AddressGenderAndInterests
   ) => Promise<void>
@@ -64,6 +65,8 @@ const reducer = (
   action: ProfileAction
 ): ProfileStateType => {
   switch (action.type) {
+    case 'SET_ERROR':
+      return { ...state, error: action.payload, loading: false }
     case ProfileCreateSteps.START:
       return { ...state, nextAction: ProfileCreateSteps.START }
     case ProfileCreateSteps.FIND_FRIENDS:
@@ -87,14 +90,24 @@ export const ProfileContextProvider: React.FC<ProfileContextProviderProps> = ({
   const [state, dispatch] = useReducer(reducer, initialState)
 
   // **Update Profile Functions**
-  const updateProfile = async (user: Partial<Profile>) => {}
+  const updateProfile = async (user: Partial<Profile>) => {
+    console.log({ user })
+  }
   const getProfile = async () => {
+    const { data: profile, isLoading, error } = useFetchProfileQuery(undefined)
+
+    if (error) {
+      console.log({ error })
+      dispatch({
+        type: 'SET_ERROR',
+        payload: new Error('Error fetching profile'),
+      })
+      return
+    }
+    if (profile) dispatch({ type: 'SET_PROFILE', payload: profile })
     setNextAction()
   }
-  const followFriens = async (friendsIds: string[]) => {
-    setNextAction()
-  }
-  const inViteFriens = async (phoneNumbers: string[]) => {
+  const followFriends = async (friendsIds: string[]) => {
     setNextAction()
   }
   const updateAddressGenderAndInterests = async (
@@ -103,17 +116,17 @@ export const ProfileContextProvider: React.FC<ProfileContextProviderProps> = ({
     setNextAction()
   }
   const setNextAction = () => {
-    if (!state.user) {
+    if (!state.profile) {
       state.nextAction !== ProfileCreateSteps.START &&
         dispatch({ type: ProfileCreateSteps.START })
       return
     }
-    if (state.user?.dob && !isNil(state.user.dob)) {
+    if (state.profile?.dob) {
       state.nextAction !== ProfileCreateSteps.FIND_FRIENDS &&
         dispatch({ type: ProfileCreateSteps.FIND_FRIENDS })
       return
     }
-    if (state.user?.profilePicture && !isNil(state.user.profilePicture)) {
+    if (state.profile?.profilePicture) {
       state.nextAction !== ProfileCreateSteps.PROFILE_PICTURE &&
         dispatch({ type: ProfileCreateSteps.PROFILE_COMPLETE })
       return
@@ -127,8 +140,7 @@ export const ProfileContextProvider: React.FC<ProfileContextProviderProps> = ({
         dispatch,
         updateProfile,
         getProfile,
-        followFriens,
-        inViteFriens,
+        followFriends,
         updateAddressGenderAndInterests,
       }}
     >

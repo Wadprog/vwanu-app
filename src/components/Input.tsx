@@ -1,9 +1,14 @@
-import React from 'react'
-import { TextInput } from 'react-native'
+import React, { useState } from 'react'
+import { TextInput, TouchableOpacity } from 'react-native'
 
 import Wrapper, { WrapperProps } from './InputsWrapper'
 
-export type P = React.ComponentProps<typeof TextInput> & WrapperProps
+export type P = React.ComponentProps<typeof TextInput> &
+  WrapperProps & {
+    secureTextEntry?: boolean
+    showPasswordToggle?: boolean
+  }
+
 const AppInput: React.FC<P> = (props) => {
   const [isfocus, setIsFocus] = React.useState(false)
   const {
@@ -26,7 +31,7 @@ const AppInput: React.FC<P> = (props) => {
       iconRight={iconRight}
       style={style}
       onIconLeftPress={onIconLeftPress}
-      onIconRightPress={onIconLeftPress}
+      onIconRightPress={onIconRightPress}
       isFocus={isfocus}
       onPress={() => inputRef.current?.focus()}
     >
@@ -36,6 +41,10 @@ const AppInput: React.FC<P> = (props) => {
         onFocus={(e) => {
           setIsFocus(true)
           onFocus && onFocus(e)
+        }}
+        onBlur={(e) => {
+          setIsFocus(false)
+          props.onBlur && props.onBlur(e)
         }}
       />
     </Wrapper>

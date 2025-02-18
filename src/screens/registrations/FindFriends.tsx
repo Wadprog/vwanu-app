@@ -1,15 +1,20 @@
 import React from 'react'
 import * as Yup from 'yup'
 import { View } from 'react-native'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store'
 
 // Core components
 import tw from '../../lib/tailwind'
 import Button from '../../components/Button'
 import IconRight from './components/RightIcon'
 import PageWrapper from '../../components/PageWrapper'
-import { useFetchProfilesQuery } from '../../store/profiles'
+import {
+  useFetchProfilesQuery,
+  useFetchProfileQuery,
+} from '../../store/profiles'
+import { useUpdateProfileMutation } from '../../store/profiles'
 import { Form, MultiImageSelector, Submit } from '../../components/form'
-import useProfileContext from 'hooks/useProfileContext'
 
 const initialValues = {
   users: [],
@@ -20,8 +25,9 @@ const ValidationSchema = Yup.object().shape({
 
 const FindFriends: React.FC<{}> = () => {
   const { data: users, isFetching } = useFetchProfilesQuery()
-  const { followFriens } = useProfileContext()
-
+  const { userId } = useSelector((state: RootState) => state.auth)
+  const { data: profile } = useFetchProfileQuery(userId!)
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation()
   return (
     <PageWrapper
       title="Connect with new people"
@@ -33,7 +39,17 @@ const FindFriends: React.FC<{}> = () => {
           validationSchema={ValidationSchema}
           initialValues={initialValues}
           onSubmit={async (values) => {
-            await followFriens(values.users)
+            console.log('values', values)
+            if (userId) {
+              await updateProfile({
+                id: userId,
+                data: {
+                  ...profile,
+                  friends: values.users,
+                  nextCompletionStep: 3,
+                },
+              })
+            }
           }}
           style={tw`flex-1 flex justify-between items-center`}
         >

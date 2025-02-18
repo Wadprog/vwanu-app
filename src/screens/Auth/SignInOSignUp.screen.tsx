@@ -5,10 +5,10 @@ import tw from 'lib/tailwind'
 import images from 'config/image'
 import Text from 'components/Text'
 import Button from 'components/Button'
-import useAuthContext, { AuthState } from 'hooks/useAuthContext'
-
+import { setNextAction, NextActions } from 'store/auth-slice'
+import { useDispatch } from 'react-redux'
 const LogSignup: React.FC<{}> = () => {
-  const { dispatch } = useAuthContext()
+  const dispatch = useDispatch()
 
   return (
     <ImageBackground style={tw`px-5 flex-1`} source={images.onBoardBg}>
@@ -29,7 +29,7 @@ const LogSignup: React.FC<{}> = () => {
           <Button
             title="Create account"
             onPress={() => {
-              dispatch({ type: AuthState.SIGNED_UP })
+              dispatch(setNextAction(NextActions.SIGNED_UP))
             }}
             style={tw`  mb-6`}
           />
@@ -38,7 +38,7 @@ const LogSignup: React.FC<{}> = () => {
             title="Login"
             appearance="outline"
             onPress={() => {
-              dispatch({ type: AuthState.SIGNED_IN })
+              dispatch(setNextAction(NextActions.SIGNED_IN))
             }}
             style={tw`border-black bg-white`}
           />

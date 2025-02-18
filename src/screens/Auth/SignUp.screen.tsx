@@ -9,7 +9,10 @@ import Link from 'components/Link'
 import routes from 'navigation/routes'
 import PageWrapper from 'components/PageWrapper'
 import { Form, Field, Submit, Switch } from 'components/form'
-import useAuthContext, { AuthState } from 'hooks/useAuthContext'
+import { signUpUser } from 'store/auth-slice'
+import { useSelector } from 'react-redux'
+import { RootState, AppDispatch } from 'store'
+import { useDispatch } from 'react-redux'
 
 const ValidationSchema = object().shape({
   email: string().email().required().label('Email'),
@@ -26,23 +29,16 @@ const ValidationSchema = object().shape({
 })
 
 const RegisterScreen: React.FC<{}> = () => {
-  const { loading, error, dispatch, signup } = useAuthContext()
+  const { error, loading } = useSelector((state: RootState) => state.auth)
+  console.log({ error })
+  const dispatch = useDispatch<AppDispatch>()
   return (
     <PageWrapper
       title="Personal Information"
       subtitle="Please fill the following"
       pageNumber={0}
       loading={loading}
-      error={
-        error
-          ? {
-              message: error.message,
-              onDismiss: () => {
-                dispatch({ type: 'SET_ERROR', payload: 'null' })
-              },
-            }
-          : null
-      }
+      error={error}
     >
       <>
         <Form
@@ -56,7 +52,7 @@ const RegisterScreen: React.FC<{}> = () => {
             termOfUse: false,
           }}
           onSubmit={async (values) => {
-            await signup(values)
+            dispatch(signUpUser(values))
           }}
           style={tw`flex-1 flex justify-between items-center`}
         >

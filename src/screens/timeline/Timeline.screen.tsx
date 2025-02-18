@@ -13,6 +13,7 @@ import Screen from '../../components/screen'
 import { useFetchPostsQuery } from '../../store/post'
 import { useFetchCommunityQuery } from '../../store/community'
 import TimelineSkeletone from './TimelineSkeletone'
+import NoPost from '../../components/NoPost'
 
 const Separator = () => <View style={tw`m-1`} />
 
@@ -35,16 +36,17 @@ const Timeline: React.FC = () => {
   return (
     <Screen
       loading={posts.isLoading || posts.isFetching}
-      loadinScreen={<TimelineSkeletone />}
+      loadingScreen={<TimelineSkeletone />}
       error={
-        posts.error
-          ? {
-              message: posts.error as string,
-              onRetry: () => {
-                posts.refetch()
-              },
-            }
-          : null
+        null
+        // posts.error
+        //   ? {
+        //       message: posts.error as string,
+        //       onRetry: () => {
+        //         posts.refetch()
+        //       },
+        //     }
+        //   : null
       }
     >
       <View style={tw`bg-white p-3 relative`}>
@@ -71,8 +73,11 @@ const Timeline: React.FC = () => {
         <View>
           <FlatList
             ListEmptyComponent={() => (
-              <View>
-                <Text>Empty list</Text>
+              <View style={tw`mt-20`}>
+                <NoPost
+                  title="No posts Yet"
+                  subtitle="Hurry be the first to create a post"
+                />
               </View>
             )}
             refreshing={posts.isFetching}

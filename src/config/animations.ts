@@ -1,3 +1,4 @@
 export default Object.freeze({
-  confeti: require("../assets/animations/confeti.animation.json"),
-});
+  loading: require('../assets/animations/loading.animation.json'),
+  confetti: require('../assets/animations/confetti.animation.json'),
+})

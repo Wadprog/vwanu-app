@@ -10,7 +10,8 @@ import tw from 'lib/tailwind'
 import Img from 'assets/svg/Image'
 import useToggle from 'hooks/useToggle'
 import PostInputModal from './PostInputModal'
-import { getCurrentUser } from 'store/auth'
+import { useFetchProfileQuery } from 'store/profiles'
+import { RootState } from 'store'
 
 const shadowStyle = {
   ...Platform.select({
@@ -27,7 +28,9 @@ const shadowStyle = {
 }
 
 const PostInput = () => {
-  const user = useSelector(getCurrentUser)
+  const { userId } = useSelector((state: RootState) => state.auth)
+  const { data: user } = useFetchProfileQuery(userId!)
+
   const [creatingPost, toggleCreatingPost] = useToggle(false)
   const [openBottomSheet, toggleOpenBottomSheet] = useToggle(false)
   // const navigation = useNavigation()
@@ -56,8 +59,8 @@ const PostInput = () => {
         <Avatar.Image
           source={{
             uri:
-              user?.profile?.profilePicture ||
-              `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}`,
+              user?.profilePicture ||
+              `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}`,
           }}
           size={50}
         />

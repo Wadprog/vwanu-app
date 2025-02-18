@@ -12,7 +12,7 @@ export enum endpoints {
   STATES = 'address/state',
   CITIES = 'address/city',
   INTERESTS = '/interests',
-  USERS = '/users',
+  USERS = '/profile/users',
   POSTS = 'post/posts',
   POSTKOREMS = 'post/korem',
   COMMUNITY = '/commmunities',

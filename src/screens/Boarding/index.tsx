@@ -1,16 +1,17 @@
 import React from 'react'
 import { ViewPager } from '@ui-kitten/components'
 import { View, Image, ImageBackground } from 'react-native'
+import { useDispatch } from 'react-redux'
 
 import tw from '../../lib/tailwind'
 import images from '../../config/image'
 import Text from '../../components/Text'
-import onBordingScreen from './screenData'
+import onBoardingScreen from './screenData'
 import Button from '../../components/Button'
-import useAuthContext, { AuthState } from 'hooks/useAuthContext'
+import { setNextAction, NextActions } from 'store/auth-slice'
 
 const BoardingScreen: React.FC<{}> = () => {
-  const { dispatch } = useAuthContext()
+  const dispatch = useDispatch()
   const [currentScreen, setCurrentScreen] = React.useState<number>(0)
 
   const handleNext = (screenCount: number, screens: number) => {
@@ -18,7 +19,7 @@ const BoardingScreen: React.FC<{}> = () => {
       setCurrentScreen(currentScreen + 1)
       return
     }
-    dispatch({ type: AuthState.SIGNED_IN_SIGNED_UP })
+    dispatch(setNextAction(NextActions.SIGNED_IN_SIGNED_UP))
   }
 
   return (
@@ -27,7 +28,7 @@ const BoardingScreen: React.FC<{}> = () => {
       onSelect={(index) => setCurrentScreen(index)}
       style={tw`flex-1`}
     >
-      {onBordingScreen.map((screen, index) => (
+      {onBoardingScreen.map((screen, index) => (
         <ImageBackground
           style={tw`px-5 flex-1`}
           source={images.onBoardBg}
@@ -49,20 +50,20 @@ const BoardingScreen: React.FC<{}> = () => {
               <Button
                 title="Next"
                 onPress={() => {
-                  handleNext(currentScreen, onBordingScreen.length)
+                  handleNext(currentScreen, onBoardingScreen.length)
                 }}
                 style={tw`  mb-6`}
               />
 
               <Button
-                disabled={currentScreen === onBordingScreen.length - 1}
+                disabled={currentScreen === onBoardingScreen.length - 1}
                 title="Skip"
                 appearance="outline"
                 onPress={() => {
-                  dispatch({ type: AuthState.SIGNED_IN_SIGNED_UP })
+                  dispatch(setNextAction(NextActions.SIGNED_IN_SIGNED_UP))
                 }}
                 style={tw`border-black bg-white ${
-                  currentScreen === onBordingScreen.length - 1
+                  currentScreen === onBoardingScreen.length - 1
                     ? 'opacity-0'
                     : ''
                 }`}

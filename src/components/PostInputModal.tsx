@@ -12,6 +12,8 @@ import { getCurrentUser } from 'store/auth'
 import { Field, Form, Submit, ImageFields, PrivacyNoticeField } from './form'
 import { useCreatePostMutation } from 'store/post'
 import { Notice } from '../../types'
+import { useFetchProfileQuery } from 'store/profiles'
+import { RootState } from 'store'
 
 interface PostInputModalInterface {
   visible: boolean
@@ -50,7 +52,8 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
   onClose,
   openBottomSheet,
 }) => {
-  const user = useSelector(getCurrentUser)
+  const { userId } = useSelector((state: RootState) => state.auth)
+  const { data: user } = useFetchProfileQuery(userId!)
   const bottomSheetRef = React.useRef<BottomSheet>(null)
   const snapPoints = React.useMemo(() => [40, 100], [])
   const iniTialsnapPointIndex = openBottomSheet ? 1 : 0
@@ -92,12 +95,12 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
           <View style={tw`flex flex-row items-center p-2`}>
             <ProfAvatar
               source={
-                user?.profile?.profilePicture ||
-                `https://ui-avatars.com/api/?name=${user.profile.firstName}+${user.profile.lastName}`
+                user?.profilePicture ||
+                `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}`
               }
               size={50}
-              name={`${user.profile.firstName} ${user.profile.lastName}`}
-              subtitle={formatDistanceToNow(new Date(user.profile.createdAt), {
+              name={`${user?.firstName} ${user?.lastName}`}
+              subtitle={formatDistanceToNow(new Date(), {
                 addSuffix: true,
               })}
             />
