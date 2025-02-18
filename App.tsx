@@ -11,7 +11,6 @@ import { store } from './src/store'
 import theme from './tailwind.config'
 import mapping from './src/mapping.json'
 import amplifyconfig from './src/amplifyconfiguration.json'
-import { AuthContextProvider } from './src/contexts/AuthContext'
 import { ProfileContextProvider } from './src/contexts/ProfileContext'
 
 Amplify.configure(amplifyconfig)
@@ -25,13 +24,9 @@ const App: React.FC = () => (
       theme={{ ...eva.light, ...theme.theme.extend.colors }}
     >
       <Authenticator.Provider>
-        <AuthContextProvider>
-          <ProfileContextProvider>
-            <NavigationContainer>
-              <Routes />
-            </NavigationContainer>
-          </ProfileContextProvider>
-        </AuthContextProvider>
+        <NavigationContainer>
+          <Routes />
+        </NavigationContainer>
       </Authenticator.Provider>
     </ApplicationProvider>
   </Provider>

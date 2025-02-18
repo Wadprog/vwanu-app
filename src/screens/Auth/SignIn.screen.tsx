@@ -1,14 +1,20 @@
 import React from 'react'
-import { View } from 'react-native'
+import { View, ImageBackground } from 'react-native'
 import { string, object } from 'yup'
 
 import tw from 'lib/tailwind'
 import Text from 'components/Text'
 import Link from 'components/Link'
 import routes from 'navigation/routes'
-import PageWrapper from 'components/PageWrapper'
 import { Form, Field, Submit } from 'components/form'
-import useAuthContext from 'hooks/useAuthContext'
+import { signInUser } from 'store/auth-slice'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState, AppDispatch } from 'store'
+import Icon from '@expo/vector-icons/Ionicons'
+import useToggle from 'hooks/useToggle'
+import SignInSvg from 'assets/svg/SignIn'
+import Screen from 'components/screen'
+import images from 'config/image'
 
 const ValidationSchema = object().shape({
   password: string().required().min(8).label('Password'),
@@ -16,53 +22,89 @@ const ValidationSchema = object().shape({
 })
 
 const LoginScreen: React.FC = () => {
-  const { dispatch, signIn } = useAuthContext()
-
+  const dispatch = useDispatch<AppDispatch>()
+  const { error, loading } = useSelector((state: RootState) => state.auth)
+  const [showPassword, toggleShowPassword] = useToggle(false)
   return (
-    <PageWrapper title="Login" subtitle="Enter your credentials to continue">
-      <Form
-        validationSchema={ValidationSchema}
-        initialValues={{
-          email: '',
-          password: '',
-        }}
-        onSubmit={async (values) => {
-          await signIn(values.email, values.password)
-        }}
+    <Screen loading={loading} error={error}>
+      <ImageBackground
+        style={tw`px-5 pt-30 flex-1 flex`}
+        source={images.registerBg}
       >
-        <Field
-          required
-          autoCapitalize="none"
-          placeholder="Email"
-          name="email"
-          // type="email"
-          style={tw`mb-5 rounded-lg`}
-        />
-        <Field
-          required
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholder="Password"
-          name="password"
-          // type="password"
-          // showPassword
-          style={tw`mb-5 rounded-lg`}
-        />
-        <View style={tw`-mt-4 mb-4 items-end`}>
-          <Link text="Forgot Password" to={routes.FORGET_PASSWORD} />
+        <View style={tw`items-center mb-6   relative`}>
+          <SignInSvg />
+          <View style={tw`absolute top-38`}>
+            <Text category="h4" style={tw`text-center font-400 `}>
+              Welcome Back
+            </Text>
+            <Text>Sign in and access your account</Text>
+          </View>
         </View>
 
-        <Submit title="Login" />
-      </Form>
-      <View style={tw`h-[70px] bg-green-50 bg-opacity-0`}>
-        <View style={tw`flex flex-row justify-center`}>
-          <Text category="c1" appearance="hint" style={tw`text-black mr-2`}>
-            Do not have an account
-          </Text>
-          <Link text="Create one" to={routes.SIGN_UP} />
+        <Form
+          validationSchema={ValidationSchema}
+          initialValues={{
+            email: '',
+            password: '',
+          }}
+          onSubmit={async (values) => {
+            dispatch(signInUser(values))
+          }}
+        >
+          <Field
+            required
+            autoCapitalize="none"
+            placeholder="Email"
+            name="email"
+            keyboardType="email-address"
+            autoComplete="email"
+            style={tw`mb-5 rounded-lg`}
+            iconRight={
+              <Icon
+                name="mail-outline"
+                size={15}
+                color={tw.color('text-gray-500')}
+              />
+            }
+          />
+          <Field
+            required
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholder="Password"
+            name="password"
+            secureTextEntry={!showPassword}
+            style={tw`mb-5 rounded-lg`}
+            iconRight={
+              <Icon
+                name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                size={15}
+                color={tw.color('text-gray-500')}
+              />
+            }
+            onIconRightPress={() => {
+              console.log('toggleShowPassword')
+              toggleShowPassword()
+            }}
+          />
+          <View style={tw`-mt-4 mb-4 items-end`}>
+            <Link text="Forgot Password" to={routes.FORGET_PASSWORD} />
+          </View>
+
+          <View style={tw`mt-10`}>
+            <Submit title="Login" />
+          </View>
+        </Form>
+        <View style={tw`h-[70px] bg-green-500 bg-opacity-0`}>
+          <View style={tw`flex flex-row justify-center`}>
+            <Text category="c1" appearance="hint" style={tw`text-black mr-2`}>
+              Do not have an account
+            </Text>
+            <Link text="Create one" to={routes.SIGN_UP} />
+          </View>
         </View>
-      </View>
-    </PageWrapper>
+      </ImageBackground>
+    </Screen>
   )
 }
 export default LoginScreen

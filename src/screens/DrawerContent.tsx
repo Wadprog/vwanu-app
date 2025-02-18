@@ -4,19 +4,25 @@
 // Dependencies
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer'
-import { StyleSheet, View, Text } from 'react-native'
+import {
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerContentComponentProps,
+} from '@react-navigation/drawer'
+import { StyleSheet, View } from 'react-native'
 import Icon from '@expo/vector-icons/MaterialCommunityIcons'
 import { Avatar, Drawer, TouchableRipple } from 'react-native-paper'
 
-import { Toggle } from '@ui-kitten/components'
+import { Toggle, Text } from '@ui-kitten/components'
 // import { ThemeContext } from '../config/theme-context'
 
-import Screen from '../components/screen'
+// import Screen from 'components/Screen'
 // Customs imports
 // import Screen from '../components/Screen'
-import { getCurrentUser } from '../store/auth'
+import { useFetchProfileQuery } from '../store/profiles'
+import { RootState } from '../store'
 import routes from '../navigation/routes'
+import { signOutUser } from 'store/auth-slice'
 // Main Function to Return
 
 // Styles
@@ -65,33 +71,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
 })
-const DrawerContent = (props) => {
+const DrawerContent = (props: DrawerContentComponentProps) => {
   // Hooks
-  const auth = useSelector(getCurrentUser)
+  const { userId } = useSelector((state: RootState) => state.auth)
+  const { data: auth, isLoading, error } = useFetchProfileQuery(userId!)
   //   const dispatch = useDispatch()
   //   const themeContext = React.useContext(ThemeContext)
   // Main Object
+  // loading={isLoading} error={error ? 'Failed to load profile' : null}
   return (
-    <Screen loading={auth.user.loading} error={auth.user.error}>
+    <>
       <DrawerContentScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
             <View style={{ flexDirection: 'row', marginTop: 15 }}>
               <Avatar.Image
                 source={{
-                  uri: auth.profile.profilePicture,
+                  uri: auth?.profilePicture,
                 }}
                 size={50}
               />
               <View style={{ marginLeft: 15, flexDirection: 'column' }}>
-                <Text category="h6">{auth.user.firstName}</Text>
-                <Text category="s1">{auth.user.lastName}</Text>
+                <Text category="h6">{auth?.firstName}</Text>
+                <Text category="s1">{auth?.lastName}</Text>
               </View>
             </View>
             <View style={{ marginTop: 10, flexDirection: 'row' }}>
-              <Text> 79 </Text>
+              <Text> {String(auth?.amountOfFollower || 0)} </Text>
               <Text> Following</Text>
-              <Text> 23 </Text>
+              <Text> {String(auth?.amountOfFollowing || 0)} </Text>
               <Text> Followers</Text>
             </View>
           </View>
@@ -169,23 +177,26 @@ const DrawerContent = (props) => {
         </View>
       </DrawerContentScrollView>
       <Drawer.Section style={styles.bottomDrawerSection}>
-        <DrawerItem
+        {/* <DrawerItem
+          onPress={() => {
+            console.log('Support')
+          }}
           icon={({ color, size }) => (
             <Icon name="phone" color={color} size={size} />
           )}
           label="Support"
-        />
+        /> */}
         <DrawerItem
+          onPress={() => {
+            signOutUser()
+          }}
           icon={({ color, size }) => (
             <Icon name="exit-to-app" color={color} size={size} />
           )}
           label="Sign Out"
-          onPress={() => {
-            // dispatch(logout())
-          }}
         />
       </Drawer.Section>
-    </Screen>
+    </>
   )
 }
 

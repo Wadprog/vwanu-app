@@ -7,10 +7,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import tw from '../../lib/tailwind'
 import Text from '../../components/Text'
 import Button from '../../components/Button'
-import { updateUser } from '../../store/auth'
 import PageWrapper from '../../components/PageWrapper'
 import { Form, Submit, ImageField } from '../../components/form'
-import useProfileContext from 'hooks/useProfileContext'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store'
+import {
+  useFetchProfileQuery,
+  useUpdateProfileMutation,
+} from '../../store/profiles'
 
 const ValidationSchema = Yup.object().shape({
   profilePicture: Yup.string().required().label('Profile Picture').nullable(),
@@ -30,7 +34,10 @@ const IconWithArrow: React.FC<{}> = () => (
 )
 
 const ProfilePictureForm: React.FC<{}> = () => {
-  const { updateProfile, loading, user } = useProfileContext()
+  const { userId } = useSelector((state: RootState) => state.auth)
+  const { data: profile } = useFetchProfileQuery(userId!)
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation()
+  const loading = false
 
   return (
     <PageWrapper
@@ -45,10 +52,21 @@ const ProfilePictureForm: React.FC<{}> = () => {
           initialValues={initialValues}
           onSubmit={async (val) => {
             if (val.profilePicture)
-              await updateProfile({ profilePicture: val.profilePicture })
+              updateProfile({
+                id: userId!,
+                data: {
+                  ...profile,
+                  profilePicture: val.profilePicture,
+                  nextCompletionStep: 4,
+                },
+              })
             else {
-              await updateProfile({
-                profilePicture: `https://ui-avatars.com/api/?name=${user?.firstName}+{user?.lastName}`,
+              updateProfile({
+                id: userId!,
+                data: {
+                  profilePicture: `https://ui-avatars.com/api/?name=${profile?.firstName}+${profile?.lastName}`,
+                  nextCompletionStep: 4,
+                },
               })
             }
           }}
@@ -75,8 +93,12 @@ const ProfilePictureForm: React.FC<{}> = () => {
                 style={tw`text-black`}
                 textStyle={tw`text-black`}
                 onPress={async () => {
-                  await updateProfile({
-                    profilePicture: `https://ui-avatars.com/api/?name=${user?.firstName}+{user?.lastName}`,
+                  updateProfile({
+                    id: userId!,
+                    data: {
+                      profilePicture: `https://ui-avatars.com/api/?name=${profile?.firstName}+${profile?.lastName}`,
+                      nextCompletionStep: 4,
+                    },
                   })
                 }}
               />

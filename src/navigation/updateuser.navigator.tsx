@@ -2,12 +2,13 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation } from '@react-navigation/native'
-
+import { useSelector } from 'react-redux'
 import FindFriendScreen from 'screens/registrations/FindFriends'
 import MoreInfoScreen from 'screens/registrations/MoreInfo.screen'
 import ProfilePictureScreen from 'screens/registrations/ProfilePicture'
-import useProfileContext, { ProfileCreateSteps } from 'hooks/useProfileContext'
-
+import { useFetchProfileQuery } from 'store/profiles'
+import { NextCompletionStep } from '../../types.d'
+import { RootState } from 'store'
 import routes from './routes'
 
 export type ProfileParamList = {
@@ -20,16 +21,22 @@ export type ProfileNavigationProp = NativeStackNavigationProp<ProfileParamList>
 const { Navigator, Screen } = createStackNavigator<ProfileParamList>()
 
 const RegisterNavigator = () => {
-  const { nextAction } = useProfileContext()
+  console.log('RegisterNavigator')
+  const { userId } = useSelector((state: RootState) => state.auth)
+
+  const { data } = useFetchProfileQuery(userId!)
+
+  const nextAction = data?.nextCompletionStep
+
   const navigation = useNavigation<ProfileNavigationProp>()
   React.useEffect(() => {
-    if (nextAction === ProfileCreateSteps.FIND_FRIENDS) {
+    if (nextAction === NextCompletionStep.FIND_FRIENDS) {
       navigation.navigate(routes.FIND_FRIEND)
     }
-    if (nextAction === ProfileCreateSteps.PROFILE_PICTURE) {
+    if (nextAction === NextCompletionStep.PROFILE_PICTURE) {
       navigation.navigate(routes.PROFILE_PICTURE)
     }
-    if (nextAction === ProfileCreateSteps.START) {
+    if (nextAction === NextCompletionStep.START) {
       navigation.navigate(routes.MORE_INFO)
     }
   }, [nextAction])

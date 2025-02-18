@@ -18,11 +18,22 @@ interface Media {
   height: number
 }
 
+export enum NextCompletionStep {
+  START = 1,
+  FIND_FRIENDS = 2,
+  PROFILE_PICTURE = 3,
+  PROFILE_COMPLETE = 4,
+}
 interface User {
   firstName: string
   lastName: string
+  createdAt: Date
   profilePicture: string
+  amountOfFollower: number
+  amountOfFollowing: number
+  nextCompletionStep: NextCompletionStep
 }
+
 interface Profile extends User {
   dob?: string
 }
@@ -89,4 +100,15 @@ export interface Conversation {
   messages: Message[]
   lastMessage: Message
   amountOfUnreadMessages: number
+}
+
+interface Profiles extends User {
+  id: string
+  bio?: string
+  email: string
+  gender?: string
+  emailVerified: boolean
+  dob?: string
+  searchVector?: string | null
+  online: boolean
 }

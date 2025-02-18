@@ -1,10 +1,11 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
+import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import routes from './routes'
-import useAuthContext, { AuthState } from 'hooks/useAuthContext'
+import { RootState } from '../store'
 
 import SignInScreen from '../screens/Auth/SignIn.screen'
 import SignUpScreen from '../screens/Auth/SignUp.screen'
@@ -23,24 +24,24 @@ export type AuthStackParamList = {
 }
 export type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>
 const { Navigator, Screen } = createStackNavigator<AuthStackParamList>()
+import { NextActions } from '../store/auth-slice'
 
 const AuthNavigator: React.FC<{}> = () => {
-  console.log('AuthNavigator')
-  const { nextAction } = useAuthContext()
+  const { nextAction } = useSelector((state: RootState) => state.auth)
   const navigation = useNavigation<AuthNavigationProp>()
 
   React.useEffect(() => {
     console.log({ nextAction })
-    if (nextAction === AuthState.SIGNED_IN) {
+    if (nextAction === NextActions.SIGNED_IN) {
       navigation.navigate(routes.SIGN_IN)
     }
-    if (nextAction === AuthState.SIGNED_UP) {
+    if (nextAction === NextActions.SIGNED_UP) {
       navigation.navigate(routes.SIGN_UP)
     }
-    if (nextAction === AuthState.CONFIRMED_SIGNUP) {
+    if (nextAction === NextActions.CONFIRMED_SIGNUP) {
       navigation.navigate(routes.CONFIRM_SIGNUP)
     }
-    if (nextAction === AuthState.SIGNED_IN_SIGNED_UP) {
+    if (nextAction === NextActions.SIGNED_IN_SIGNED_UP) {
       navigation.navigate(routes.SIGN_IN_SIGN_UP)
     }
   }, [nextAction])

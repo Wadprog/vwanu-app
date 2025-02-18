@@ -1,15 +1,16 @@
 import React from 'react'
 import { View } from 'react-native'
 import { string, object } from 'yup'
-import { useDispatch } from 'react-redux'
 
 import tw from 'lib/tailwind'
 import Text from 'components/Text'
 import Link from 'components/Link'
 import routes from 'navigation/routes'
-import { forgotPassword } from 'store/auth'
 import PageWrapper from 'components/PageWrapper'
 import { Form, Field, Submit } from 'components/form'
+// import { signUpUser } from 'store/auth-slice'
+import { useSelector } from 'react-redux'
+import { RootState } from 'store'
 
 const ValidationSchema = object().shape({
   password: string().required().min(8).label('Password'),
@@ -17,12 +18,14 @@ const ValidationSchema = object().shape({
 })
 
 const ForgotPasswordScreen: React.FC = () => {
-  const dispatch = useDispatch()
+  const { error, loading } = useSelector((state: RootState) => state.auth)
 
   return (
     <PageWrapper
       title="ForgotPassword"
       subtitle="Enter your credentials to continue"
+      loading={loading}
+      error={error}
     >
       <Form
         validationSchema={ValidationSchema}
@@ -32,7 +35,7 @@ const ForgotPasswordScreen: React.FC = () => {
         }}
         onSubmit={(values) => {
           // @ts-ignore
-          dispatch(forgotPassword(values))
+          console.log(values)
         }}
       >
         <Field

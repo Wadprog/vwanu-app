@@ -2,6 +2,8 @@ import React from 'react'
 import * as Yup from 'yup'
 import { View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store'
 
 // Core components
 import tw from '../../lib/tailwind'
@@ -21,8 +23,7 @@ import {
 } from '../../store/add'
 
 import { useFetchInterestsQuery } from '../../store/interests'
-import useProfileContext from 'hooks/useProfileContext'
-
+import { useUpdateProfileMutation } from '../../store/profiles'
 const ValidationSchema = Yup.object().shape({
   city: Yup.string().required().label('City'),
   country: Yup.string().required().label('Country'),
@@ -58,12 +59,12 @@ const genders = [
 ]
 
 const RegisterScreen: React.FC<{}> = () => {
-  const { loading, error, updateAddressGenderAndInterests } =
-    useProfileContext()
-
+  const { userId } = useSelector((state: RootState) => state.auth)
+  const loading = false
+  const error = null
   const [selectedCountry, setSelectedCountry] = React.useState(undefined)
   const [selectedState, setSelectedState] = React.useState(undefined)
-
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation()
   const {
     data: countries = [],
     isFetching,
@@ -91,22 +92,23 @@ const RegisterScreen: React.FC<{}> = () => {
       title="More Personal Information"
       subtitle="Let's get to know you better"
       pageNumber={1}
-      loading={loading}
-      error={
-        error
-          ? {
-              message: error.message,
-              onDismiss: () => {},
-            }
-          : null
-      }
+      loading={isUpdating}
+      error={error}
     >
       <>
         <Form
           validationSchema={ValidationSchema}
           initialValues={initialValues}
           onSubmit={async (value) => {
-            await updateAddressGenderAndInterests(value)
+            console.log(value)
+            if (userId)
+              await updateProfile({
+                id: userId,
+                data: {
+                  ...value,
+                  nextCompletionStep: 2,
+                },
+              })
           }}
           style={tw`flex-1 flex`}
         >

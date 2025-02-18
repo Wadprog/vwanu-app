@@ -1,4 +1,5 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { TouchableOpacity } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -6,12 +7,12 @@ import { createStackNavigator } from '@react-navigation/stack'
 import tw from '../lib/tailwind'
 import Text from '../components/Text'
 import BoardingScreen from '../screens/Boarding'
-import useAuthContext, { AuthState } from 'hooks/useAuthContext'
+import { setNextAction, NextActions } from 'store/auth-slice'
 
 const { Navigator, Screen } = createStackNavigator()
 
 const Account = () => {
-  const { dispatch } = useAuthContext()
+  const dispatch = useDispatch()
   return (
     <Navigator
       screenOptions={{
@@ -25,7 +26,7 @@ const Account = () => {
             style={tw`flex-row items-center`}
             onPress={() => {
               console.log('Skip')
-              dispatch({ type: AuthState.SIGNED_IN_SIGNED_UP })
+              dispatch(setNextAction(NextActions.SIGNED_IN_SIGNED_UP))
             }}
           >
             <Text appearance="hint">Skip</Text>

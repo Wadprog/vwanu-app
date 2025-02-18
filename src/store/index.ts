@@ -7,10 +7,13 @@ import api from '../middleware/api'
 import logger from '../middleware/logger'
 import api_slice from './api-slice'
 import authentication from './auth'
+import authReducer from './auth-slice'
+// import profileReducer from './profile-slice'
 
 export const store = configureStore({
   reducer: {
-    authentication,
+    auth: authReducer,
+    // profile: profileReducer,
     [api_slice.reducerPath]: api_slice.reducer,
   },
   devTools: false,
@@ -27,3 +30,5 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>
+
+export default store
