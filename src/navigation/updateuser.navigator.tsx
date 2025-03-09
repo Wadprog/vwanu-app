@@ -1,15 +1,16 @@
 import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { useNavigation } from '@react-navigation/native'
 import { useSelector } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+
+import routes from './routes'
+import { RootState } from 'store'
+import { NextCompletionStep } from '../../types.d'
+import { useFetchProfileQuery } from 'store/profiles'
 import FindFriendScreen from 'screens/registrations/FindFriends'
 import MoreInfoScreen from 'screens/registrations/MoreInfo.screen'
 import ProfilePictureScreen from 'screens/registrations/ProfilePicture'
-import { useFetchProfileQuery } from 'store/profiles'
-import { NextCompletionStep } from '../../types.d'
-import { RootState } from 'store'
-import routes from './routes'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 export type ProfileParamList = {
   [routes.MORE_INFO]: undefined

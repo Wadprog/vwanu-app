@@ -6,9 +6,7 @@ export default {
         projectId: 'e550dc60-d34d-4c1d-8286-c670002c81d3',
       },
     },
-    runtimeVersion: {
-      policy: 'sdkVersion',
-    },
+    runtimeVersion: '1.0.0',
     updates: {
       url: 'https://u.expo.dev/e550dc60-d34d-4c1d-8286-c670002c81d3',
     },

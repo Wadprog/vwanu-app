@@ -1,19 +1,20 @@
 import React from 'react'
-import { View } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import { string, ref, bool, object } from 'yup'
+import Icon from '@expo/vector-icons/Ionicons'
 
-// Core components
 import tw from 'lib/tailwind'
 import Text from 'components/Text'
 import Link from 'components/Link'
 import routes from 'navigation/routes'
-import PageWrapper from 'components/PageWrapper'
-import { Form, Field, Submit, Switch } from 'components/form'
-import { signUpUser } from 'store/auth-slice'
+import useToggle from 'hooks/useToggle'
 import { useSelector } from 'react-redux'
-import { RootState, AppDispatch } from 'store'
 import { useDispatch } from 'react-redux'
-
+import { RootState, AppDispatch } from 'store'
+import PageWrapper from 'components/PageWrapper'
+import { useAuthActions } from 'hooks/useAuthActions'
+import { Form, Field, Submit, Switch } from 'components/form'
+import { Profile } from '../../../types.d'
 const ValidationSchema = object().shape({
   email: string().email().required().label('Email'),
   password: string().required().min(8).label('Password'),
@@ -22,16 +23,17 @@ const ValidationSchema = object().shape({
   passwordConfirmation: string()
     .required()
     .oneOf([ref('password'), ''], 'Passwords must be match'),
-  // termOfUse: bool(),
   termOfUse: bool()
     .required()
     .oneOf([true], 'You must accept the terms of use and the policy privacy'),
 })
 
 const RegisterScreen: React.FC<{}> = () => {
-  const { error, loading } = useSelector((state: RootState) => state.auth)
-  console.log({ error })
   const dispatch = useDispatch<AppDispatch>()
+  const { signUpUserWithMessage } = useAuthActions()
+  const [showPassword, toggleShowPassword] = useToggle(false)
+  const { error, loading } = useSelector((state: RootState) => state.auth)
+
   return (
     <PageWrapper
       title="Personal Information"
@@ -52,7 +54,7 @@ const RegisterScreen: React.FC<{}> = () => {
             termOfUse: false,
           }}
           onSubmit={async (values) => {
-            dispatch(signUpUser(values))
+            dispatch(signUpUserWithMessage(values))
           }}
           style={tw`flex-1 flex justify-between items-center`}
         >
@@ -91,8 +93,17 @@ const RegisterScreen: React.FC<{}> = () => {
               style={tw`mb-5 rounded-lg`}
               required
               autoCapitalize="none"
+              secureTextEntry={!showPassword}
               placeholder="Password"
               name="password"
+              iconRight={
+                <TouchableOpacity onPress={toggleShowPassword}>
+                  <Icon
+                    name={showPassword ? 'eye-off' : 'eye'}
+                    color={tw.color('gray-500')}
+                  />
+                </TouchableOpacity>
+              }
             />
 
             <Field
@@ -103,6 +114,15 @@ const RegisterScreen: React.FC<{}> = () => {
               autoCapitalize="none"
               placeholder="Password Confirmation"
               name="passwordConfirmation"
+              secureTextEntry={!showPassword}
+              iconRight={
+                <TouchableOpacity onPress={toggleShowPassword}>
+                  <Icon
+                    name={showPassword ? 'eye-off' : 'eye'}
+                    color={tw.color('gray-500')}
+                  />
+                </TouchableOpacity>
+              }
             />
 
             <Switch

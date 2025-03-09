@@ -21,6 +21,7 @@ const Timeline: React.FC = () => {
   const [page, setPage] = useState({ skip: 0, limit: 10 })
   const posts = useFetchPostsQuery()
   const loadMore = () => {
+    console.log('loadMore', posts.isFetching)
     if (!posts.isFetching) {
       setPage((prev) => ({ ...prev, skip: prev.skip + 10 }))
     }

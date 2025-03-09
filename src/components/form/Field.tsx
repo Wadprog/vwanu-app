@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
-import { useFormikContext } from 'formik'
+import { useFormikContext, Field as FormikField } from 'formik'
+import { TextInput } from 'react-native'
 
 import Input, { P } from '../Input'
 import Error from './Error'
@@ -40,7 +41,8 @@ const FormField: React.FC<Props> = React.memo(({ name, ...otherProps }) => {
 
   return (
     <>
-      <Input {...inputProps} />
+      <FormikField {...inputProps} component={Input} />
+      {/* <Input {...inputProps} /> */}
       <Error
         error={typeof error === 'string' ? error : undefined}
         visible={typeof visible === 'boolean' ? visible : false}

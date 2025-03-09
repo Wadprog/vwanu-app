@@ -11,7 +11,6 @@ const apiSlice = createApi({
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token
       const idToken = (getState() as RootState).auth.idToken
-      console.log('[idToken]', idToken)
       if (token && idToken) {
         headers.set('authorization', `Bearer ${token}`)
         headers.set('x-id-token', idToken)

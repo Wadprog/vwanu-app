@@ -1,61 +1,38 @@
 import React from 'react'
 import * as eva from '@eva-design/eva'
-import { ApplicationProvider } from '@ui-kitten/components'
-import { NavigationContainer } from '@react-navigation/native'
 import { Provider } from 'react-redux'
 import { Amplify } from 'aws-amplify'
+import { ApplicationProvider } from '@ui-kitten/components'
 import { Authenticator } from '@aws-amplify/ui-react-native'
+import { NavigationContainer } from '@react-navigation/native'
 
 import Routes from './src/navigation'
 import { store } from './src/store'
 import theme from './tailwind.config'
 import mapping from './src/mapping.json'
 import amplifyconfig from './src/amplifyconfiguration.json'
-import { ProfileContextProvider } from './src/contexts/ProfileContext'
+import { MessageProvider } from './src/contexts/MessageContext'
 
 Amplify.configure(amplifyconfig)
 
-const App: React.FC = () => (
-  <Provider store={store}>
-    <ApplicationProvider
-      {...eva}
-      // @ts-ignore
-      customMapping={mapping}
-      theme={{ ...eva.light, ...theme.theme.extend.colors }}
-    >
-      <Authenticator.Provider>
-        <NavigationContainer>
-          <Routes />
-        </NavigationContainer>
-      </Authenticator.Provider>
-    </ApplicationProvider>
-  </Provider>
-)
-
-const formFields = {
-  name: {
-    order: 1,
-  },
-  birthdate: {
-    order: 2,
-  },
-  gender: {
-    label: 'Gender',
-    key: 'gender',
-    isRequired: true,
-    order: 3,
-  },
-  signUp: {
-    email: {
-      order: 4,
-    },
-    password: {
-      order: 5,
-    },
-    confirm_password: {
-      order: 6,
-    },
-  },
+const App: React.FC = () => {
+  return (
+    <Provider store={store}>
+      <ApplicationProvider
+        {...eva}
+        customMapping={mapping as any}
+        theme={{ ...eva.light, ...theme.theme.extend.colors }}
+      >
+        <Authenticator.Provider>
+          <MessageProvider>
+            <NavigationContainer>
+              <Routes />
+            </NavigationContainer>
+          </MessageProvider>
+        </Authenticator.Provider>
+      </ApplicationProvider>
+    </Provider>
+  )
 }
 
 export default App
