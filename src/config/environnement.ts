@@ -5,7 +5,7 @@ type ReleaseChannel = 'development' | 'staging' | 'production'
 
 const environnement: { [key in ReleaseChannel]: { apiUrl: string } } = {
   development: {
-    apiUrl: 'https://dev.vwanu.com/api/v1/',
+    apiUrl: 'https://devy.vwanu.com/api/v1/',
   },
   staging: {
     apiUrl: 'https://staging.vwanu.com/api/v1/',

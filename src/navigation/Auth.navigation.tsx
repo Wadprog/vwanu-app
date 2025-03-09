@@ -41,8 +41,14 @@ const AuthNavigator: React.FC<{}> = () => {
     if (nextAction === NextActions.CONFIRMED_SIGNUP) {
       navigation.navigate(routes.CONFIRM_SIGNUP)
     }
+    if (nextAction === NextActions.RESET_PASSWORD) {
+      navigation.navigate(routes.RESET_PASSWORD)
+    }
     if (nextAction === NextActions.SIGNED_IN_SIGNED_UP) {
       navigation.navigate(routes.SIGN_IN_SIGN_UP)
+    }
+    if (nextAction === NextActions.FORGOT_PASSWORD) {
+      navigation.navigate(routes.FORGET_PASSWORD)
     }
   }, [nextAction])
 

@@ -1,67 +1,62 @@
-import { useReducer } from 'react'
-import { StyleSheet, View } from 'react-native'
 import { MotiView } from 'moti'
 import { Skeleton } from 'moti/skeleton'
+import { StyleSheet, View } from 'react-native'
 
 import tw from '../../lib/tailwind'
-export default function HelloWorld() {
-  const [dark, toggle] = useReducer((s) => !s, true)
+import SearchBar from '../../components/skelettons/SearchBar'
+import SkeletonPost from '../../components/skelettons/Post.screens'
+import { ColorMode } from '../../components/skelettons/Hamburger.screen'
 
-  const colorMode = 'light'
+/**
+ * Props for the TwoColumnHeader component
+ */
+type TwoColumnHeaderProps = {
+  colorMode: ColorMode
+  leftWidth?: number
+  leftHeight?: number
+  rightWidth?: number
+  rightHeight?: number
+}
+
+/**
+ * Header component with two text columns - typically used for section titles
+ */
+const TwoColumnHeader = ({ colorMode }: TwoColumnHeaderProps) => (
+  <View style={tw`flex-row justify-between items-center mb-5 px-1`}>
+    <Skeleton colorMode={colorMode} width={100} height={10} />
+    <Skeleton colorMode={colorMode} width={40} height={10} />
+  </View>
+)
+
+export default function HelloWorld() {
+  const colorMode: ColorMode = 'light'
+
+  // Array of post configurations for variation
+  const posts = [
+    { id: 1, lastLineWidth: '90%' },
+    { id: 2, lastLineWidth: '85%' },
+    { id: 3, lastLineWidth: '95%' },
+    { id: 4, lastLineWidth: '80%' },
+  ]
 
   return (
     <MotiView
-      transition={{
-        type: 'timing',
-      }}
+      transition={{ type: 'timing' }}
       style={[styles.container, styles.padded]}
-      animate={{ backgroundColor: dark ? '#000000' : '#ffffff' }}
+      animate={{ backgroundColor: tw.color('white') }}
     >
-      <View style={tw` flex flex-row items-between`}>
-        <Skeleton colorMode={colorMode} radius="round" height={50} width={50} />
-        <Spacer />
-      </View>
-
-      <Skeleton colorMode={colorMode} width={250} />
-      <Spacer height={8} />
-      <Skeleton colorMode={colorMode} width={'100%'} />
-      <Spacer height={8} />
-      <Skeleton colorMode={colorMode} width={'100%'} />
-      <View style={tw` flex flex-row items-between`}>
-        <Skeleton colorMode={colorMode} radius="round" height={50} width={50} />
-        <Spacer />
-      </View>
-
-      <Skeleton colorMode={colorMode} width={250} />
-      <Spacer height={8} />
-      <Skeleton colorMode={colorMode} width={'100%'} />
-      <Spacer height={8} />
-      <Skeleton colorMode={colorMode} width={'100%'} />
-      <View style={tw` flex flex-row items-between`}>
-        <Skeleton colorMode={colorMode} radius="round" height={50} width={50} />
-        <Spacer />
-      </View>
-
-      <Skeleton colorMode={colorMode} width={250} />
-      <Spacer height={8} />
-      <Skeleton colorMode={colorMode} width={'100%'} />
-      <Spacer height={8} />
-      <Skeleton colorMode={colorMode} width={'100%'} />
-      <View style={tw` flex flex-row items-between`}>
-        <Skeleton colorMode={colorMode} radius="round" height={50} width={50} />
-        <Spacer />
-      </View>
-
-      <Skeleton colorMode={colorMode} width={250} />
-      <Spacer height={8} />
-      <Skeleton colorMode={colorMode} width={'100%'} />
-      <Spacer height={8} />
-      <Skeleton colorMode={colorMode} width={'100%'} />
+      <SearchBar colorMode={colorMode} />
+      <TwoColumnHeader colorMode={colorMode} />
+      {posts.map((post) => (
+        <SkeletonPost
+          key={post.id}
+          colorMode={colorMode}
+          lastLineWidth={post.lastLineWidth}
+        />
+      ))}
     </MotiView>
   )
 }
-
-const Spacer = ({ height = 16 }) => <View style={{ height }} />
 
 const styles = StyleSheet.create({
   shape: {

@@ -63,4 +63,4 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
   )
 }
 
-export default Wrapper
+export default React.memo(Wrapper)

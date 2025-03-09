@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react'
+import { Ionicons } from '@expo/vector-icons'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
   View,
   TouchableOpacity,
@@ -6,7 +8,7 @@ import {
   Animated,
   Pressable,
 } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+
 import Text from './Text'
 import tw from '../lib/tailwind'
 
@@ -31,13 +33,14 @@ const Toast: React.FC<ToastProps> = ({
   position = 'bottom',
   autoDismiss = true,
 }) => {
+  const insets = useSafeAreaInsets()
   const translateY = new Animated.Value(position === 'top' ? -100 : 100)
   const fadeAnim = new Animated.Value(0)
 
   const handleDismiss = () => {
     Animated.parallel([
       Animated.timing(translateY, {
-        toValue: position === 'top' ? -100 : 100,
+        toValue: position === 'top' ? -130 : 130,
         duration: 300,
         useNativeDriver: true,
       }),
@@ -99,6 +102,12 @@ const Toast: React.FC<ToastProps> = ({
     }
   }
 
+  // Calculate position styles including safe area insets
+  const positionStyles =
+    position === 'top'
+      ? { top: 16 + insets.top }
+      : { bottom: 16 + insets.bottom }
+
   return (
     <>
       <Animated.View
@@ -114,7 +123,7 @@ const Toast: React.FC<ToastProps> = ({
         style={[
           styles.container,
           getBackgroundColor(),
-          position === 'top' ? styles.topPosition : styles.bottomPosition,
+          positionStyles, // Use dynamic positioning with insets
           { transform: [{ translateY }], opacity: fadeAnim },
         ]}
       >
@@ -162,12 +171,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     zIndex: 1000,
-  },
-  topPosition: {
-    top: 16,
-  },
-  bottomPosition: {
-    bottom: 16,
   },
 })
 

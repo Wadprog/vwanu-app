@@ -2,17 +2,24 @@ import React, { useState } from 'react'
 import { View, TextInput, ImageBackground } from 'react-native'
 import { Text } from '@ui-kitten/components'
 import tw from '../../lib/tailwind'
-// import { signUpUser } from 'store/auth-slice'
-import { useSelector } from 'react-redux'
+
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'store'
 import Button from 'components/Button'
 import Screen from 'components/screen'
 import images from 'config/image'
+import { AppDispatch } from 'store'
+import { useAuthActions } from 'hooks/useAuthActions'
 
 const ConfirmSignUpScreen: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>()
+
   const { error, loading, username } = useSelector(
     (state: RootState) => state.auth
   )
+  const { confirmSignUpUserWithMessage, resendPasscodeWithMessage } =
+    useAuthActions()
+
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
   const [countdown, setCountdown] = useState(60)
@@ -34,6 +41,7 @@ const ConfirmSignUpScreen: React.FC = () => {
   }, [countdown, isTimerRunning])
 
   const handleResendCode = () => {
+    dispatch(resendPasscodeWithMessage(username ?? ''))
     setCountdown(60)
     setIsTimerRunning(true)
   }
@@ -60,7 +68,7 @@ const ConfirmSignUpScreen: React.FC = () => {
   return (
     <Screen loading={loading} error={error}>
       <ImageBackground
-        style={tw`px-5  pt-30 flex-1 flex`}
+        style={tw`px-5  pt-10 flex-1 flex`}
         source={images.registerBg}
       >
         <View style={tw` mb-4`}>
@@ -81,7 +89,7 @@ const ConfirmSignUpScreen: React.FC = () => {
               key={index}
               ref={inputRefs[index]}
               style={[
-                tw`w-12 h-12 border border-gray-300 rounded-lg text-center text-lg`,
+                tw`w-12 h-12 border border-gray-300 rounded-lg text-center text-lg line-5 pb-2`,
                 // Add focused state styling
                 focusedIndex === index && tw`border-2 border-secondary`,
                 // Add filled state styling
@@ -106,6 +114,12 @@ const ConfirmSignUpScreen: React.FC = () => {
             const otpString = otp.join('')
             // Handle OTP submission here
             console.log('OTP:', otpString)
+            dispatch(
+              confirmSignUpUserWithMessage({
+                email: username ?? '',
+                code: otpString,
+              })
+            )
           }}
         />
 

@@ -3,7 +3,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 // Dependencies
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -18,9 +18,9 @@ import { Toggle, Text } from '@ui-kitten/components'
 
 // import Screen from 'components/Screen'
 // Customs imports
-// import Screen from '../components/Screen'
+import Screen from 'components/screen'
 import { useFetchProfileQuery } from '../store/profiles'
-import { RootState } from '../store'
+import { RootState, AppDispatch } from '../store'
 import routes from '../navigation/routes'
 import { signOutUser } from 'store/auth-slice'
 // Main Function to Return
@@ -73,14 +73,22 @@ const styles = StyleSheet.create({
 })
 const DrawerContent = (props: DrawerContentComponentProps) => {
   // Hooks
-  const { userId } = useSelector((state: RootState) => state.auth)
+  const dispatch = useDispatch<AppDispatch>()
+  const {
+    userId,
+    loading,
+    error: authError,
+  } = useSelector((state: RootState) => state.auth)
   const { data: auth, isLoading, error } = useFetchProfileQuery(userId!)
-  //   const dispatch = useDispatch()
+
   //   const themeContext = React.useContext(ThemeContext)
   // Main Object
   // loading={isLoading} error={error ? 'Failed to load profile' : null}
   return (
-    <>
+    <Screen
+      loading={isLoading || loading}
+      error={error || authError ? 'Profile issue' : null}
+    >
       <DrawerContentScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
@@ -188,7 +196,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         /> */}
         <DrawerItem
           onPress={() => {
-            signOutUser()
+            dispatch(signOutUser())
           }}
           icon={({ color, size }) => (
             <Icon name="exit-to-app" color={color} size={size} />
@@ -196,7 +204,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
           label="Sign Out"
         />
       </Drawer.Section>
-    </>
+    </Screen>
   )
 }
 

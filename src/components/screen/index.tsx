@@ -5,6 +5,7 @@ import { Layout } from '@ui-kitten/components'
 import tw from '../../lib/tailwind'
 import Toast from '../Toast'
 import DefaultPageLoading from './components/PageLoading'
+import { useMessage } from 'contexts/MessageContext'
 
 interface ErrorProps {
   message: string
@@ -30,16 +31,43 @@ const Screen: React.FC<ScreenProps> = ({
   showToast = true,
   safeArea = true,
 }) => {
+  const { messages, removeMessage } = useMessage()
+
   return (
     <Layout style={tw`flex-1`}>
       {loading ? (
         <>{loadingScreen ? loadingScreen : <DefaultPageLoading />}</>
       ) : (
         <>
-          {safeArea && (
-            <SafeAreaView style={tw`flex-1`}>{children}</SafeAreaView>
+          {safeArea ? (
+            <SafeAreaView style={tw`flex-1`}>
+              {messages?.map((msg, index) => (
+                <Toast
+                  key={index}
+                  type={msg.type || 'info'}
+                  message={msg.text}
+                  position="top"
+                  autoDismiss={true}
+                  onDismiss={() => removeMessage(msg.id)}
+                />
+              ))}
+              {children}
+            </SafeAreaView>
+          ) : (
+            <>
+              {messages?.map((msg, index) => (
+                <Toast
+                  key={index}
+                  type={msg.type || 'info'}
+                  message={msg.text}
+                  position="top"
+                  autoDismiss={true}
+                  onDismiss={() => removeMessage(msg.id)}
+                />
+              ))}
+              {children}
+            </>
           )}
-          {!safeArea && children}
         </>
       )}
 

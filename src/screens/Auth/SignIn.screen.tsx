@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, ImageBackground } from 'react-native'
+import { View, ImageBackground, TouchableOpacity } from 'react-native'
 import { string, object } from 'yup'
 
 import tw from 'lib/tailwind'
@@ -7,7 +7,7 @@ import Text from 'components/Text'
 import Link from 'components/Link'
 import routes from 'navigation/routes'
 import { Form, Field, Submit } from 'components/form'
-import { signInUser } from 'store/auth-slice'
+import { NextActions, setNextAction } from 'store/auth-slice'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState, AppDispatch } from 'store'
 import Icon from '@expo/vector-icons/Ionicons'
@@ -15,6 +15,7 @@ import useToggle from 'hooks/useToggle'
 import SignInSvg from 'assets/svg/SignIn'
 import Screen from 'components/screen'
 import images from 'config/image'
+import { useAuthActions } from 'hooks/useAuthActions'
 
 const ValidationSchema = object().shape({
   password: string().required().min(8).label('Password'),
@@ -25,6 +26,7 @@ const LoginScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { error, loading } = useSelector((state: RootState) => state.auth)
   const [showPassword, toggleShowPassword] = useToggle(false)
+  const { signInUserWithMessage: signInUser } = useAuthActions()
   return (
     <Screen loading={loading} error={error}>
       <ImageBackground
@@ -87,9 +89,16 @@ const LoginScreen: React.FC = () => {
               toggleShowPassword()
             }}
           />
-          <View style={tw`-mt-4 mb-4 items-end`}>
-            <Link text="Forgot Password" to={routes.FORGET_PASSWORD} />
-          </View>
+          <TouchableOpacity
+            style={tw`-mt-4 mb-4 items-end`}
+            onPress={() => {
+              dispatch(setNextAction(NextActions.FORGOT_PASSWORD))
+            }}
+          >
+            <Text category="c1" appearance="hint" style={tw`text-blue-500`}>
+              Forgot Password
+            </Text>
+          </TouchableOpacity>
 
           <View style={tw`mt-10`}>
             <Submit title="Login" />

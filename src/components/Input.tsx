@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { TextInput, TouchableOpacity } from 'react-native'
+import React from 'react'
+import { TextInput } from 'react-native'
 
 import Wrapper, { WrapperProps } from './InputsWrapper'
 
@@ -10,7 +10,6 @@ export type P = React.ComponentProps<typeof TextInput> &
   }
 
 const AppInput: React.FC<P> = (props) => {
-  const [isfocus, setIsFocus] = React.useState(false)
   const {
     label,
     iconLeft,
@@ -32,23 +31,16 @@ const AppInput: React.FC<P> = (props) => {
       style={style}
       onIconLeftPress={onIconLeftPress}
       onIconRightPress={onIconRightPress}
-      isFocus={isfocus}
       onPress={() => inputRef.current?.focus()}
     >
       <TextInput
         ref={inputRef}
         {...rest}
-        onFocus={(e) => {
-          setIsFocus(true)
-          onFocus && onFocus(e)
-        }}
-        onBlur={(e) => {
-          setIsFocus(false)
-          props.onBlur && props.onBlur(e)
-        }}
+        onFocus={onFocus && onFocus}
+        onBlur={props.onBlur && props.onBlur}
       />
     </Wrapper>
   )
 }
 
-export default AppInput
+export default React.memo(AppInput)

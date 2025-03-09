@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import Text from "./Text";
-import tw from "../lib/tailwind";
+import Text from './Text'
+import tw from '../lib/tailwind'
 
 interface PageTitlesProps {
-  title: string;
-  subtitle?: string;
+  title: string
+  subtitle?: string
 }
 
 const PageTitles: React.FC<PageTitlesProps> = ({ title, subtitle }) => {
@@ -18,11 +18,11 @@ const PageTitles: React.FC<PageTitlesProps> = ({ title, subtitle }) => {
       )}
       {subtitle && (
         <Text category="p1" style={tw`text-black`}>
-          Please fill the following
+          {subtitle ?? 'Please fill the following'}
         </Text>
       )}
     </>
-  );
-};
+  )
+}
 
-export default PageTitles;
+export default PageTitles
