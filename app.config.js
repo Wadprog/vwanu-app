@@ -10,5 +10,8 @@ export default {
     updates: {
       url: 'https://u.expo.dev/e550dc60-d34d-4c1d-8286-c670002c81d3',
     },
+    ios: {
+      bundleIdentifier: 'com.waddprog.vwanu-app',
+    },
   },
 }

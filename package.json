@@ -72,8 +72,6 @@
     "redux-devtools-expo-dev-plugin": "^0.2.1",
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.0",
-    "tailwind-react-native-classnames": "^1.5.1",
-    "tailwindcss": "^4.0.12",
     "twrnc": "^3.3.3",
     "undefined": "react-navigation/native",
     "yup": "^1.4.0"

@@ -16,6 +16,10 @@ db.json
 
 # macOS
 .DS_Store
+ios/
+android/
+ios
+android
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
