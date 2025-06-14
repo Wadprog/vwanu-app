@@ -107,7 +107,7 @@ const Routes: React.FC = () => {
 
   // Post-Authentication Flow
   if (profile) {
-    switch (profile.nextCompletionStep) {
+    switch (parseInt(profile.nextCompletionStep || '0')) {
       case NextCompletionStep.PROFILE_COMPLETE:
         return <AppNavigation />
       default:

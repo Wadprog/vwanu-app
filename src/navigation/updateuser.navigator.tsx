@@ -27,7 +27,10 @@ const RegisterNavigator = () => {
 
   const { data } = useFetchProfileQuery(userId!)
 
-  const nextAction = data?.nextCompletionStep
+  // @ts-ignore
+  const nextAction = parseInt(data?.nextCompletionStep || '0')
+
+  console.log('nextAction', nextAction)
 
   const navigation = useNavigation<ProfileNavigationProp>()
   React.useEffect(() => {

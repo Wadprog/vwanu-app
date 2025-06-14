@@ -44,7 +44,7 @@ const FindFriends: React.FC<{}> = () => {
               await updateProfile({
                 id: userId,
                 data: {
-                  ...profile,
+                  // ...profile,
                   friends: values.users,
                   nextCompletionStep: 3,
                 },

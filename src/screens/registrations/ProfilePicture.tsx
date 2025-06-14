@@ -55,7 +55,7 @@ const ProfilePictureForm: React.FC<{}> = () => {
               updateProfile({
                 id: userId!,
                 data: {
-                  ...profile,
+                  // ...profile,
                   profilePicture: val.profilePicture,
                   nextCompletionStep: 4,
                 },
