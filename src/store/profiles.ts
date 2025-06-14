@@ -47,3 +47,5 @@ const {
 } = Profiles
 
 export { useFetchProfilesQuery, useFetchProfileQuery, useUpdateProfileMutation }
+
+export default Profiles.reducer

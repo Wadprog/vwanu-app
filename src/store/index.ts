@@ -9,11 +9,12 @@ import api_slice from './api-slice'
 import authentication from './auth'
 import authReducer from './auth-slice'
 // import profileReducer from './profile-slice'
+import profileReducer from './profiles'
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    // profile: profileReducer,
+    profile: profileReducer,
     [api_slice.reducerPath]: api_slice.reducer,
   },
   devTools: false,

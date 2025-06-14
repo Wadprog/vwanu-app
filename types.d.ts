@@ -32,6 +32,7 @@ interface User {
   amountOfFollower: number
   amountOfFollowing: number
   nextCompletionStep: NextCompletionStep
+  id: string
 }
 
 interface Profile extends User {
