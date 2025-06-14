@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
+import { AppDispatch } from 'store'
 
 import {
   signUp,
@@ -13,25 +14,60 @@ import {
 } from 'aws-amplify/auth'
 
 // Add secure temporary storage service
-class AuthSessionService {
+export class AuthSessionService {
   private static tempCredentials = new Map<string, string>()
+  private static timeoutIds = new Map<string, NodeJS.Timeout>()
+  private static dispatch: AppDispatch | null = null
+
+  static setDispatch(dispatch: AppDispatch) {
+    this.dispatch = dispatch
+  }
 
   static storeTempPassword(email: string, password: string) {
     this.tempCredentials.set(email, password)
-    // Auto-clear after 5 minutes for security
-    setTimeout(() => this.clearTempPassword(email), 5 * 60 * 1000)
+
+    // Clear any existing timeout for this email
+    const existingTimeout = this.timeoutIds.get(email)
+    if (existingTimeout) {
+      clearTimeout(existingTimeout)
+    }
+
+    // Set new timeout
+    const timeoutId = setTimeout(() => {
+      this.clearTempPassword(email)
+      // Dispatch action to handle timeout
+      if (this.dispatch) {
+        this.dispatch(handleConfirmationTimeout())
+      }
+    }, 5 * 60 * 1000)
+
+    this.timeoutIds.set(email, timeoutId)
   }
 
   static getTempPassword(email: string) {
     const password = this.tempCredentials.get(email)
-    this.clearTempPassword(email) // Clear immediately after use
+    this.clearTempPassword(email)
     return password
   }
 
   static clearTempPassword(email: string) {
     this.tempCredentials.delete(email)
+    const timeoutId = this.timeoutIds.get(email)
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+      this.timeoutIds.delete(email)
+    }
   }
 }
+
+// Add new action for handling confirmation timeout
+export const handleConfirmationTimeout = createAsyncThunk(
+  'auth/handleConfirmationTimeout',
+  async () => {
+    // No async work needed, just return null
+    return null
+  }
+)
 
 export enum NextActions {
   INITIALIZING = 'INITIALIZING',
@@ -472,6 +508,14 @@ const authSlice = createSlice({
         state.nextAction = NextActions.BOARDED
         state.previousAction = NextActions.INITIALIZING
         // Don't set an error, this is an expected case
+      })
+      // Add handler for confirmation timeout
+      .addCase(handleConfirmationTimeout.fulfilled, (state) => {
+        state.loading = false
+        state.error = 'Confirmation timeout. Please sign in again.'
+        state.username = null
+        state.previousAction = state.nextAction
+        state.nextAction = NextActions.SIGNED_IN_SIGNED_UP
       })
   },
 })
