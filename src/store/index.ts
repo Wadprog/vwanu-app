@@ -7,13 +7,14 @@ import api from '../middleware/api'
 import logger from '../middleware/logger'
 import api_slice from './api-slice'
 import authentication from './auth'
-import authReducer from './auth-slice'
+import authReducer, { AuthSessionService } from './auth-slice'
 // import profileReducer from './profile-slice'
+import profileReducer from './profiles'
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    // profile: profileReducer,
+    profile: profileReducer,
     [api_slice.reducerPath]: api_slice.reducer,
   },
   devTools: false,
@@ -27,6 +28,9 @@ export const store = configureStore({
   // @ts-ignore
   enhancers: [devToolsEnhancer({ trace: true })],
 })
+
+// Initialize AuthSessionService with store's dispatch
+AuthSessionService.setDispatch(store.dispatch)
 
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>

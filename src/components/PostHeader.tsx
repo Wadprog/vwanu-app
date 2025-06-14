@@ -17,10 +17,9 @@ import Text from './Text'
 import tw from '../lib/tailwind'
 import ProfAvatar from './ProfAvatar'
 import PrivacyNotice from './PrivacyNotice'
-import { getCurrentUser } from '../store/auth'
 
 import { PostProps, UpdatePost } from '../../types'
-import { object } from 'prop-types'
+import { RootState } from '../store'
 
 interface PostHeaderProps extends PostProps {
   onDeletePress: () => void
@@ -31,7 +30,7 @@ interface PostHeaderProps extends PostProps {
 }
 
 const PostHeader: React.FC<PostHeaderProps> = (props) => {
-  const user = useSelector(getCurrentUser)
+  const user = useSelector((state: RootState) => state.auth)
 
   return (
     <View style={tw`flex flex-row justify-between items-center mb-2`}>
@@ -49,7 +48,7 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
         />
         <PrivacyNotice
           privacyType={props.privacyType}
-          canEdit={user?.id?.toString() === props.UserId.toString()}
+          canEdit={user.userId === props.User?.id}
           isEditing={props.updatePostMeta.isLoading}
           onEdit={async (newPrivacyType) => {
             try {

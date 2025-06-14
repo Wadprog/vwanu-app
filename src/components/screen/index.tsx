@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native'
 import { Layout } from '@ui-kitten/components'
 import tw from '../../lib/tailwind'
@@ -32,6 +32,20 @@ const Screen: React.FC<ScreenProps> = ({
   safeArea = true,
 }) => {
   const { messages, removeMessage } = useMessage()
+  const [localError, setLocalError] = useState<ErrorProps | string | null>(
+    error || null
+  )
+
+  useEffect(() => {
+    setLocalError(error || null)
+  }, [error])
+
+  const handleErrorDismiss = () => {
+    if (typeof localError !== 'string' && localError?.onDismiss) {
+      localError.onDismiss()
+    }
+    setLocalError(null)
+  }
 
   return (
     <Layout style={tw`flex-1`}>
@@ -71,12 +85,16 @@ const Screen: React.FC<ScreenProps> = ({
         </>
       )}
 
-      {showToast && error && (
+      {showToast && localError && (
         <Toast
           type="error"
-          message={typeof error === 'string' ? error : error.message}
-          onRetry={typeof error !== 'string' ? error.onRetry : undefined}
-          onDismiss={typeof error !== 'string' ? error.onDismiss : undefined}
+          message={
+            typeof localError === 'string' ? localError : localError.message
+          }
+          onRetry={
+            typeof localError !== 'string' ? localError.onRetry : undefined
+          }
+          onDismiss={handleErrorDismiss}
           position="bottom"
           autoDismiss={false}
         />

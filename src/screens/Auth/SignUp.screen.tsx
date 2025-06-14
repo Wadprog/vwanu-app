@@ -6,7 +6,6 @@ import Icon from '@expo/vector-icons/Ionicons'
 import tw from 'lib/tailwind'
 import Text from 'components/Text'
 import Link from 'components/Link'
-import routes from 'navigation/routes'
 import useToggle from 'hooks/useToggle'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
@@ -14,7 +13,7 @@ import { RootState, AppDispatch } from 'store'
 import PageWrapper from 'components/PageWrapper'
 import { useAuthActions } from 'hooks/useAuthActions'
 import { Form, Field, Submit, Switch } from 'components/form'
-import { Profile } from '../../../types.d'
+import { NextActions, setNextAction } from 'store/auth-slice'
 const ValidationSchema = object().shape({
   email: string().email().required().label('Email'),
   password: string().required().min(8).label('Password'),
@@ -154,7 +153,15 @@ const RegisterScreen: React.FC<{}> = () => {
             <Text category="c1" appearance="hint" style={tw`text-black mr-1`}>
               Already have an account
             </Text>
-            <Link text="Sign in here" to={routes.SIGN_IN} />
+            <TouchableOpacity
+              onPress={() => {
+                dispatch(setNextAction(NextActions.SIGNED_IN))
+              }}
+            >
+              <Text category="c1" appearance="hint" style={tw`text-blue-500`}>
+                Sign in here
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </>

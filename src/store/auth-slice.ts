@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
+import { AppDispatch } from 'store'
 
 import {
   signUp,
@@ -11,6 +12,62 @@ import {
   confirmResetPassword as confirmReset,
   getCurrentUser,
 } from 'aws-amplify/auth'
+
+// Add secure temporary storage service
+export class AuthSessionService {
+  private static tempCredentials = new Map<string, string>()
+  private static timeoutIds = new Map<string, NodeJS.Timeout>()
+  private static dispatch: AppDispatch | null = null
+
+  static setDispatch(dispatch: AppDispatch) {
+    this.dispatch = dispatch
+  }
+
+  static storeTempPassword(email: string, password: string) {
+    this.tempCredentials.set(email, password)
+
+    // Clear any existing timeout for this email
+    const existingTimeout = this.timeoutIds.get(email)
+    if (existingTimeout) {
+      clearTimeout(existingTimeout)
+    }
+
+    // Set new timeout
+    const timeoutId = setTimeout(() => {
+      this.clearTempPassword(email)
+      // Dispatch action to handle timeout
+      if (this.dispatch) {
+        this.dispatch(handleConfirmationTimeout())
+      }
+    }, 5 * 60 * 1000)
+
+    this.timeoutIds.set(email, timeoutId)
+  }
+
+  static getTempPassword(email: string) {
+    const password = this.tempCredentials.get(email)
+    this.clearTempPassword(email)
+    return password
+  }
+
+  static clearTempPassword(email: string) {
+    this.tempCredentials.delete(email)
+    const timeoutId = this.timeoutIds.get(email)
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+      this.timeoutIds.delete(email)
+    }
+  }
+}
+
+// Add new action for handling confirmation timeout
+export const handleConfirmationTimeout = createAsyncThunk(
+  'auth/handleConfirmationTimeout',
+  async () => {
+    // No async work needed, just return null
+    return null
+  }
+)
 
 export enum NextActions {
   INITIALIZING = 'INITIALIZING',
@@ -50,9 +107,6 @@ const initialState: AuthState = {
   userId: null,
   nextAction: NextActions.INITIALIZING,
   previousAction: NextActions.INITIALIZING,
-
-  // nextAction: NextActions.BOARDED,
-  // previousAction: NextActions.BOARDED,
 }
 
 // Define a simplified response interface
@@ -94,6 +148,8 @@ export const signUpUser = createAsyncThunk(
         },
       },
     })
+    // Store password temporarily in the service instead of returning it
+    AuthSessionService.storeTempPassword(email, password)
     return email
   }
 )
@@ -105,6 +161,19 @@ export const confirmSignUpUser = createAsyncThunk<
   console.log(`[debug] confirming sign up for ${email} with code ${code}`)
   await confirmSignUp({ username: email, confirmationCode: code })
   console.log(`[debug] confirmed sign up great success`)
+
+  // Get the stored password from secure service
+  const password = AuthSessionService.getTempPassword(email)
+
+  if (!password) {
+    throw new Error('Confirmation code expired. Please sign up again.')
+  }
+
+  // Sign in the user after confirmation
+  await signIn({
+    username: email,
+    password,
+  })
 
   // Get the session to retrieve tokens
   try {
@@ -119,7 +188,6 @@ export const confirmSignUpUser = createAsyncThunk<
   } catch (error) {
     console.log(`[debug] error fetching session after confirmation`, error)
 
-    // Check if it's a network error
     if (error instanceof Error) {
       if (
         error.message.includes('Network Error') ||
@@ -139,22 +207,20 @@ export const confirmSignUpUser = createAsyncThunk<
 export const signInUser = createAsyncThunk<
   SignInResponse,
   { email: string; password: string }
->('auth/signIn', async ({ email, password }) => {
+>('auth/signIn', async ({ email, password }, { dispatch }) => {
   try {
-    console.log(`['Debug'] before checking for session`)
-    // const currentSession = await fetchAuthSession()
-    // if (currentSession.tokens?.accessToken) {
-    //   await signOut()
-    // }
-
-    const s1 = await signIn({
+    const signInResult = await signIn({
       username: email,
       password,
     })
-    console.log({ s1 })
+
+    // Check if the user needs to confirm their account
+    if (signInResult.nextStep.signInStep === 'CONFIRM_SIGN_UP') {
+      AuthSessionService.storeTempPassword(email, password)
+      throw new Error('NEEDS_CONFIRMATION')
+    }
+
     const session = await fetchAuthSession()
-    console.log(`[debug], signing invoked`)
-    console.log({ s1, session })
     return {
       token: session.tokens?.accessToken?.toString() || null,
       idToken: session.tokens?.idToken?.toString() || null,
@@ -162,19 +228,17 @@ export const signInUser = createAsyncThunk<
       ...session,
     }
   } catch (error) {
-    console.log(`[debug error signing in]`)
-    console.log(error)
-    if (error instanceof Error && !error.message.includes('current user')) {
+    if (error instanceof Error) {
+      if (error.message === 'NEEDS_CONFIRMATION') {
+        throw new Error('NEEDS_CONFIRMATION')
+      }
+
+      if (error.message.includes('Unauthenticated access')) {
+        throw new Error('Please confirm your email address before signing in.')
+      }
       throw error
     }
-    const s = await signIn({ username: email, password })
-    const session = await fetchAuthSession()
-    console.log({ s, session })
-    return {
-      token: session.tokens?.accessToken?.toString() || null,
-      idToken: session.tokens?.idToken?.toString() || null,
-      userId: session.tokens?.idToken?.payload.sub || null,
-    }
+    throw error
   }
 })
 
@@ -319,7 +383,14 @@ const authSlice = createSlice({
       })
       .addCase(signInUser.rejected, (state, action) => {
         state.loading = false
-        state.error = action.error.message || 'Sign in failed'
+        if (action.error.message === 'NEEDS_CONFIRMATION') {
+          state.username = action.meta.arg.email
+          state.previousAction = state.nextAction
+          state.nextAction = NextActions.CONFIRMED_SIGNUP
+          state.error = 'Please confirm your email address to continue.'
+        } else {
+          state.error = action.error.message || 'Sign in failed'
+        }
       })
       // Sign Out
       .addCase(signOutUser.fulfilled, (state) => {
@@ -437,6 +508,14 @@ const authSlice = createSlice({
         state.nextAction = NextActions.BOARDED
         state.previousAction = NextActions.INITIALIZING
         // Don't set an error, this is an expected case
+      })
+      // Add handler for confirmation timeout
+      .addCase(handleConfirmationTimeout.fulfilled, (state) => {
+        state.loading = false
+        state.error = 'Confirmation timeout. Please sign in again.'
+        state.username = null
+        state.previousAction = state.nextAction
+        state.nextAction = NextActions.SIGNED_IN_SIGNED_UP
       })
   },
 })
