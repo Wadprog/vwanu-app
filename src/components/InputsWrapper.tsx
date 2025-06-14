@@ -23,17 +23,19 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
     <Pressable onPress={props.onPress} disabled={props.disabled}>
       <>
         {props.label && (
-          <Text style={tw`text-black mb-1`} category="c1" appearance="hint">
+          <Text
+            style={tw`text-color-basic-800 mb-1`}
+            category="c1"
+            appearance="hint"
+          >
             {props.label}
           </Text>
         )}
         <View
           style={[
-            tw` p-2 mb-1 border flex  bg-[#F2F2F2] border-accent ${
-              props.disabled ? 'border-opacity-400 bg-opacity-50' : ''
-            }
-          `,
-
+            tw`p-2 mb-1 border flex bg-color-basic-200 border-primary ${
+              props.disabled ? 'border-opacity-400' : ''
+            }`,
             props.style,
             tw`${props.isFocus ? 'border-accent' : ''}`,
           ]}
