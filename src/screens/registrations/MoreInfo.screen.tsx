@@ -64,7 +64,10 @@ const RegisterScreen: React.FC<{}> = () => {
   const error = null
   const [selectedCountry, setSelectedCountry] = React.useState(undefined)
   const [selectedState, setSelectedState] = React.useState(undefined)
-  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation()
+  const [
+    updateProfile,
+    { isLoading: isUpdating, error: updateError, data: updateData },
+  ] = useUpdateProfileMutation()
   const {
     data: countries = [],
     isFetching,
@@ -109,6 +112,9 @@ const RegisterScreen: React.FC<{}> = () => {
                   nextCompletionStep: 2,
                 },
               })
+            console.log('updated profile')
+            console.log('updateData', updateError)
+            console.log('updateData', updateData)
           }}
           style={tw`flex-1 flex`}
         >

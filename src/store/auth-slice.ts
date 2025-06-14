@@ -90,6 +90,7 @@ export const signUpUser = createAsyncThunk(
         userAttributes: {
           given_name: firstName,
           family_name: lastName,
+          picture: 'https://vwanu.com/logo.png',
         },
       },
     })
