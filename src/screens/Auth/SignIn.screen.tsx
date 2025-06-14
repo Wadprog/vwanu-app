@@ -1,21 +1,19 @@
 import React from 'react'
-import { View, ImageBackground, TouchableOpacity } from 'react-native'
 import { string, object } from 'yup'
+import { View, ImageBackground, TouchableOpacity } from 'react-native'
 
 import tw from 'lib/tailwind'
+import images from 'config/image'
 import Text from 'components/Text'
-import Link from 'components/Link'
-import routes from 'navigation/routes'
-import { Form, Field, Submit } from 'components/form'
-import { NextActions, setNextAction } from 'store/auth-slice'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState, AppDispatch } from 'store'
-import Icon from '@expo/vector-icons/Ionicons'
+import Screen from 'components/screen'
 import useToggle from 'hooks/useToggle'
 import SignInSvg from 'assets/svg/SignIn'
-import Screen from 'components/screen'
-import images from 'config/image'
+import Icon from '@expo/vector-icons/Ionicons'
+import { RootState, AppDispatch } from 'store'
+import { Form, Field, Submit } from 'components/form'
 import { useAuthActions } from 'hooks/useAuthActions'
+import { useDispatch, useSelector } from 'react-redux'
+import { NextActions, setNextAction } from 'store/auth-slice'
 
 const ValidationSchema = object().shape({
   password: string().required().min(8).label('Password'),
@@ -109,7 +107,15 @@ const LoginScreen: React.FC = () => {
             <Text category="c1" appearance="hint" style={tw`text-black mr-2`}>
               Do not have an account
             </Text>
-            <Link text="Create one" to={routes.SIGN_UP} />
+            <TouchableOpacity
+              onPress={() => {
+                dispatch(setNextAction(NextActions.SIGNED_UP))
+              }}
+            >
+              <Text category="c1" appearance="hint" style={tw`text-blue-500`}>
+                Create an account
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ImageBackground>
