@@ -6,20 +6,19 @@ Sub-Component: PostHeader
 
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
 import { TouchableOpacity, View, Dimensions, FlatList } from 'react-native'
 import { Popover, Layout } from '@ui-kitten/components'
 import { formatDistanceToNow } from 'date-fns'
-
 import { useSelector } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
 
 import Text from './Text'
 import tw from '../lib/tailwind'
 import ProfAvatar from './ProfAvatar'
 import PrivacyNotice from './PrivacyNotice'
-
 import { PostProps, UpdatePost } from '../../types'
 import { RootState } from '../store'
+import nameToPicture from 'lib/nameToPicture'
 
 interface PostHeaderProps extends PostProps {
   onDeletePress: () => void
@@ -27,17 +26,35 @@ interface PostHeaderProps extends PostProps {
   toggleDeleting: () => void
   updatePostMeta: { isLoading: boolean }
   updatePost: (data: UpdatePost) => void
+  disableNavigation?: boolean
 }
 
 const PostHeader: React.FC<PostHeaderProps> = (props) => {
   const user = useSelector((state: RootState) => state.auth)
+  const PostUser = props.User
+  const navigation = useNavigation()
+
+  const handlePress = () => {
+    // console.log('props', props)
+    if (!props.disableNavigation) {
+      // @ts-ignore
+      navigation.navigate('SinglePost', { postId: props.id })
+    }
+  }
 
   return (
-    <View style={tw`flex flex-row justify-between items-center mb-2`}>
-      <View style={tw`flex flex-row`}>
+    <TouchableOpacity
+      onPress={handlePress}
+      style={tw`flex flex-row justify-between items-center mb-2`}
+    >
+      <View style={tw`flex flex-row items-center`}>
         <ProfAvatar
-          size={50}
-          source={props.User?.profilePicture || ''}
+          size={30}
+          source={
+            PostUser?.profilePicture
+              ? PostUser?.profilePicture.toString()
+              : (PostUser && nameToPicture(PostUser)) || ''
+          }
           name={`${props.User?.firstName} ${props.User?.lastName}`}
           subtitle={formatDistanceToNow(
             new Date(props.createdAt || Date.now()),
@@ -60,6 +77,7 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
               console.error('Failed to update post privacy type', error)
             }
           }}
+          style={`mt-5.2 ml-1`}
         />
       </View>
       {props.canDelete && (
@@ -88,7 +106,7 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
           </Layout>
         </Popover>
       )}
-    </View>
+    </TouchableOpacity>
   )
 }
 

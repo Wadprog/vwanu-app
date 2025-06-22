@@ -2,18 +2,17 @@ import React from 'react'
 import { string, object, mixed, InferType, array } from 'yup'
 import { useSelector } from 'react-redux'
 import { Ionicons } from '@expo/vector-icons'
-import { formatDistanceToNow } from 'date-fns'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { View, Text, Modal, TouchableOpacity, Platform } from 'react-native'
 
 import tw from 'lib/tailwind'
 import ProfAvatar from './ProfAvatar'
-import { getCurrentUser } from 'store/auth'
 import { Field, Form, Submit, ImageFields, PrivacyNoticeField } from './form'
 import { useCreatePostMutation } from 'store/post'
 import { Notice } from '../../types'
 import { useFetchProfileQuery } from 'store/profiles'
 import { RootState } from 'store'
+import nameToPicture from 'lib/nameToPicture'
 
 interface PostInputModalInterface {
   visible: boolean
@@ -58,7 +57,6 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
   const snapPoints = React.useMemo(() => [40, 100], [])
   const iniTialsnapPointIndex = openBottomSheet ? 1 : 0
   const [createPost, result] = useCreatePostMutation()
-
   if (result.isError) {
     console.error(result.error)
   }
@@ -95,14 +93,12 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
           <View style={tw`flex flex-row items-center p-2`}>
             <ProfAvatar
               source={
-                user?.profilePicture ||
-                `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}`
+                user?.profilePicture.original ||
+                (user ? nameToPicture(user) : '')
               }
               size={50}
               name={`${user?.firstName} ${user?.lastName}`}
-              subtitle={formatDistanceToNow(new Date(), {
-                addSuffix: true,
-              })}
+              subtitle="Start crafting your post"
             />
             <View style={tw`ml-2 self-end`}>
               <PrivacyNoticeField

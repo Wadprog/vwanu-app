@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from 'react'
-import { useFormikContext, Field as FormikField } from 'formik'
+import React, { useCallback, useMemo, forwardRef } from 'react'
+import { useFormikContext } from 'formik'
 import { TextInput } from 'react-native'
 
 import Input, { P } from '../Input'
@@ -8,48 +8,49 @@ import FieldParams from './fieldParams'
 
 type Props = FieldParams & P
 
-const FormField: React.FC<Props> = React.memo(({ name, ...otherProps }) => {
-  const { setFieldTouched, setFieldValue, errors, touched, values } =
-    useFormikContext<any>()
+const FormField = forwardRef<TextInput, Props>(
+  ({ name, ...otherProps }, ref) => {
+    const { setFieldTouched, setFieldValue, errors, touched, values } =
+      useFormikContext<any>()
 
-  // Memoized change handler
-  const handleTextChange = useCallback(
-    (text: string) => {
-      setFieldValue(name, text)
-    },
-    [setFieldValue, name]
-  )
+    // Memoized change handler
+    const handleTextChange = useCallback(
+      (text: string) => {
+        setFieldValue(name, text)
+      },
+      [setFieldValue, name]
+    )
 
-  // Memoized blur handler
-  const handleBlur = useCallback(() => {
-    setFieldTouched(name)
-  }, [setFieldTouched, name])
+    // Memoized blur handler
+    const handleBlur = useCallback(() => {
+      setFieldTouched(name)
+    }, [setFieldTouched, name])
 
-  // Memoize the input props
-  const inputProps = useMemo(
-    () => ({
-      value: values[name],
-      onBlur: handleBlur,
-      onChangeText: handleTextChange,
-      ...otherProps,
-    }),
-    [values[name], handleBlur, handleTextChange, otherProps]
-  )
+    // Memoize the input props
+    const inputProps = useMemo(
+      () => ({
+        value: values[name],
+        onBlur: handleBlur,
+        onChangeText: handleTextChange,
+        ...otherProps,
+      }),
+      [values[name], handleBlur, handleTextChange, otherProps]
+    )
 
-  const error = errors[name]
-  const visible = touched[name]
+    const error = errors[name]
+    const visible = touched[name]
 
-  return (
-    <>
-      <FormikField {...inputProps} component={Input} />
-      {/* <Input {...inputProps} /> */}
-      <Error
-        error={typeof error === 'string' ? error : undefined}
-        visible={typeof visible === 'boolean' ? visible : false}
-      />
-    </>
-  )
-})
+    return (
+      <>
+        <Input {...inputProps} />
+        <Error
+          error={typeof error === 'string' ? error : undefined}
+          visible={typeof visible === 'boolean' ? visible : false}
+        />
+      </>
+    )
+  }
+)
 
 FormField.displayName = 'FormField'
 

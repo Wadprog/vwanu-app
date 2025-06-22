@@ -1,20 +1,27 @@
-import { View } from "react-native";
-import React from "react";
-import { Avatar } from "react-native-paper";
+import { View } from 'react-native'
+import React from 'react'
+import { Avatar } from 'react-native-paper'
 
-import tw from "lib/tailwind";
-import Text from "components/Text";
+import tw from 'lib/tailwind'
+import Text from 'components/Text'
+import LongText from './LongText'
 
 interface ProfAvatarProps {
-  source: string;
-  name: string;
-  subtitle?: string;
-  size: number;
-  layout?: "col" | "row";
+  source: string
+  name: string
+  subtitle?: string
+  size: number
+  layout?: 'col' | 'row'
+  subtitleParams?: {
+    maxLength?: number
+    showMoreText?: string
+    showLessText?: string
+    textStyles?: string
+  }
 }
 
 const ProfAvatar: React.FC<ProfAvatarProps> = ({
-  layout = "row",
+  layout = 'row',
   ...props
 }) => {
   return (
@@ -23,11 +30,17 @@ const ProfAvatar: React.FC<ProfAvatarProps> = ({
       <View style={tw`ml-2 flex justify-center`}>
         <Text style={tw`font-semibold`}>{props.name}</Text>
         {props.subtitle ? (
-          <Text style={tw`font-thin`}>{props?.subtitle}</Text>
+          <LongText
+            textStyles={`font-thin`}
+            text={props?.subtitle}
+            maxLength={props?.subtitleParams?.maxLength}
+            showMoreText={props?.subtitleParams?.showMoreText}
+            showLessText={props?.subtitleParams?.showLessText}
+          />
         ) : null}
       </View>
     </View>
-  );
-};
+  )
+}
 
-export default ProfAvatar;
+export default ProfAvatar

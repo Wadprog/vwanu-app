@@ -12,6 +12,7 @@ import theme from './tailwind.config'
 import mapping from './src/mapping.json'
 import amplifyconfig from './src/amplifyconfiguration.json'
 import { MessageProvider } from './src/contexts/MessageContext'
+import { ScrollProvider } from 'contexts/ScrollContext'
 
 Amplify.configure(amplifyconfig)
 
@@ -26,7 +27,9 @@ const App: React.FC = () => {
         <Authenticator.Provider>
           <MessageProvider>
             <NavigationContainer>
-              <Routes />
+              <ScrollProvider>
+                <Routes />
+              </ScrollProvider>
             </NavigationContainer>
           </MessageProvider>
         </Authenticator.Provider>
