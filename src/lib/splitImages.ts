@@ -6,9 +6,22 @@ interface SplitImages {
   rightColumn: Media[]
 }
 
+// Extract height from Cloudinary URL
+const getImageHeight = (url: string): number => {
+  try {
+    const match = url.match(/h_(\d+)/)
+    if (match && match[1]) {
+      return parseInt(match[1], 10)
+    }
+    return 200 // default height if not found
+  } catch (error) {
+    return 200 // default height if parsing fails
+  }
+}
+
 /**
- * Distributes images into two columns, but first linearly scales
- * each image's height into the range [100, screenHeight/2].
+ * Distributes images into two columns, extracting height from Cloudinary URLs
+ * and scaling them appropriately for the screen.
  */
 export const splitImages = (images: Media[]): SplitImages => {
   const screenHeight = Dimensions.get('window').height
@@ -20,9 +33,10 @@ export const splitImages = (images: Media[]): SplitImages => {
   // Special case: if there's only one image, just map it and put in left column
   if (images.length === 1) {
     const single = images[0]
+    const height = getImageHeight(single.original)
     const scaledHeight = clampHeight(
-      single.height,
-      images,
+      height,
+      images.map((img) => getImageHeight(img.original)),
       minMapped,
       maxMapped
     )
@@ -32,15 +46,16 @@ export const splitImages = (images: Media[]): SplitImages => {
     }
   }
 
-  // 1) Determine the min & max original heights
-  const heights = images.map((img) => img.height)
+  // 1) Get heights from Cloudinary URLs
+  const heights = images.map((img) => getImageHeight(img.original))
   const minOriginal = Math.min(...heights)
   const maxOriginal = Math.max(...heights)
 
   // 2) Map every image's height linearly into [minMapped, maxMapped]
   const scaledImages = images.map((img) => {
+    const originalHeight = getImageHeight(img.original)
     const newHeight = linearMap(
-      img.height,
+      originalHeight,
       minOriginal,
       maxOriginal,
       minMapped,
@@ -93,7 +108,7 @@ function linearMap(
  */
 function clampHeight(
   value: number,
-  images: Media[],
+  heights: number[],
   minMapped: number,
   maxMapped: number
 ) {

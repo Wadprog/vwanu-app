@@ -42,7 +42,7 @@ const FormField = forwardRef<TextInput, Props>(
 
     return (
       <>
-        <Input {...inputProps} />
+        <Input ref={ref} {...inputProps} />
         <Error
           error={typeof error === 'string' ? error : undefined}
           visible={typeof visible === 'boolean' ? visible : false}

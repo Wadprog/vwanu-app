@@ -62,6 +62,9 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
               addSuffix: true,
             }
           )}
+          subtitleParams={{
+            textStyles: 'text-white font-thin',
+          }}
         />
         <PrivacyNotice
           privacyType={props.privacyType}
@@ -87,7 +90,7 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
             <TouchableOpacity onPress={props.toggleDeleting}>
               <Ionicons
                 name="ellipsis-horizontal-outline"
-                size={24}
+                size={15}
                 color="black"
               />
             </TouchableOpacity>

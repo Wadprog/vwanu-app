@@ -1,12 +1,15 @@
 import React from 'react'
-import { Formik, FormikValues } from 'formik'
+import { Formik, FormikValues, FormikHelpers } from 'formik'
 import { View, StyleProp, ViewStyle } from 'react-native'
 import { AnyObjectSchema, InferType } from 'yup'
 
 interface FormProps<S extends AnyObjectSchema> {
   validationSchema: S
   initialValues: InferType<S>
-  onSubmit: (values: InferType<S>) => Promise<void> | void
+  onSubmit: (
+    values: InferType<S>,
+    helpers: FormikHelpers<InferType<S>>
+  ) => Promise<void> | void
   children: React.ReactNode
   style?: StyleProp<ViewStyle>
 }

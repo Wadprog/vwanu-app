@@ -57,8 +57,8 @@ export interface PostProps {
   User?: User
   reactors: User[]
   id: number | string
-  canDelete?: Boolean
-  isReactor?: Boolean
+  canDelete?: boolean
+  isReactor?: boolean
   createdAt: Date
   privacyType: Notice
   UserId: number | string

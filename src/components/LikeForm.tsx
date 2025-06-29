@@ -79,7 +79,6 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
         style={tw`-m-1`}
       >
         <Submit
-          title=" "
           disabled={isLoading}
           appearance="ghost"
           accessoryRight={() => <Kore width={koreHeight} height={koreHeight} />}

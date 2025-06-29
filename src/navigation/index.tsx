@@ -28,12 +28,19 @@ interface GeneralError {
 const Routes: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
 
-  const { nextAction, token } = useSelector((state: RootState) => state.auth)
+  const { nextAction, token, idToken, userId } = useSelector(
+    (state: RootState) => state.auth
+  )
 
   // Check for existing Cognito session when the app starts
   useEffect(() => {
     dispatch(checkExistingSession())
   }, [dispatch])
+
+  // Add debug logging
+  useEffect(() => {
+    console.log('Auth State:', { token, idToken, userId, nextAction })
+  }, [token, idToken, userId, nextAction])
 
   const {
     data: profile,
@@ -41,12 +48,20 @@ const Routes: React.FC = () => {
     isFetching,
     error,
     refetch,
-  } = useFetchProfileQuery('1', {
-    skip: !token,
-    refetchOnMountOrArgChange: false,
-    refetchOnReconnect: false,
-    refetchOnFocus: false,
+  } = useFetchProfileQuery(userId || '', {
+    skip: !token || !idToken || !userId,
+    refetchOnMountOrArgChange: true,
   })
+
+  // Add debug logging for profile
+  useEffect(() => {
+    if (error) {
+      console.log('Profile Error:', error)
+    }
+    if (profile) {
+      console.log('Profile Data:', profile)
+    }
+  }, [profile, error])
 
   // Loading State
   if (isFetching || isLoading || error) {
@@ -86,7 +101,7 @@ const Routes: React.FC = () => {
   }
 
   // Pre-Authentication Flow
-  if (!token) {
+  if (!token || !idToken) {
     // If we're still checking for existing session, show a loading screen
     if (nextAction === NextActions.INITIALIZING) {
       return (

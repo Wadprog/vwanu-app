@@ -43,12 +43,11 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
               key={image.id}
               style={[
                 tw`rounded-l-lg overflow-hidden  ${
-                  !rightColumn.length
-                    ? 'rounded-r-lg bg-red-500'
-                    : 'bg-green-800'
-                } `,
+                  !rightColumn.length ? 'rounded-r-lg' : ''
+                }`,
                 {
                   width: !!rightColumn.length ? width / 2 - 24 : width - 24,
+                  marginBottom: 2,
                 },
               ]}
               onPress={() => {
@@ -61,6 +60,7 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
                   width: !!rightColumn.length ? width / 2 - 4 : width - 8,
                   height: image.height,
                 }}
+                resizeMode="cover"
               />
             </TouchableOpacity>
           ))}
@@ -70,7 +70,7 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
         {!!rightColumn.length && (
           <View
             style={[
-              tw`rounded-r-lg overflow-hidden `,
+              tw`rounded-r-lg overflow-hidden`,
               {
                 width: Dimensions.get('screen').width / 2,
               },
@@ -79,7 +79,13 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
             {rightColumn.map((image) => (
               <TouchableOpacity
                 key={image.id}
-                style={styles.imageContainer}
+                style={[
+                  tw`rounded-r-lg overflow-hidden ml-2`,
+                  // styles.imageContainer,
+                  {
+                    marginBottom: 2,
+                  },
+                ]}
                 onPress={() => {
                   props?.onImageTouch?.(image.id)
                 }}
@@ -90,6 +96,7 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
                     width: Dimensions.get('screen').width / 2,
                     height: image.height,
                   }}
+                  resizeMode="cover"
                 />
               </TouchableOpacity>
             ))}

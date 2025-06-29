@@ -1,11 +1,20 @@
-import React, { useRef } from 'react'
+import React, { useRef, forwardRef, useImperativeHandle } from 'react'
 import { string, object, mixed, InferType } from 'yup'
-import { useFormikContext, FormikHelpers } from 'formik'
+import {
+  View,
+  Platform,
+  Keyboard,
+  Animated,
+  StyleSheet,
+  TextInput,
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import tw from 'lib/tailwind'
 import { Notice } from '../../types'
-import { Form, Field } from './form'
+import { Form, Field, Submit } from './form'
 import { useCreateCommentMutation } from 'store/post'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 const validationSchema = object().shape({
   postText: string().required().label('Comment'),
@@ -19,62 +28,132 @@ interface CommentFormProps {
   postId: string
   onSubmit?: () => void
   isCommenting?: boolean
+  off?: number
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({
-  postId,
-  onSubmit,
-  isCommenting,
-}) => {
-  const [formValues] = React.useState<FormValues>({
-    postText: '',
-    postId: postId,
-    privacyType: 'public',
-  })
-  const [createComment] = useCreateCommentMutation()
+export type CommentFormHandle = {
+  focus: () => void
+}
 
-  const handleSubmit = async (values: any) => {
-    try {
-      await createComment(values)
-      onSubmit?.()
-    } catch (error) {
-      console.error('Failed to submit comment:', error)
-    }
-  }
+const CommentForm = forwardRef<CommentFormHandle, CommentFormProps>(
+  ({ postId, onSubmit, isCommenting, off = 40 }, ref) => {
+    const insets = useSafeAreaInsets()
+    const [formValues] = React.useState<FormValues>({
+      postText: '',
+      postId: postId,
+      privacyType: 'public',
+    })
+    const [createComment] = useCreateCommentMutation()
+    const translateY = React.useRef(new Animated.Value(0)).current
+    const inputRef = useRef<TextInput>(null)
 
-  const handleKeyPress = (e: any) => {
-    const { key, shiftKey } = e.nativeEvent
+    React.useEffect(() => {
+      const keyboardWillShow = (event: any) => {
+        const keyboardHeight = event.endCoordinates.height
+        const offset = Platform.OS === 'ios' ? 0 : insets.bottom
+        Animated.timing(translateY, {
+          toValue: -keyboardHeight + off,
+          duration: event.duration,
+          useNativeDriver: true,
+        }).start()
+      }
 
-    if (key === 'Enter' && !shiftKey) {
-      e.preventDefault()
+      const keyboardWillHide = (event: any) => {
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: event.duration,
+          useNativeDriver: true,
+        }).start()
+      }
 
-      // Get formik context and submit
-      const form = e.target.form
-      if (form) {
-        console.log('form', form)
-        form.dispatchEvent(
-          new Event('submit', { cancelable: true, bubbles: true })
-        )
+      const showSubscription = Keyboard.addListener(
+        Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+        keyboardWillShow
+      )
+      const hideSubscription = Keyboard.addListener(
+        Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+        keyboardWillHide
+      )
+
+      return () => {
+        showSubscription.remove()
+        hideSubscription.remove()
+      }
+    }, [insets.bottom])
+
+    const handleSubmit = async (values: any, { resetForm }: any) => {
+      try {
+        await createComment(values)
+        onSubmit?.()
+        resetForm()
+        Keyboard.dismiss()
+      } catch (error) {
+        console.error('Error submitting comment:', error)
       }
     }
-  }
 
-  return (
-    <Form
-      validationSchema={validationSchema}
-      initialValues={formValues}
-      onSubmit={handleSubmit}
-      style={tw`h-ful`}
-    >
-      <Field
-        multiline
-        name="postText"
-        style={tw`rounded-2xl m-0 p-2`}
-        placeholder="Comment on this post"
-        onKeyPress={(e) => handleKeyPress(e)}
-      />
-    </Form>
-  )
-}
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        console.log('CommentForm focus called, inputRef:', inputRef.current)
+        if (inputRef.current) {
+          console.log('Attempting to focus TextInput...')
+          inputRef.current.focus()
+          console.log('Focus called on TextInput')
+        } else {
+          console.log('inputRef.current is null/undefined')
+        }
+      },
+    }))
+
+    return (
+      <Animated.View
+        style={[styles.container, { transform: [{ translateY }] }]}
+      >
+        <Form
+          validationSchema={validationSchema}
+          initialValues={formValues}
+          onSubmit={handleSubmit}
+          style={tw`w-full bg-white border-t border-gray-200`}
+        >
+          <View style={tw`flex-row items-center w-full px-1`}>
+            <View style={tw`flex-1 py-4`}>
+              <Field
+                ref={inputRef}
+                multiline
+                name="postText"
+                style={tw`rounded-2xl p-2 flex-1 bg-gray-50`}
+                placeholder="Comment on this post"
+              />
+            </View>
+            <Submit
+              appearance="ghost"
+              accessoryRight={() => (
+                <MaterialCommunityIcons
+                  name="send"
+                  size={15}
+                  color={tw.color('primary')}
+                  style={{ transform: [{ rotate: '-15deg' }] }}
+                />
+              )}
+              size="small"
+              style={tw`w-8 h-8 justify-center items-center p-0 ml-2`}
+              textStyle={tw`p-0 m-0`}
+            />
+          </View>
+        </Form>
+      </Animated.View>
+    )
+  }
+)
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+  },
+})
 
 export default CommentForm

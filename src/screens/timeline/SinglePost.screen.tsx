@@ -27,7 +27,7 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
   const { data: commentsData = { data: [] }, isLoading: loadingComments } =
     useFetchPostsQuery({ postId })
   const comments = commentsData.data
-  console.log('comments', comments)
+  console.log('comments', commentsData)
   const { handleScroll, scrollRef } = useScroll()
 
   if (loadingPost) {
@@ -84,7 +84,7 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
           )}
         />
         <View
-          style={tw`absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4`}
+          style={tw`absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-4`}
         >
           <CommentForm
             postId={String(postId)}

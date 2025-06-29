@@ -35,13 +35,6 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
     : (props.amountOfKorems ?? 0) - (props.reactors?.length - 2 || 0)
 
   const handleCommentPress = () => {
-    console.log(
-      '\n\n__________________________________________________________'
-    )
-    console.log('props.disableNavigation', props.id)
-    console.log(
-      '\n\n__________________________________________________________'
-    )
     if (props.disableNavigation) {
       // We're in SinglePost view, just toggle the comment form
       props.toggleCommenting()
@@ -60,10 +53,10 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
       <View>
         {props.amountOfKorems ? (
           <View style={tw`flex flex-row items-center`}>
-            <Text style={tw`text-black font-thin`}>Liked by</Text>
+            <Text style={tw`text-sm font-thin`}>Liked by</Text>
             {props.isReactor && (
               <TouchableOpacity onPress={() => {}}>
-                <Text style={tw`text-primary`}>You</Text>
+                <Text style={tw`text-primary font-thin text-sm`}> You</Text>
               </TouchableOpacity>
             )}
             {props.isReactor ? (
@@ -95,40 +88,35 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
             )}
           </View>
         ) : (
-          <Text style={tw`text-black font-thin`}>Be the first to Kore</Text>
+          <Text style={tw`font-thin text-sm`}>
+            Be the first to
+            <Text style={tw`text-sm font-thin italic`}> Kore</Text>
+          </Text>
         )}
 
         {props.showViewComment && (props.amountOfComments ?? 0) > 0 && (
-          <TouchableOpacity
-            onPress={() => {
-              // @ts-ignore
-              navigation.navigate('Comment', {
-                ...props,
-                showViewComment: false,
-              })
-            }}
-          >
-            <View style={tw`flex flex-row items-center`}>
-              <Text style={tw`text-primary font-thin text-sm`}>View all </Text>
+          <TouchableOpacity onPress={handleCommentPress}>
+            <Text style={tw`text-primary font-thin text-sm`}>
+              View all{' '}
               <Text style={tw`text-primary text-sm`}>
                 {abbreviateNumber(props.amountOfComments || 0)}
               </Text>
               <Text style={tw`text-primary font-thin text-sm`}> comments</Text>
-            </View>
+            </Text>
           </TouchableOpacity>
         )}
       </View>
 
       <View style={tw`flex flex-row items-center justify-between`}>
-        <View style={tw`self-end`}>
-          <Ionicons name="share-outline" size={24} color="black" />
+        <View style={tw`self-end flex-row items-center`}>
+          <Ionicons name="share-outline" size={15} color="black" />
         </View>
         <View style={tw`mx-2 items-center`}>
           <LikeForm
             id={props.id.toString()}
             isReactor={!!props.isReactor}
             amountOfKorems={+props.amountOfKorems}
-            koreHeight={24}
+            koreHeight={18}
             flexDir="column"
           />
         </View>
@@ -143,7 +131,7 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
           <TouchableOpacity onPress={handleCommentPress}>
             <Ionicons
               name="chatbubble-ellipses-outline"
-              size={24}
+              size={15}
               color="black"
             />
           </TouchableOpacity>

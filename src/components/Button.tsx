@@ -1,15 +1,15 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-import React from "react";
+import React from 'react'
 
-import { Button, ButtonProps } from "@ui-kitten/components";
+import { Button, ButtonProps } from '@ui-kitten/components'
 
 // Custom dependencies
-import Text from "./Text";
-import tw from "../lib/tailwind";
+import Text from './Text'
+import tw from '../lib/tailwind'
 
 export interface BtnProps extends ButtonProps {
-  title: string;
-  textStyle?: object;
+  title?: string
+  textStyle?: object
 }
 
 const Btn: React.FC<BtnProps> = ({
@@ -19,20 +19,15 @@ const Btn: React.FC<BtnProps> = ({
   ...props
 }) => {
   return (
-    <>
-      {title ? (
-        <Button onPress={onPress} {...props}>
-          {textStyle ? (
-            <Text style={[tw`text-black`, textStyle]}>{title}</Text>
-          ) : (
-            <Text style={[tw`text-black`]}>{title}</Text>
-          )}
-        </Button>
-      ) : (
-        Button
-      )}
-    </>
-  );
-};
+    <Button onPress={onPress} {...props}>
+      {title &&
+        (textStyle ? (
+          <Text style={[tw`text-black`, textStyle]}>{title.trim()}</Text>
+        ) : (
+          <Text style={[tw`text-black`]}>{title.trim()}</Text>
+        ))}
+    </Button>
+  )
+}
 
-export default Btn;
+export default Btn

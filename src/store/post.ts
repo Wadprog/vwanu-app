@@ -56,7 +56,7 @@ const post = apiSlice.injectEndpoints({
         const queryParams = new URLSearchParams()
 
         if (params?.postId) {
-          queryParams.append('postId', params.postId.toString())
+          queryParams.append('PostId', params.postId.toString())
         }
         if (params?.$sort) {
           Object.entries(params.$sort).forEach(([key, value]) => {
