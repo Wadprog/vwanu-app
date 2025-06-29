@@ -7,6 +7,8 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native'
+import { Video, ResizeMode } from 'expo-av'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import tw from '../lib/tailwind'
 import { Media } from '../../types'
@@ -29,6 +31,63 @@ interface ImageGridProps {
 const ImageGrid: React.FC<ImageGridProps> = (props) => {
   const { width } = Dimensions.get('screen')
   const { leftColumn, rightColumn } = splitImages(props.medias)
+
+  // Check if video support is available
+  const hasVideoSupport = () => {
+    try {
+      require('expo-av')
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  // Helper function to determine if the URI is a video
+  const isVideo = (uri: string) => {
+    return (
+      uri &&
+      (uri.includes('.mp4') ||
+        uri.includes('.mov') ||
+        uri.includes('.avi') ||
+        uri.includes('video') ||
+        uri.includes('.webm'))
+    )
+  }
+
+  // Component to render media (image or video)
+  const MediaItem = ({ item, style }: { item: Media; style: any }) => (
+    <View style={[style, { position: 'relative' }]}>
+      {hasVideoSupport() && isVideo(item.original) ? (
+        <>
+          <Video
+            source={{ uri: item.original }}
+            style={style}
+            resizeMode={ResizeMode.COVER}
+            shouldPlay={false}
+            isLooping={false}
+            isMuted={true}
+          />
+          {/* Video play icon overlay */}
+          <View
+            style={[
+              StyleSheet.absoluteFillObject,
+              tw`flex justify-center items-center`,
+            ]}
+          >
+            <View style={tw`bg-black bg-opacity-50 rounded-full p-3`}>
+              <MaterialCommunityIcons name="play" size={32} color="white" />
+            </View>
+          </View>
+        </>
+      ) : (
+        <Image
+          source={{ uri: item.original }}
+          style={style}
+          resizeMode="cover"
+        />
+      )}
+    </View>
+  )
 
   return (
     <View>
@@ -54,13 +113,12 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
                 props?.onImageTouch?.(image.id)
               }}
             >
-              <Image
-                source={{ uri: image.original }}
+              <MediaItem
+                item={image}
                 style={{
                   width: !!rightColumn.length ? width / 2 - 4 : width - 8,
                   height: image.height,
                 }}
-                resizeMode="cover"
               />
             </TouchableOpacity>
           ))}
@@ -90,13 +148,12 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
                   props?.onImageTouch?.(image.id)
                 }}
               >
-                <Image
-                  source={{ uri: image.original }}
+                <MediaItem
+                  item={image}
                   style={{
                     width: Dimensions.get('screen').width / 2,
                     height: image.height,
                   }}
-                  resizeMode="cover"
                 />
               </TouchableOpacity>
             ))}

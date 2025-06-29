@@ -52,7 +52,7 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
 
   return (
     <Screen>
-      <View style={tw`bg-white p-3 relative flex-1`}>
+      <View style={tw`bg-white pb-3 pt-10 px-3 relative flex-1`}>
         <FlatList
           ref={scrollRef}
           onScroll={handleScroll}
@@ -86,11 +86,7 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
         <View
           style={tw`absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-4`}
         >
-          <CommentForm
-            postId={String(postId)}
-            onSubmit={toggleCommenting}
-            isCommenting={commenting}
-          />
+          <CommentForm postId={String(postId)} onSubmit={toggleCommenting} />
         </View>
       </View>
     </Screen>

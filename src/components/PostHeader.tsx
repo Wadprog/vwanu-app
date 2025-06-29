@@ -103,8 +103,8 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
               onPress={props.onDeletePress}
               style={tw`flex flex-row items-center`}
             >
-              <Ionicons name="trash-outline" size={24} color="black" />
-              <Text>Delete Post</Text>
+              <Ionicons name="trash-outline" size={15} color="#000" />
+              <Text style={tw`text-sm font-thin`}>Delete Post</Text>
             </TouchableOpacity>
           </Layout>
         </Popover>

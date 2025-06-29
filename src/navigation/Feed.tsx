@@ -31,15 +31,7 @@ const TimelineNavigator = () => (
       options={options}
     />
     <Stack.Screen name="Gallery" component={ImageGallery} />
-    <Stack.Screen
-      name="SinglePost"
-      component={SinglePostScreen}
-      options={{
-        ...options,
-        headerShown: true,
-        headerTitle: 'Post',
-      }}
-    />
+    <Stack.Screen name="SinglePost" component={SinglePostScreen} />
   </Stack.Navigator>
 )
 

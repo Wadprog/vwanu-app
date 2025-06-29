@@ -23,18 +23,32 @@ const _toFormData = (values: Partial<PostCreationProps>): FormData => {
   formData.append('privacyType', values?.privacyType || 'public')
   if (values?.postImage?.length) {
     values.postImage.forEach((uri) => {
-      const filename = uri.split('/').pop() || 'postImage.jpg'
-      const mimeType = filename.endsWith('.png')
-        ? 'image/png'
-        : filename.endsWith('.gif')
-        ? 'image/gif'
-        : 'image/jpeg'
-      const imageBlob = {
+      const filename = uri.split('/').pop() || 'postMedia.jpg'
+      let mimeType = 'image/jpeg' // default
+
+      // Determine mime type based on file extension
+      if (filename.endsWith('.png')) {
+        mimeType = 'image/png'
+      } else if (filename.endsWith('.gif')) {
+        mimeType = 'image/gif'
+      } else if (filename.endsWith('.mp4')) {
+        mimeType = 'video/mp4'
+      } else if (filename.endsWith('.mov')) {
+        mimeType = 'video/quicktime'
+      } else if (filename.endsWith('.avi')) {
+        mimeType = 'video/x-msvideo'
+      } else if (filename.endsWith('.webm')) {
+        mimeType = 'video/webm'
+      } else if (uri.includes('video')) {
+        mimeType = 'video/mp4' // fallback for video
+      }
+
+      const mediaBlob = {
         uri,
         type: mimeType,
         name: filename,
       } as any
-      formData.append('postImage', imageBlob)
+      formData.append('postImage', mediaBlob)
     })
   }
   return formData
@@ -136,6 +150,31 @@ const post = apiSlice.injectEndpoints({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { data: newPost } = await queryFulfilled
+
+          // Update all active fetchPosts queries by invalidating the cache
+          // This will trigger a refetch for all active queries
+          dispatch(apiSlice.util.invalidateTags([{ type: 'Post', id: 'LIST' }]))
+
+          // Alternatively, update specific known query patterns
+          // Update the main timeline query (most common case)
+          const timelineQueryArgs = {
+            $limit: 10,
+            $skip: 0,
+            $sort: { createdAt: -1 as const },
+          }
+
+          dispatch(
+            post.util.updateQueryData(
+              'fetchPosts',
+              timelineQueryArgs,
+              (draft) => {
+                // Insert the new post at the top of the 'data' array
+                draft.data.unshift(newPost)
+              }
+            )
+          )
+
+          // Also update the query without parameters (for profile pages, etc.)
           dispatch(
             post.util.updateQueryData('fetchPosts', undefined, (draft) => {
               // Insert the new post at the top of the 'data' array
@@ -207,6 +246,20 @@ const post = apiSlice.injectEndpoints({
         }
       },
     }),
+    deletePost: build.mutation<PostProps, string | number>({
+      query: (id) => ({
+        url: `${endpoints.POSTS}/${id.toString()}`,
+        method: HttpMethods.DELETE,
+      }),
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(post.util.invalidateTags([{ type: 'Post' as const, id }]))
+        } catch (error) {
+          console.error('Delete post failed:', error)
+        }
+      },
+    }),
   }),
 })
 
@@ -218,6 +271,7 @@ const {
   useCreateCommentMutation,
   useToggleKoreMutation,
   useFetchPostQuery,
+  useDeletePostMutation,
 } = post
 
 export {
@@ -228,4 +282,5 @@ export {
   useCreateCommentMutation,
   useToggleKoreMutation,
   useFetchPostQuery,
+  useDeletePostMutation,
 }

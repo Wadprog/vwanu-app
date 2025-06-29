@@ -12,6 +12,7 @@ import {
   Pressable,
 } from 'react-native'
 import { RouteProp } from '@react-navigation/native'
+import { Video, ResizeMode } from 'expo-av'
 
 import tw from 'lib/tailwind'
 import LikeForm from 'components/LikeForm'
@@ -74,6 +75,28 @@ const ImageGallery: React.FC = () => {
     }, 100)
   }
 
+  // Check if video support is available
+  const hasVideoSupport = () => {
+    try {
+      require('expo-av')
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  // Helper function to determine if the URI is a video
+  const isVideo = (uri: string) => {
+    return (
+      uri &&
+      (uri.includes('.mp4') ||
+        uri.includes('.mov') ||
+        uri.includes('.avi') ||
+        uri.includes('video') ||
+        uri.includes('.webm'))
+    )
+  }
+
   return (
     <View style={tw`flex-1 `}>
       <View style={tw`flex-1 relative`}>
@@ -103,10 +126,22 @@ const ImageGallery: React.FC = () => {
           }}
           renderItem={({ item }) => (
             <View style={{ width, height }}>
-              <Image
-                source={{ uri: item.original }}
-                style={[StyleSheet.absoluteFillObject]}
-              />
+              {hasVideoSupport() && isVideo(item.original) ? (
+                <Video
+                  source={{ uri: item.original }}
+                  style={[StyleSheet.absoluteFillObject]}
+                  resizeMode={ResizeMode.CONTAIN}
+                  shouldPlay={true}
+                  isLooping={true}
+                  isMuted={false}
+                  useNativeControls
+                />
+              ) : (
+                <Image
+                  source={{ uri: item.original }}
+                  style={[StyleSheet.absoluteFillObject]}
+                />
+              )}
             </View>
           )}
           keyExtractor={(item) => item.id}
@@ -124,18 +159,63 @@ const ImageGallery: React.FC = () => {
                 scrollToActiveIndex(index)
               }}
             >
-              <Image
-                source={{ uri: item.original }}
-                style={{
-                  width: IMG_SIZE,
-                  height: IMG_SIZE,
-                  borderRadius: SPACING,
-                  marginBottom: 10,
-                  marginRight: 10,
-                  borderWidth: 2,
-                  borderColor: activeIndex === index ? 'white' : 'transparent',
-                }}
-              />
+              <View style={{ position: 'relative' }}>
+                {hasVideoSupport() && isVideo(item.original) ? (
+                  <>
+                    <Video
+                      source={{ uri: item.original }}
+                      style={{
+                        width: IMG_SIZE,
+                        height: IMG_SIZE,
+                        borderRadius: SPACING,
+                        marginBottom: 10,
+                        marginRight: 10,
+                        borderWidth: 2,
+                        borderColor:
+                          activeIndex === index ? 'white' : 'transparent',
+                      }}
+                      resizeMode={ResizeMode.COVER}
+                      shouldPlay={false}
+                      isMuted={true}
+                    />
+                    {/* Video play icon overlay for thumbnail */}
+                    <View
+                      style={[
+                        StyleSheet.absoluteFillObject,
+                        {
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          borderRadius: SPACING,
+                          marginBottom: 10,
+                          marginRight: 10,
+                        },
+                      ]}
+                    >
+                      <View style={tw`bg-black bg-opacity-50 rounded-full p-1`}>
+                        <MaterialCommunityIcons
+                          name="play"
+                          size={16}
+                          color="white"
+                        />
+                      </View>
+                    </View>
+                  </>
+                ) : (
+                  <Image
+                    source={{ uri: item.original }}
+                    style={{
+                      width: IMG_SIZE,
+                      height: IMG_SIZE,
+                      borderRadius: SPACING,
+                      marginBottom: 10,
+                      marginRight: 10,
+                      borderWidth: 2,
+                      borderColor:
+                        activeIndex === index ? 'white' : 'transparent',
+                    }}
+                  />
+                )}
+              </View>
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item.id}

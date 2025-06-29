@@ -6,7 +6,7 @@ import tw from '../lib/tailwind'
 import ImageGrid from './ImageGrid'
 import AvatarGroup from './AvatarGroups'
 import useToggle from '../hooks/useToggle'
-import { useUpdatePostMutation } from '../store/post'
+import { useDeletePostMutation, useUpdatePostMutation } from '../store/post'
 import PostHeader from './PostHeader'
 import PostFooter from './PostFooter'
 import { PostProps } from '../../types'
@@ -28,13 +28,18 @@ const Post: React.FC<Props> = ({
   const [modifying, toggleModifying] = useToggle(false)
   const [seeLikers, toggleLikerPopover] = useToggle(false)
   const [updatePost, updatePostMeta] = useUpdatePostMutation()
+  const [deletePost, deletePostMeta] = useDeletePostMutation()
 
+  const handleDeletePress = () => {
+    deletePost(props.id)
+    toggleModifying()
+  }
   return (
     <View style={tw`static my-3`}>
       <PostHeader
         {...props}
         updatePostMeta={updatePostMeta}
-        onDeletePress={toggleModifying}
+        onDeletePress={handleDeletePress}
         toggleDeleting={toggleModifying}
         deletingVisible={modifying}
         updatePost={updatePost}
