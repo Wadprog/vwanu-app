@@ -2,7 +2,14 @@ import React from 'react'
 import { Divider } from '@ui-kitten/components'
 
 import tw from '../lib/tailwind'
+import { ViewStyle } from 'react-native'
 
-const Separator = () => <Divider style={tw`my-2`} />
+interface Props {
+  style?: string
+}
+
+const Separator = ({ style = '' }: Props) => (
+  <Divider style={tw`my-2 ${style}`} />
+)
 
 export default Separator

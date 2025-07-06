@@ -1,11 +1,18 @@
-import * as React from "react";
-import Svg, { Rect, Defs, Pattern, Use, Image } from "react-native-svg";
+import * as React from 'react'
+import Svg, { Rect, Defs, Pattern, Use, Image } from 'react-native-svg'
 
-interface SVGComponentProps {}
-const SVGComponent: React.FC<SVGComponentProps> = (props) => (
+interface SVGComponentProps {
+  height: number
+  width: number
+}
+const SVGComponent: React.FC<SVGComponentProps> = ({
+  width,
+  height,
+  ...props
+}) => (
   <Svg
-    width={24}
-    height={24}
+    width={width || 24}
+    height={height || 24}
     viewBox="0 0 20 16"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -33,5 +40,5 @@ const SVGComponent: React.FC<SVGComponentProps> = (props) => (
       />
     </Defs>
   </Svg>
-);
-export default SVGComponent;
+)
+export default SVGComponent

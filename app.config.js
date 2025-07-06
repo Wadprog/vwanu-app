@@ -13,5 +13,8 @@ export default {
     ios: {
       bundleIdentifier: 'com.waddprog.vwanu-app',
     },
+    android: {
+      package: 'com.waddprog.vwanuapp',
+    },
   },
 }

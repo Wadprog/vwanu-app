@@ -9,7 +9,7 @@ export type P = React.ComponentProps<typeof TextInput> &
     showPasswordToggle?: boolean
   }
 
-const AppInput: React.FC<P> = (props) => {
+const AppInput = React.forwardRef<TextInput, P>((props, ref) => {
   const {
     label,
     iconLeft,
@@ -21,7 +21,18 @@ const AppInput: React.FC<P> = (props) => {
     ...rest
   } = props
 
-  const inputRef = React.useRef<TextInput>(null)
+  const internalRef = React.useRef<TextInput>(null)
+
+  // Use the forwarded ref if provided, otherwise use internal ref
+  const textInputRef = ref || internalRef
+
+  const handleWrapperPress = () => {
+    if (typeof textInputRef === 'function') {
+      // ref is a callback ref, we can't call focus on it directly
+      return
+    }
+    textInputRef?.current?.focus()
+  }
 
   return (
     <Wrapper
@@ -31,16 +42,18 @@ const AppInput: React.FC<P> = (props) => {
       style={style}
       onIconLeftPress={onIconLeftPress}
       onIconRightPress={onIconRightPress}
-      onPress={() => inputRef.current?.focus()}
+      onPress={handleWrapperPress}
     >
       <TextInput
-        ref={inputRef}
+        ref={textInputRef}
         {...rest}
         onFocus={onFocus && onFocus}
         onBlur={props.onBlur && props.onBlur}
       />
     </Wrapper>
   )
-}
+})
 
-export default React.memo(AppInput)
+AppInput.displayName = 'AppInput'
+
+export default AppInput

@@ -14,9 +14,11 @@ import Separator from './Separator'
 import ProfAvatar from './ProfAvatar'
 import { useFetchLikesQuery } from '../store/post'
 import { ActivityIndicator } from 'react-native-paper'
+import nameToPicture from 'lib/nameToPicture'
+import { formatDistanceToNow } from 'date-fns'
 
 interface LikerPopoverProps {
-  id: number
+  id: string
   visible: boolean
   onDismiss: () => void
 }
@@ -27,7 +29,9 @@ const LikerPopover: React.FC<LikerPopoverProps> = ({
   onDismiss,
   ...props
 }) => {
-  const likers = useFetchLikesQuery(props.id)
+  const likers = useFetchLikesQuery(props.id, {
+    skip: !visible, // Skip the query when popover is not visible
+  })
 
   return (
     <Popover
@@ -51,11 +55,21 @@ const LikerPopover: React.FC<LikerPopoverProps> = ({
             onRefresh={likers.refetch}
             data={likers.data?.data || []}
             renderItem={({ item }) => (
-              <ProfAvatar
-                name={`${item?.User.firstName} ${item?.User.lastName}`}
-                source={item?.User.profilePicture || ''}
-                size={25}
-              />
+              <>
+                <ProfAvatar
+                  name={`${item?.User.firstName} ${item?.User.lastName}`}
+                  source={
+                    (item.User.profilePicture as string) ||
+                    nameToPicture(item?.User)
+                  }
+                  size={25}
+                />
+                <Text category="c1" appearance="hint">
+                  {formatDistanceToNow(new Date(item.createdAt as Date), {
+                    addSuffix: true,
+                  })}
+                </Text>
+              </>
             )}
             keyExtractor={(_, index) => index.toString()}
             ItemSeparatorComponent={Separator}

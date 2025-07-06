@@ -6,7 +6,8 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 // Custom core imports
 import TimelineScreen from '../screens/timeline/Timeline.screen'
 import ImageGallery from '../screens/timeline/ImageGallery.screen'
-import CommentScreen from '../screens/timeline/Comment.screen'
+import CommentScreen from '../screens/timeline/Comment.screen' // to delete
+import SinglePostScreen from '../screens/timeline/SinglePost.screen'
 import { FeedStackParams } from '../../types'
 
 const options = {
@@ -30,7 +31,7 @@ const TimelineNavigator = () => (
       options={options}
     />
     <Stack.Screen name="Gallery" component={ImageGallery} />
-    <Stack.Screen name="Comment" options={options} component={CommentScreen} />
+    <Stack.Screen name="SinglePost" component={SinglePostScreen} />
   </Stack.Navigator>
 )
 
@@ -39,5 +40,5 @@ export default TimelineNavigator
 // Helper function to get tab bar visibility
 const getTabBarVisibility = (route: any) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Timeline'
-  return routeName === 'Gallery'
+  return routeName === 'Gallery' || routeName === 'SinglePost'
 }

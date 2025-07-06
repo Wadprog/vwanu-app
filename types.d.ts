@@ -28,7 +28,14 @@ interface User {
   firstName: string
   lastName: string
   createdAt: Date
-  profilePicture: string
+  profilePicture:
+    | string
+    | {
+        original: string
+        medium: string
+        small: string
+        tiny: string
+      }
   amountOfFollower: number
   amountOfFollowing: number
   nextCompletionStep: NextCompletionStep
@@ -44,17 +51,18 @@ export interface PostProps {
   postText?: string
   Media?: Medias[]
   createdAt?: string
-  amountOfKorems?: number
-  amountOfComments?: number
+  amountOfKorems: number
+  amountOfComments: number
   likers?: User[]
   User?: User
   reactors: User[]
   id: number | string
-  canDelete?: Boolean
-  isReactor?: Boolean
+  canDelete?: boolean
+  isReactor?: boolean
   createdAt: Date
   privacyType: Notice
   UserId: number | string
+  disableNavigation?: boolean
 }
 
 export interface UpdatePost {
@@ -71,10 +79,11 @@ export interface PostKoremProps {
 interface CommentInterface extends Omit<PostProps, 'media'> {
   postId: Pick<PostProps, 'id'>
 }
-export type FeedStackParams = {
-  Timeline: undefined
-  Gallery: undefined
+export type FeedStackParams = Record<string, object | undefined> & {
+  Feed: undefined
   Comment: PostProps
+  Gallery: PostProps & { initialSlide?: number }
+  SinglePost: { postId: string; isCommenting?: boolean }
 }
 
 export type ProfileStackParams = {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { TouchableOpacity, View } from 'react-native'
+import { StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { Popover, Layout, Divider } from '@ui-kitten/components'
 
 import Text from './Text'
@@ -18,6 +18,7 @@ interface PrivacyNotice {
   isEditing?: Boolean
   displayLong?: Boolean
   onBlur?: () => void
+  style?: string
 }
 
 const notices: Notice[] = ['private', 'network', 'public']
@@ -33,11 +34,13 @@ const PrivacyNotice: React.FC<PrivacyNotice> = ({
   }
   const [modifying, toggleModifying] = useToggle(false)
   return (
-    <View style={tw`flex flex-row items-center justify-center`}>
+    <View
+      style={tw`flex flex-row items-center justify-center ${props.style || ''}`}
+    >
       <View style={tw`flex flex-row items-center mb-1 self-end`}>
         <Ionicons
           name={mapPrivacyNoticeToIcon(props.privacyType)}
-          size={15}
+          size={13}
           color={props.canEdit ? tw.color(`gray-500`) : tw.color(`gray-400`)}
         />
         {displayLong && (
@@ -56,7 +59,7 @@ const PrivacyNotice: React.FC<PrivacyNotice> = ({
             >
               <Ionicons
                 name="chevron-down-outline"
-                size={15}
+                size={13}
                 color={tw.color(`gray-500`)}
               />
             </TouchableOpacity>

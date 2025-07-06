@@ -1,10 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet'
 import {
   View,
   FlatList,
@@ -12,49 +8,49 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Modal,
+  Pressable,
 } from 'react-native'
+import { RouteProp } from '@react-navigation/native'
+import { Video, ResizeMode } from 'expo-av'
 
 import tw from 'lib/tailwind'
-import Kore from 'assets/svg/Kore'
-import useToggle from 'hooks/useToggle'
-import animations from 'config/animations'
-import CommentForm from 'components/CommentForm'
-import AnimationLoader from 'components/AnimationLoader'
+import LikeForm from 'components/LikeForm'
+import CommentForm, { CommentFormHandle } from 'components/CommentForm'
+import { FeedStackParams } from '../../../types'
+
+import { setTabBarVisibility } from 'store/ui-slice'
+import { useDispatch } from 'react-redux'
 
 const IMG_SIZE = 80
 const SPACING = 10
 const { width, height } = Dimensions.get('screen')
 
-const ImageGallery: React.FC<{}> = () => {
-  console.log('\n\n\n\n')
-  console.log('*************')
-  console.log('Loaded ImageGallery')
-  console.log('\n\n\n\n')
-  const route = useRoute()
+type GalleryScreenRouteProp = RouteProp<FeedStackParams, 'Gallery'>
+
+const ImageGallery: React.FC = () => {
+  const dispatch = useDispatch()
   const navigation = useNavigation()
-  // @ts-ignore
-  const images = route?.params?.Media || []
+  const route = useRoute<GalleryScreenRouteProp>()
+  const images = route.params?.Media || []
 
   const [activeIndex, setActiveIndex] = React.useState(
     //@ts-ignore
     route?.params?.initialSlide || 0
   )
+  const [modalVisible, setModalVisible] = useState(false)
+  const commentFormRef = useRef<CommentFormHandle>(null)
+
+  useEffect(() => {
+    dispatch(setTabBarVisibility(false))
+    return () => {
+      dispatch(setTabBarVisibility(true))
+    }
+  }, [])
 
   const topRef = React.useRef<FlatList>(null)
   const thumbRef = React.useRef<FlatList>(null)
-  const animationRef = React.useRef<AnimationLoader>(null)
-  const [liked, toggleLiked] = useToggle(false)
 
-  const snapPoints = ['40%']
-  const handleLike = (): void => {
-    if (!liked) {
-      toggleLiked()
-      return
-    }
-
-    animationRef.current?.play()
-  }
-  const bottomSheetRef = React.useRef<BottomSheet>(null)
   const scrollToActiveIndex = (index: number) => {
     setActiveIndex(index)
 
@@ -72,7 +68,33 @@ const ImageGallery: React.FC<{}> = () => {
   }
 
   const handleOpenComments = () => {
-    bottomSheetRef.current?.expand()
+    setModalVisible(true)
+
+    setTimeout(() => {
+      commentFormRef.current?.focus()
+    }, 100)
+  }
+
+  // Check if video support is available
+  const hasVideoSupport = () => {
+    try {
+      require('expo-av')
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  // Helper function to determine if the URI is a video
+  const isVideo = (uri: string) => {
+    return (
+      uri &&
+      (uri.includes('.mp4') ||
+        uri.includes('.mov') ||
+        uri.includes('.avi') ||
+        uri.includes('video') ||
+        uri.includes('.webm'))
+    )
   }
 
   return (
@@ -84,12 +106,42 @@ const ImageGallery: React.FC<{}> = () => {
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={(ev) => {
+            const index = Math.floor(ev.nativeEvent.contentOffset.x / width)
+            setActiveIndex(index)
+
+            // Auto-scroll thumbnail list to keep active item visible
+            if (index * IMG_SIZE - IMG_SIZE / 2 > width / 2) {
+              thumbRef?.current?.scrollToOffset({
+                offset: index * (IMG_SIZE + SPACING) - width / 2 + IMG_SIZE / 2,
+                animated: true,
+              })
+            } else {
+              // If we're at the beginning, scroll thumbnail list to start
+              thumbRef?.current?.scrollToOffset({
+                offset: 0,
+                animated: true,
+              })
+            }
+          }}
           renderItem={({ item }) => (
             <View style={{ width, height }}>
-              <Image
-                source={{ uri: item.original }}
-                style={[StyleSheet.absoluteFillObject]}
-              />
+              {hasVideoSupport() && isVideo(item.original) ? (
+                <Video
+                  source={{ uri: item.original }}
+                  style={[StyleSheet.absoluteFillObject]}
+                  resizeMode={ResizeMode.CONTAIN}
+                  shouldPlay={true}
+                  isLooping={true}
+                  isMuted={false}
+                  useNativeControls
+                />
+              ) : (
+                <Image
+                  source={{ uri: item.original }}
+                  style={[StyleSheet.absoluteFillObject]}
+                />
+              )}
             </View>
           )}
           keyExtractor={(item) => item.id}
@@ -101,40 +153,85 @@ const ImageGallery: React.FC<{}> = () => {
           showsHorizontalScrollIndicator={false}
           style={{ position: 'absolute', bottom: 20 }}
           contentContainerStyle={{ paddingHorizontal: 20 }}
-          onMomentumScrollEnd={(ev) => {
-            const index = Math.floor(ev.nativeEvent.contentOffset.x / width)
-            scrollToActiveIndex(index)
-          }}
           renderItem={({ item, index }) => (
             <TouchableOpacity
               onPress={() => {
                 scrollToActiveIndex(index)
               }}
             >
-              <Image
-                source={{ uri: item.original }}
-                style={{
-                  width: IMG_SIZE,
-                  height: IMG_SIZE,
-                  borderRadius: SPACING,
-                  marginBottom: 10,
-                  marginRight: 10,
-                  borderWidth: 2,
-                  borderColor: activeIndex === index ? 'white' : 'transparent',
-                }}
-              />
+              <View style={{ position: 'relative' }}>
+                {hasVideoSupport() && isVideo(item.original) ? (
+                  <>
+                    <Video
+                      source={{ uri: item.original }}
+                      style={{
+                        width: IMG_SIZE,
+                        height: IMG_SIZE,
+                        borderRadius: SPACING,
+                        marginBottom: 10,
+                        marginRight: 10,
+                        borderWidth: 2,
+                        borderColor:
+                          activeIndex === index ? 'white' : 'transparent',
+                      }}
+                      resizeMode={ResizeMode.COVER}
+                      shouldPlay={false}
+                      isMuted={true}
+                    />
+                    {/* Video play icon overlay for thumbnail */}
+                    <View
+                      style={[
+                        StyleSheet.absoluteFillObject,
+                        {
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          borderRadius: SPACING,
+                          marginBottom: 10,
+                          marginRight: 10,
+                        },
+                      ]}
+                    >
+                      <View style={tw`bg-black bg-opacity-50 rounded-full p-1`}>
+                        <MaterialCommunityIcons
+                          name="play"
+                          size={16}
+                          color="white"
+                        />
+                      </View>
+                    </View>
+                  </>
+                ) : (
+                  <Image
+                    source={{ uri: item.original }}
+                    style={{
+                      width: IMG_SIZE,
+                      height: IMG_SIZE,
+                      borderRadius: SPACING,
+                      marginBottom: 10,
+                      marginRight: 10,
+                      borderWidth: 2,
+                      borderColor:
+                        activeIndex === index ? 'white' : 'transparent',
+                    }}
+                  />
+                )}
+              </View>
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item.id}
         />
         <View style={tw`absolute bottom-[${IMG_SIZE * 2}px] right-2 `}>
-          <TouchableOpacity
-            onPress={handleLike}
-            style={tw`bg-white bg-opacity-50 items-center justify-center 
-           rounded-full w-10 h-10 mb-3`}
+          <View
+            style={tw`bg-white bg-opacity-50 items-center justify-center rounded-full w-10 h-10 mb-2`}
           >
-            <Kore />
-          </TouchableOpacity>
+            <LikeForm
+              id={route.params.id.toString()}
+              isReactor={route.params.isReactor || false}
+              amountOfKorems={route.params.amountOfKorems}
+              koreHeight={20}
+              flexDir="row"
+            />
+          </View>
 
           <TouchableOpacity
             onPress={handleOpenComments}
@@ -148,49 +245,52 @@ const ImageGallery: React.FC<{}> = () => {
             />
           </TouchableOpacity>
         </View>
-
-        <View
-          style={tw`absolute bottom-40 h-100 w-[${width * 0.75}px] right-10`}
-        >
-          <AnimationLoader
-            source={animations.confeti}
-            loop={false}
-            ref={animationRef}
-          />
-        </View>
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack()
-          }}
-          style={tw`absolute bg-white rounded-full p-2 bg-opacity-50 top-10 right-3 `}
-        >
-          <MaterialCommunityIcons
-            name="close"
-            style={tw`text-black`}
-            size={24}
-          />
-        </TouchableOpacity>
       </View>
-      {/* @ts-ignore */}
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1} // Initially hidden
-        snapPoints={snapPoints}
-        enablePanDownToClose
-        backdropComponent={(props) => (
-          <>
-            {/* @ts-ignore */}
-            <BottomSheetBackdrop {...props} />
-          </>
-        )}
+
+      {/* Close button moved outside the main container */}
+      <Pressable
+        onPress={() => {
+          navigation.goBack()
+        }}
+        style={({ pressed }) => [
+          {
+            position: 'absolute',
+            top: 50,
+            right: 20,
+            width: 50,
+            height: 50,
+            backgroundColor: pressed
+              ? 'rgba(255,255,255,0.9)'
+              : 'rgba(255,255,255,0.8)',
+            borderRadius: 25,
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            elevation: 10,
+          },
+        ]}
+        // hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
       >
-        {/* @ts-ignore */}
-        <BottomSheetView style={tw`flex-1 px-1`}>
-          {/* @ts-ignore */}
-          <CommentForm postId={route.params?.id!.toString()} />
-        </BottomSheetView>
-      </BottomSheet>
+        <MaterialCommunityIcons name="close" color="black" size={28} />
+      </Pressable>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible)
+        }}
+      >
+        <CommentForm
+          ref={commentFormRef}
+          off={10}
+          postId={route.params?.id!.toString()}
+          onSubmit={() => {
+            setModalVisible(false)
+          }}
+        />
+      </Modal>
     </View>
   )
 }

@@ -17,7 +17,7 @@ export enum endpoints {
   POSTKOREMS = '/korem',
   COMMUNITY = '/commmunities',
   BANNER = '/banners',
-  COMMENTS = 'post/comments',
+  COMMENTS = 'comments',
 }
 
 export const HttpMethods = {

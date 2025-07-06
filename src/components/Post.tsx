@@ -2,43 +2,52 @@ import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { View, Dimensions } from 'react-native'
 
-import Text from './Text'
 import tw from '../lib/tailwind'
 import ImageGrid from './ImageGrid'
-import CommentForm from './CommentFrom'
 import AvatarGroup from './AvatarGroups'
 import useToggle from '../hooks/useToggle'
-import { useFetchLikesQuery, useUpdatePostMutation } from '../store/post'
+import { useDeletePostMutation, useUpdatePostMutation } from '../store/post'
 import PostHeader from './PostHeader'
 import PostFooter from './PostFooter'
 import { PostProps } from '../../types'
+import LongText from './LongText'
 
 const { height } = Dimensions.get('screen')
+
 interface Props extends PostProps {
   showViewComment?: boolean
+  disableNavigation?: boolean
+  toggleCommenting: () => void
 }
-const Post: React.FC<Props> = ({ showViewComment = true, ...props }) => {
+const Post: React.FC<Props> = ({
+  showViewComment = true,
+  toggleCommenting,
+  ...props
+}) => {
   const navigation = useNavigation()
-  const [commenting, toggleCommenting] = useToggle(false)
   const [modifying, toggleModifying] = useToggle(false)
   const [seeLikers, toggleLikerPopover] = useToggle(false)
-  const likers = useFetchLikesQuery(props.id, { skip: seeLikers })
   const [updatePost, updatePostMeta] = useUpdatePostMutation()
+  const [deletePost, deletePostMeta] = useDeletePostMutation()
 
+  const handleDeletePress = () => {
+    deletePost(props.id)
+    toggleModifying()
+  }
   return (
-    <View style={tw`static`}>
+    <View style={tw`static my-3`}>
       <PostHeader
         {...props}
         updatePostMeta={updatePostMeta}
-        onDeletePress={toggleModifying}
+        onDeletePress={handleDeletePress}
         toggleDeleting={toggleModifying}
         deletingVisible={modifying}
         updatePost={updatePost}
       />
 
-      <Text category="p2" style={tw`text-gray-500 mb-2`}>
-        {props.postText}
-      </Text>
+      {props.postText && (
+        <LongText style={tw`text-gray-500  font-thin`} text={props.postText} />
+      )}
 
       {props?.Media && props.Media.length > 0 && (
         <ImageGrid
@@ -61,17 +70,8 @@ const Post: React.FC<Props> = ({ showViewComment = true, ...props }) => {
         toggleCommenting={toggleCommenting}
         toggleLikerPopover={toggleLikerPopover}
         seeLikers={seeLikers}
-        likers={likers}
         showViewComment={showViewComment}
       />
-
-      {commenting && (
-        <View
-          style={tw`bg-red-500 bg-opacity-50 absolute top-0 left-0 h-[${height}px]`}
-        >
-          <CommentForm postId={props.id} />
-        </View>
-      )}
     </View>
   )
 }

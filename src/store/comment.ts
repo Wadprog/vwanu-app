@@ -1,6 +1,6 @@
-import apiSlice from "./api-slice";
-import { endpoints, HttpMethods } from "../config";
-import { CommentInterface, PostProps } from "../../types";
+import apiSlice from './api-slice'
+import { endpoints, HttpMethods } from '../config'
+import { CommentInterface, PostProps } from '../../types'
 
 const comment = apiSlice.injectEndpoints({
   endpoints: (build) => ({
@@ -13,13 +13,16 @@ const comment = apiSlice.injectEndpoints({
 
     postComment: build.query<CommentInterface, number>({
       query: (postId) => ({
-        url: `${endpoints.COMMENTS}?postId=${postId}`,
+        url: `${endpoints.COMMENTS}/postId=${postId}`,
+        body: {
+          postId,
+        },
         method: HttpMethods.POST,
       }),
     }),
   }),
-});
+})
 
-const { useFetchCommentsQuery, usePostCommentQuery } = comment;
+const { useFetchCommentsQuery, usePostCommentQuery } = comment
 
-export { useFetchCommentsQuery, usePostCommentQuery };
+export { useFetchCommentsQuery, usePostCommentQuery }
