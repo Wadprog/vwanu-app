@@ -31,7 +31,7 @@ interface PostHeaderProps extends PostProps {
 
 const PostHeader: React.FC<PostHeaderProps> = (props) => {
   const user = useSelector((state: RootState) => state.auth)
-  const PostUser = props.User
+  const PostUser = props.user
   const navigation = useNavigation()
 
   const handlePress = () => {
@@ -55,7 +55,7 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
               ? PostUser?.profilePicture.toString()
               : (PostUser && nameToPicture(PostUser)) || ''
           }
-          name={`${props.User?.firstName} ${props.User?.lastName}`}
+          name={`${props.user?.firstName} ${props.user?.lastName}`}
           subtitle={formatDistanceToNow(
             new Date(props.createdAt || Date.now()),
             {
@@ -68,7 +68,7 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
         />
         <PrivacyNotice
           privacyType={props.privacyType}
-          canEdit={user.userId === props.User?.id}
+          canEdit={user.userId === props.user?.id}
           isEditing={props.updatePostMeta.isLoading}
           onEdit={async (newPrivacyType) => {
             try {

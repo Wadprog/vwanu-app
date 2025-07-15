@@ -49,12 +49,12 @@ type Notice = 'public' | 'private' | 'network'
 
 export interface PostProps {
   postText?: string
-  Media?: Medias[]
+  media?: Medias[]
   createdAt?: string
   amountOfKorems: number
   amountOfComments: number
   likers?: User[]
-  User?: User
+  user?: User
   reactors: User[]
   id: number | string
   canDelete?: boolean
