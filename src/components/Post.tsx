@@ -49,12 +49,12 @@ const Post: React.FC<Props> = ({
         <LongText style={tw`text-gray-500  font-thin`} text={props.postText} />
       )}
 
-      {props?.Media && props.Media.length > 0 && (
+      {props?.media && props.media.length > 0 && (
         <ImageGrid
-          medias={props.Media || []}
+          medias={props.media || []}
           style={tw`mb-2`}
           onImageTouch={(id) => {
-            const index = props.Media?.findIndex(
+            const index = props.media?.findIndex(
               (media) => media?.id === id.toString()
             )
             //@ts-ignore

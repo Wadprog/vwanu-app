@@ -32,7 +32,7 @@ const ImageGallery: React.FC = () => {
   const dispatch = useDispatch()
   const navigation = useNavigation()
   const route = useRoute<GalleryScreenRouteProp>()
-  const images = route.params?.Media || []
+  const images = route.params?.media || []
 
   const [activeIndex, setActiveIndex] = React.useState(
     //@ts-ignore
