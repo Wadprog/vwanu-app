@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { AppDispatch } from 'store'
 import axios from 'axios'
-import env from '../config/environnement'
 import { Profile } from '../../types'
 
 import {
@@ -135,7 +134,7 @@ export const signUpUser = createAsyncThunk(
     gender,
     dob,
   }: Profile & { password: string }) => {
-    const url = `${env.apiUrl}/auth/signup`
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/auth/signup`
 
     await axios.post(url, {
       email,
