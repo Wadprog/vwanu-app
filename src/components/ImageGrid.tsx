@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Dimensions,
-  Image,
+  // Image,
   ScrollView,
   StyleSheet,
   View,
@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import { Video, ResizeMode } from 'expo-av'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { Image } from 'expo-image'
 
 import tw from '../lib/tailwind'
 import { Media } from '../../types'
@@ -27,6 +28,9 @@ interface ImageGridProps {
   style?: any
   onImageTouch?: (id: number) => void
 }
+
+const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const ImageGrid: React.FC<ImageGridProps> = (props) => {
   const { width } = Dimensions.get('screen')
@@ -81,9 +85,14 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
         </>
       ) : (
         <Image
-          source={{ uri: item.original }}
+          source={[item.original, item.tiny, item.medium, item.small]}
+          // source={{uri:"https://placehold.co/600x400"}}
           style={style}
-          resizeMode="cover"
+          contentFit="cover"
+          transition={1000}
+          accessibilityLabel="Post image"
+          cachePolicy={'memory-disk'}
+          placeholder={blurhash}
         />
       )}
     </View>

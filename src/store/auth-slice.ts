@@ -520,6 +520,7 @@ const authSlice = createSlice({
   },
 })
 
+console.log('authSlice', authSlice)
 export const { setNextAction } = authSlice.actions
 
 export default authSlice.reducer
