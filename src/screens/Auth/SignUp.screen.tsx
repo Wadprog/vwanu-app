@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, TouchableOpacity } from 'react-native'
-import { string, ref, bool, object } from 'yup'
+import { string, ref, bool, object, date } from 'yup'
 import Icon from '@expo/vector-icons/Ionicons'
 
 import tw from 'lib/tailwind'
@@ -12,13 +12,16 @@ import { useDispatch } from 'react-redux'
 import { RootState, AppDispatch } from 'store'
 import PageWrapper from 'components/PageWrapper'
 import { useAuthActions } from 'hooks/useAuthActions'
-import { Form, Field, Submit, Switch } from 'components/form'
 import { NextActions, setNextAction } from 'store/auth-slice'
+import { Form, Field, Submit, Switch, Select, DateInput } from 'components/form'
+
 const ValidationSchema = object().shape({
   email: string().email().required().label('Email'),
   password: string().required().min(8).label('Password'),
   lastName: string().required().label('Last Name'),
   firstName: string().required().label('First Name'),
+  gender: string().required().oneOf(['m', 'f']).label('Gender'),
+  birthdate: string(), // date().min(new Date('2000-01-01')).required().label('Date of Birth'),
   passwordConfirmation: string()
     .required()
     .oneOf([ref('password'), ''], 'Passwords must be match'),
@@ -27,11 +30,24 @@ const ValidationSchema = object().shape({
     .oneOf([true], 'You must accept the terms of use and the policy privacy'),
 })
 
+const genders = [
+  {
+    label: 'male',
+    value: 'm',
+  },
+
+  {
+    label: 'female',
+    value: 'f',
+  },
+]
+
 const RegisterScreen: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { signUpUserWithMessage } = useAuthActions()
   const [showPassword, toggleShowPassword] = useToggle(false)
   const { error, loading } = useSelector((state: RootState) => state.auth)
+  const random4letters = Math.random().toString(36).substring(2, 6)
 
   return (
     <PageWrapper
@@ -45,12 +61,14 @@ const RegisterScreen: React.FC<{}> = () => {
         <Form
           validationSchema={ValidationSchema}
           initialValues={{
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: '',
-            passwordConfirmation: '',
-            termOfUse: false,
+            firstName: 'wadson',
+            lastName: 'wadson',
+            email: `gwaddkara+${random4letters}@gmail.com`,
+            password: 'Password@123!',
+            passwordConfirmation: 'Password@123!',
+            gender: 'm',
+            birthdate: '1990-01-01',
+            termOfUse: true,
           }}
           onSubmit={async (values) => {
             dispatch(signUpUserWithMessage(values))
@@ -84,6 +102,28 @@ const RegisterScreen: React.FC<{}> = () => {
               autoCapitalize="none"
               placeholder="Email"
               name="email"
+            />
+            <Select
+              label="Gender"
+              items={genders}
+              // @ts-ignore
+              style={tw`mb-5 rounded`}
+              required
+              autoCapitalize="none"
+              placeholder="Select your gender"
+              name="gender"
+              type="text"
+              autoComplete="new-email"
+              iconLeft={<Icon />}
+            />
+            <DateInput
+              label="Date of Birth"
+              style={tw`mb-5 rounded`}
+              // @ts-ignore
+              placeholder="Date of Birth"
+              name="birthdate"
+              type="text"
+              autoComplete="new-email"
             />
 
             <Field

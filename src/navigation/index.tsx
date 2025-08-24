@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo, useCallback, useState } from 'react'
 import { Text, View } from 'react-native'
-import { Layout } from '@ui-kitten/components'
+import { Layout, Button } from '@ui-kitten/components'
 import { useSelector, useDispatch } from 'react-redux'
 import { ActivityIndicator } from 'react-native-paper'
 
@@ -17,7 +17,6 @@ import { NextCompletionStep } from '../../types.d'
 import { useFetchProfileQuery } from '../store/profiles'
 import { NextActions, checkExistingSession } from '../store/auth-slice'
 
-// Add this interface at the top of the file, after the imports
 interface GeneralError {
   className: string
   code: number
@@ -25,23 +24,68 @@ interface GeneralError {
   name: string
 }
 
+interface AuthState {
+  nextAction: NextActions
+  token: string | null
+  idToken: string | null
+  userId: string | null
+}
+
+interface ProfileData {
+  nextCompletionStep?: string | number
+}
+
+interface RetryState {
+  retryCount: number
+  lastRetryTime: number
+  maxRetries: number
+}
+
 const Routes: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
 
-  const { nextAction, token, idToken, userId } = useSelector(
-    (state: RootState) => state.auth
+  const authState = useSelector((state: RootState) => state.auth) as AuthState
+  const { nextAction, token, idToken, userId } = authState
+
+  // Enhanced retry state management
+  const [retryState, setRetryState] = useState<RetryState>({
+    retryCount: 0,
+    lastRetryTime: 0,
+    maxRetries: 3,
+  })
+
+  // Memoized auth check
+  const isAuthenticated = useMemo(
+    () => Boolean(token && idToken && userId),
+    [token, idToken, userId]
+  )
+
+  // Memoized loading state check
+  const isInitializing = useMemo(
+    () => nextAction === NextActions.INITIALIZING,
+    [nextAction]
   )
 
   // Check for existing Cognito session when the app starts
   useEffect(() => {
-    dispatch(checkExistingSession())
-  }, [dispatch])
+    if (isInitializing) {
+      dispatch(checkExistingSession())
+    }
+  }, [dispatch, isInitializing])
 
-  // Add debug logging
+  // Optimized debug logging (only in development)
   useEffect(() => {
-    console.log('Auth State:', { token, idToken, userId, nextAction })
+    if (__DEV__) {
+      console.log('Auth State:', {
+        token: !!token,
+        idToken: !!idToken,
+        userId,
+        nextAction,
+      })
+    }
   }, [token, idToken, userId, nextAction])
 
+  // Enhanced profile query with retry logic
   const {
     data: profile,
     isLoading,
@@ -49,88 +93,255 @@ const Routes: React.FC = () => {
     error,
     refetch,
   } = useFetchProfileQuery(userId || '', {
-    skip: !token || !idToken || !userId,
+    skip: !isAuthenticated,
     refetchOnMountOrArgChange: true,
   })
 
-  // Add debug logging for profile
+  // Separate polling logic to avoid circular dependency
+  const pollingInterval = useMemo(() => {
+    return profile ? 30000 : 0 // Poll every 30s if we have profile data
+  }, [profile])
+
+  // Smart retry function with exponential backoff
+  const handleRetry = useCallback(async () => {
+    const now = Date.now()
+    const timeSinceLastRetry = now - retryState.lastRetryTime
+
+    // Implement exponential backoff: 1s, 2s, 4s, 8s...
+    const backoffDelay = Math.pow(2, retryState.retryCount) * 1000
+
+    if (timeSinceLastRetry < backoffDelay) {
+      // Too soon to retry, wait a bit more
+      const remainingTime = backoffDelay - timeSinceLastRetry
+      setTimeout(() => handleRetry(), remainingTime)
+      return
+    }
+
+    if (retryState.retryCount < retryState.maxRetries) {
+      setRetryState((prev) => ({
+        ...prev,
+        retryCount: prev.retryCount + 1,
+        lastRetryTime: now,
+      }))
+
+      try {
+        await refetch()
+        // Reset retry count on successful fetch
+        setRetryState((prev) => ({ ...prev, retryCount: 0 }))
+      } catch (error) {
+        console.log('Retry failed:', error)
+      }
+    }
+  }, [refetch, retryState])
+
+  // Reset retry state when authentication changes
   useEffect(() => {
-    if (error) {
-      console.log('Profile Error:', error)
-    }
-    if (profile) {
-      console.log('Profile Data:', profile)
-    }
-  }, [profile, error])
+    setRetryState((prev) => ({ ...prev, retryCount: 0 }))
+  }, [isAuthenticated])
 
-  // Loading State
-  if (isFetching || isLoading || error) {
-    const errorMessage =
-      error &&
-      ('error' in error
-        ? {
-            message: 'Network error. Please check your internet connection.',
-            onRetry: refetch,
-            retryText: 'Try Again',
-          }
-        : 'data' in error &&
-          (error.data as GeneralError)?.className === 'general-error'
-        ? {
-            message: 'Unable to connect to database. Please try again later.',
-            onRetry: refetch,
-            retryText: 'Retry Connection',
-          }
-        : null)
+  // Enhanced error message calculation with retry context
+  const errorMessage = useMemo(() => {
+    if (!error) return null
 
-    return (
-      <Screen loading={isFetching || isLoading} error={errorMessage}>
-        {error ? (
-          <Layout style={tw`flex-1 justify-center items-center p-4`}>
-            <Text style={tw`text-lg text-gray-600 mb-4 text-center`}>
-              {'data' in error &&
-              (error.data as GeneralError)?.className === 'general-error'
-                ? 'We are having trouble connecting to our database. Our team has been notified and is working on it.'
-                : 'Unable to load your profile. Please check your connection and try again.'}
-            </Text>
-          </Layout>
-        ) : (
-          <Text>Loading Profile...</Text>
-        )}
+    const isRetryable = retryState.retryCount < retryState.maxRetries
+    const retryText = isRetryable
+      ? `Try Again ${
+          retryState.retryCount > 0
+            ? `(${retryState.retryCount}/${retryState.maxRetries})`
+            : ''
+        }`
+      : 'Max Retries Reached'
+
+    if ('error' in error) {
+      return {
+        message: isRetryable
+          ? 'Network error. Please check your internet connection.'
+          : 'Network error. Please check your connection and restart the app if the problem persists.',
+        onRetry: isRetryable ? handleRetry : undefined,
+        retryText,
+      }
+    }
+
+    if (
+      'data' in error &&
+      (error.data as GeneralError)?.className === 'general-error'
+    ) {
+      return {
+        message: isRetryable
+          ? 'Unable to connect to database. Please try again later.'
+          : 'Database connection failed. Please restart the app or contact support.',
+        onRetry: isRetryable ? handleRetry : undefined,
+        retryText,
+      }
+    }
+
+    return {
+      message: isRetryable
+        ? 'Unable to load your profile. Please check your connection and try again.'
+        : 'Failed to load profile after multiple attempts. Please restart the app.',
+      onRetry: isRetryable ? handleRetry : undefined,
+      retryText,
+    }
+  }, [error, retryState, handleRetry])
+
+  // Enhanced error display message with retry context
+  const errorDisplayMessage = useMemo(() => {
+    if (!error) return ''
+
+    const hasRetried = retryState.retryCount > 0
+    const maxRetriesReached = retryState.retryCount >= retryState.maxRetries
+
+    if (
+      'data' in error &&
+      (error.data as GeneralError)?.className === 'general-error'
+    ) {
+      if (maxRetriesReached) {
+        return 'Database connection failed after multiple attempts. Our team has been notified. Please restart the app or contact support.'
+      }
+      return `We are having trouble connecting to our database. ${
+        hasRetried
+          ? `Retry ${retryState.retryCount}/${retryState.maxRetries}.`
+          : ''
+      } Our team has been notified and is working on it.`
+    }
+
+    if (maxRetriesReached) {
+      return 'Unable to load your profile after multiple attempts. Please check your connection and restart the app.'
+    }
+
+    return `Unable to load your profile. ${
+      hasRetried
+        ? `Retry ${retryState.retryCount}/${retryState.maxRetries}.`
+        : ''
+    } Please check your connection and try again.`
+  }, [error, retryState])
+
+  // Memoized loading state message
+  const loadingMessage = useMemo(() => {
+    if (retryState.retryCount > 0) {
+      return `Loading Profile... (Retry ${retryState.retryCount}/${retryState.maxRetries})`
+    }
+    return 'Loading Profile...'
+  }, [retryState])
+
+  // Render initializing screen
+  const renderInitializingScreen = useCallback(
+    () => (
+      <Screen>
+        <View style={tw`flex-1 justify-center items-center`}>
+          <ActivityIndicator size="large" animating={true} />
+          <Text style={tw`mt-4 text-gray-600`}>Checking session...</Text>
+        </View>
       </Screen>
-    )
-  }
+    ),
+    []
+  )
 
-  // Pre-Authentication Flow
-  if (!token || !idToken) {
-    // If we're still checking for existing session, show a loading screen
-    if (nextAction === NextActions.INITIALIZING) {
-      return (
-        <Screen>
-          <View style={tw`flex-1 justify-center items-center`}>
-            <ActivityIndicator size="large" animating={true} />
-            <Text style={tw`mt-4`}>Checking session...</Text>
-          </View>
-        </Screen>
-      )
-    }
+  // Render navigation based on auth state
+  const renderNavigationByAuthState = useCallback(() => {
     return nextAction === NextActions.BOARDED ? (
       <BoardingNavigator />
     ) : (
       <AuthNavigator />
     )
-  }
+  }, [nextAction])
 
-  // Post-Authentication Flow
-  if (profile) {
-    switch (parseInt(profile.nextCompletionStep || '0')) {
+  // Render navigation based on profile completion
+  const renderNavigationByProfile = useCallback((profileData: ProfileData) => {
+    // Safe parsing of nextCompletionStep
+    let completionStep = NextCompletionStep.START // Default value
+
+    if (
+      profileData.nextCompletionStep !== undefined &&
+      profileData.nextCompletionStep !== null
+    ) {
+      const step =
+        typeof profileData.nextCompletionStep === 'string'
+          ? parseInt(profileData.nextCompletionStep, 10)
+          : Number(profileData.nextCompletionStep)
+
+      // Validate the parsed value
+      if (!isNaN(step) && step >= 1 && step <= 4) {
+        completionStep = step
+      } else {
+        console.warn(
+          'Invalid nextCompletionStep in profile:',
+          profileData.nextCompletionStep,
+          'defaulting to START'
+        )
+      }
+    }
+
+    if (__DEV__) {
+      console.log(
+        'Profile navigation - completionStep:',
+        completionStep,
+        'raw value:',
+        profileData.nextCompletionStep
+      )
+    }
+
+    switch (completionStep) {
       case NextCompletionStep.PROFILE_COMPLETE:
         return <AppNavigation />
       default:
         return <ProfileCreationNavigator />
     }
-  }
+  }, [])
 
-  return <ProfileCreationNavigator />
+  // Determine what to render based on current state
+  const renderContent = useMemo(() => {
+    // Show loading/error states for authenticated users
+    if (isAuthenticated && (isFetching || isLoading || error)) {
+      return (
+        <Screen loading={isFetching || isLoading} error={errorMessage}>
+          {error ? (
+            <Layout style={tw`flex-1 justify-center items-center p-4`}>
+              <Text style={tw`text-lg text-gray-600 mb-4 text-center`}>
+                {errorDisplayMessage}
+              </Text>
+            </Layout>
+          ) : (
+            <View style={tw`flex-1 justify-center items-center`}>
+              <ActivityIndicator size="large" animating={true} />
+              <Text style={tw`mt-4 text-gray-600`}>{loadingMessage}</Text>
+            </View>
+          )}
+        </Screen>
+      )
+    }
+
+    // Pre-Authentication Flow
+    if (!isAuthenticated) {
+      if (isInitializing) {
+        return renderInitializingScreen()
+      }
+      return renderNavigationByAuthState()
+    }
+
+    // Post-Authentication Flow - User is authenticated
+    if (profile) {
+      return renderNavigationByProfile(profile)
+    }
+
+    // Fallback to profile creation if no profile data yet
+    return <ProfileCreationNavigator />
+  }, [
+    isAuthenticated,
+    isFetching,
+    isLoading,
+    error,
+    errorMessage,
+    errorDisplayMessage,
+    loadingMessage,
+    isInitializing,
+    profile,
+    renderInitializingScreen,
+    renderNavigationByAuthState,
+    renderNavigationByProfile,
+  ])
+
+  return renderContent
 }
 
 export default Routes

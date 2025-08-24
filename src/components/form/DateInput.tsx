@@ -1,7 +1,6 @@
 /* eslint-disable operator-linebreak */
 import React from 'react'
 import { useFormikContext } from 'formik'
-import { TouchableOpacity } from 'react-native'
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker'
@@ -36,14 +35,11 @@ const DateInput: React.FC<DateInputProps> = ({
   const handleDateChange = (_: DateTimePickerEvent, new_date?: Date) => {
     if (!new_date) return
     setDate(new Date(new_date))
-    setFieldValue(name, new_date)
+    const formattedDate = new_date.toISOString().split('T')[0]
+    setFieldValue(name, formattedDate)
   }
   return (
     <>
-      {/* <TouchableOpacity
-        onBlur={() => setFieldTouched(name)}
-        onPress={toggleModal}
-      > */}
       <Wrapper
         iconLeft={<Icon />}
         label={label}
@@ -53,7 +49,6 @@ const DateInput: React.FC<DateInputProps> = ({
       >
         <Text style={tw`text-black`}>{date.toDateString()}</Text>
       </Wrapper>
-      {/* </TouchableOpacity> */}
 
       <Modal visible={showModal} onClose={toggleModal} onConfirm={toggleModal}>
         <View style={tw`items-center`}>
