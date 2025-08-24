@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { AppDispatch } from 'store'
+import axios from 'axios'
+import env from '../config/environnement'
+import { Profile } from '../../types'
 
 import {
-  signUp,
   confirmSignUp,
   signIn,
   signOut,
@@ -81,12 +83,6 @@ export enum NextActions {
   SIGNED_IN_SIGNED_UP = 'SIGNED_IN_SIGNED_UP',
 }
 
-interface User {
-  email: string
-  firstName: string
-  lastName: string
-}
-
 interface AuthState {
   username: string | null
   token: string | null
@@ -136,17 +132,18 @@ export const signUpUser = createAsyncThunk(
     password,
     firstName,
     lastName,
-  }: User & { password: string }) => {
-    await signUp({
-      username: email,
+    gender,
+    dob,
+  }: Profile & { password: string }) => {
+    const url = `${env.apiUrl}/auth/signup`
+
+    await axios.post(url, {
+      email,
       password,
-      options: {
-        userAttributes: {
-          given_name: firstName,
-          family_name: lastName,
-          picture: 'https://vwanu.com/logo.png',
-        },
-      },
+      firstName,
+      lastName,
+      gender,
+      dob,
     })
     // Store password temporarily in the service instead of returning it
     AuthSessionService.storeTempPassword(email, password)
@@ -169,11 +166,33 @@ export const confirmSignUpUser = createAsyncThunk<
     throw new Error('Confirmation code expired. Please sign up again.')
   }
 
+  // Ensure no existing session before signing in
+  try {
+    await getCurrentUser()
+    await signOut({ global: true })
+  } catch (_) {}
+
   // Sign in the user after confirmation
-  await signIn({
-    username: email,
-    password,
-  })
+  try {
+    await signIn({
+      username: email,
+      password,
+    })
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message?.toLowerCase().includes('already a signed in user')
+    ) {
+      try {
+        await signOut({ global: true })
+        await signIn({ username: email, password })
+      } catch (retryError) {
+        throw retryError
+      }
+    } else {
+      throw error
+    }
+  }
 
   // Get the session to retrieve tokens
   try {
@@ -209,6 +228,12 @@ export const signInUser = createAsyncThunk<
   { email: string; password: string }
 >('auth/signIn', async ({ email, password }, { dispatch }) => {
   try {
+    // Ensure no existing session before signing in
+    try {
+      await getCurrentUser()
+      await signOut({ global: true })
+    } catch (_) {}
+
     const signInResult = await signIn({
       username: email,
       password,
@@ -229,6 +254,26 @@ export const signInUser = createAsyncThunk<
     }
   } catch (error) {
     if (error instanceof Error) {
+      if (error.message?.toLowerCase().includes('already a signed in user')) {
+        // Attempt a forced sign-out and retry once
+        try {
+          await signOut({ global: true })
+          const retry = await signIn({ username: email, password })
+          if (retry.nextStep.signInStep === 'CONFIRM_SIGN_UP') {
+            AuthSessionService.storeTempPassword(email, password)
+            throw new Error('NEEDS_CONFIRMATION')
+          }
+          const session = await fetchAuthSession()
+          return {
+            token: session.tokens?.accessToken?.toString() || null,
+            idToken: session.tokens?.idToken?.toString() || null,
+            userId: session.tokens?.idToken?.payload.sub || null,
+            ...session,
+          }
+        } catch (retryError) {
+          throw retryError
+        }
+      }
       if (error.message === 'NEEDS_CONFIRMATION') {
         throw new Error('NEEDS_CONFIRMATION')
       }
@@ -357,6 +402,10 @@ const authSlice = createSlice({
         state.error = null
       })
       .addCase(signUpUser.fulfilled, (state, action) => {
+        console.log('\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+        console.log('[debug] signUpUser.fulfilled action', action)
+        console.log('[debug] signUpUser.fulfilled state', state)
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n')
         state.loading = false
         state.username = action.payload
         state.previousAction = state.nextAction

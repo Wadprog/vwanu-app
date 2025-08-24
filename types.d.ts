@@ -40,21 +40,23 @@ interface User {
   amountOfFollowing: number
   nextCompletionStep: NextCompletionStep
   id: string
+  email: string
 }
 
 interface Profile extends User {
-  dob?: string
+  dob?: Date
+  gender?: string
 }
 type Notice = 'public' | 'private' | 'network'
 
 export interface PostProps {
   postText?: string
-  media?: Medias[]
+  Media?: Medias[]
   createdAt?: string
   amountOfKorems: number
   amountOfComments: number
   likers?: User[]
-  user?: User
+  User?: User
   reactors: User[]
   id: number | string
   canDelete?: boolean

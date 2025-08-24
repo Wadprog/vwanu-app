@@ -7,13 +7,7 @@ import { RootState } from '../../store'
 
 // Core components
 import tw from '../../lib/tailwind'
-import {
-  Form,
-  Submit,
-  DateInput,
-  Select,
-  MultiSelector,
-} from '../../components/form'
+import { Form, Submit, Select, MultiSelector } from '../../components/form'
 import PageWrapper from '../../components/PageWrapper'
 
 import {
@@ -29,13 +23,9 @@ const ValidationSchema = Yup.object().shape({
   country: Yup.string().required().label('Country'),
   interests: Yup.array().required().label('Interests'),
   state: Yup.string().required().label('State'),
-  dob: Yup.date().required().label('Date of Birth'),
-  gender: Yup.string().required().oneOf(['m', 'f']).label('Gender'),
 })
 
 const initialValues: Yup.InferType<typeof ValidationSchema> = {
-  dob: new Date(),
-  gender: 'm',
   state: '',
   country: '',
   city: '',
@@ -45,18 +35,6 @@ const initialValues: Yup.InferType<typeof ValidationSchema> = {
 const Icon = () => (
   <MaterialCommunityIcons name="gender-male-female" size={24} color="black" />
 )
-
-const genders = [
-  {
-    label: 'male',
-    value: 'm',
-  },
-
-  {
-    label: 'female',
-    value: 'f',
-  },
-]
 
 const RegisterScreen: React.FC<{}> = () => {
   const { userId } = useSelector((state: RootState) => state.auth)
@@ -119,28 +97,6 @@ const RegisterScreen: React.FC<{}> = () => {
           style={tw`flex-1 flex`}
         >
           <View style={tw`mb-5 flex-1`}>
-            <DateInput
-              label="Date of Birth"
-              style={tw`mb-5 rounded`}
-              // @ts-ignore
-              placeholder="Date of Birth"
-              name="dob"
-              type="text"
-              autoComplete="new-email"
-            />
-            <Select
-              label="Gender"
-              items={genders}
-              // @ts-ignore
-              style={tw`mb-5 rounded`}
-              required
-              autoCapitalize="none"
-              placeholder="Select your gender"
-              name="gender"
-              type="text"
-              autoComplete="new-email"
-              iconLeft={<Icon />}
-            />
             <Select
               label="Country"
               isLoading={isFetching || isLoading}
