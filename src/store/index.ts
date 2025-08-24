@@ -1,17 +1,13 @@
 import thunkMiddleware from 'redux-thunk'
 import { configureStore } from '@reduxjs/toolkit'
-import { devToolsEnhancer } from 'redux-devtools-extension'
-import reducer from './reducer'
 import { setupListeners } from '@reduxjs/toolkit/query'
+import { devToolsEnhancer } from 'redux-devtools-extension'
 
-import api from '../middleware/api'
-import logger from '../middleware/logger'
 import api_slice from './api-slice'
-import authentication from './auth'
-import authReducer, { AuthSessionService } from './auth-slice'
-// import profileReducer from './profile-slice'
-import profileReducer from './profiles'
 import { uiReducer } from './ui-slice'
+import profileReducer from './profiles'
+import logger from '../middleware/logger'
+import authReducer, { AuthSessionService } from './auth-slice'
 
 export const store = configureStore({
   reducer: {
@@ -26,7 +22,6 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(api_slice.middleware)
       .concat(logger)
-      .concat(api)
       .concat(thunkMiddleware),
   // @ts-ignore
   enhancers: [devToolsEnhancer({ trace: true })],
