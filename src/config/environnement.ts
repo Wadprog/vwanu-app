@@ -15,7 +15,8 @@ const ENV = {
   local: {
     apiUrl:
       Platform.select({
-        ios: 'https://919e756052a9.ngrok-free.app', // 'https://vwanu-api-dev.webvitals.org',
+        // ios: 'https://583f911b1fc3.ngrok-free.app',
+        ios: 'https://api-dev-1.webvitals.org/',
         android: 'http://10.0.2.2:3000/api/v1/', // Special case for Android emulator
       }) || 'http://localhost:3000/api/v1/',
     timeout: 10000,
