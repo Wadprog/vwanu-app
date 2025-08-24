@@ -154,10 +154,7 @@ export const confirmSignUpUser = createAsyncThunk<
   SignInResponse,
   { email: string; code: string }
 >('auth/confirmSignUp', async ({ email, code }) => {
-  console.log(`[debug] confirming sign up for ${email} with code ${code}`)
   await confirmSignUp({ username: email, confirmationCode: code })
-  console.log(`[debug] confirmed sign up great success`)
-
   // Get the stored password from secure service
   const password = AuthSessionService.getTempPassword(email)
 
@@ -401,17 +398,12 @@ const authSlice = createSlice({
         state.error = null
       })
       .addCase(signUpUser.fulfilled, (state, action) => {
-        console.log('\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-        console.log('[debug] signUpUser.fulfilled action', action)
-        console.log('[debug] signUpUser.fulfilled state', state)
-        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n')
         state.loading = false
         state.username = action.payload
         state.previousAction = state.nextAction
         state.nextAction = NextActions.CONFIRMED_SIGNUP
       })
       .addCase(signUpUser.rejected, (state, action) => {
-        console.log('signUpUser.rejected', action.error)
         state.loading = false
         state.error = action.error.message || 'Sign up failed'
       })

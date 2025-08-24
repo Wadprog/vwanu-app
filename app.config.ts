@@ -11,20 +11,24 @@ const OWNER = 'waddprog'
 const APP_NAME = 'Vwanu'
 const BUNDLE_IDENTIFIER = 'com.webvitals.vwanu'
 const PACKAGE_NAME = 'com.webvitals.vwanu'
-const ICON = './assets/images/icons/iOS-Prod.png'
-const ADAPTIVE_ICON = './assets/images/icons/Android-Prod.png'
+const ADAPTIVE_ICON = './src/assets/images/icons/Android-Prod.png'
 const SCHEME = 'vwanu'
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   console.log('⚙️ Building app for environment:', process.env.APP_ENV)
 
-  const { name, bundleIdentifier, icon, adaptiveIcon, packageName, scheme } =
-    getDynamicAppConfig(
-      (process.env.APP_ENV as 'development' | 'preview' | 'production') ||
-        'development'
-    )
-  // console.log("🔍 Config:", config);
-  // console.log("🔍 Name:", name);
+  const environment =
+    (process.env.APP_ENV as 'development' | 'preview' | 'production') ||
+    'development'
+  const {
+    name,
+    bundleIdentifier,
+    ios,
+    android,
+    adaptiveIcon,
+    packageName,
+    scheme,
+  } = getDynamicAppConfig(environment)
 
   return {
     ...config,
@@ -34,19 +38,20 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     orientation: 'portrait',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
-    icon: icon,
     scheme: scheme,
-    ios: {
-      supportsTablet: true,
-      bundleIdentifier: bundleIdentifier,
-    },
-    android: {
-      adaptiveIcon: {
-        foregroundImage: adaptiveIcon,
-        backgroundColor: '#ffffff',
-      },
-      package: packageName,
-    },
+    ios,
+    android,
+    plugins: [
+      [
+        'expo-image-picker',
+        {
+          photosPermission:
+            'The app accesses your photos to let you share them with your friends.',
+        },
+      ],
+      'expo-secure-store',
+      createSplashScreenConfig(environment),
+    ],
     updates: {
       url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
     },
@@ -60,63 +65,91 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     web: {
       bundler: 'metro',
-      favicon: './assets/images/favicon.png',
+      favicon: './src/assets/images/favicon.png',
     },
 
     owner: OWNER,
   }
-  // expo: {
-  //   extra: {
-  //     releaseChannel: process.env.RELEASE_CHANNEL || 'development',
-  //     eas: {
-  //       projectId: 'e550dc60-d34d-4c1d-8286-c670002c81d3',
-  //     },
-  //   },
-  //   runtimeVersion: '1.0.0',
-  //   updates: {
-  //     url: 'https://u.expo.dev/e550dc60-d34d-4c1d-8286-c670002c81d3',
-  //   },
-  //   ios: {
-  //     bundleIdentifier: 'com.waddprog.vwanu-app',
-  //   },
-  //   android: {
-  //     package: 'com.waddprog.vwanuapp',
-  //   },
-  // },
 }
-// Dynamically configure the app based on the environment.
-// Update these placeholders with your actual values.
+
+// Helper function to generate iOS icon configuration
+const createIOSIconConfig = (environment: string) => ({
+  dark: `./src/assets/images/icons/ios/dark/${environment}/logo.png`,
+  light: `./src/assets/images/icons/ios/light/${environment}/logo.png`,
+  tinted: `./src/assets/images/icons/ios/tinted/${environment}/logo.png`,
+})
+
+// Helper function to generate Android adaptive icon configuration
+const createAndroidAdaptiveIcon = () => ({
+  foregroundImage: './src/assets/images/icons/android/logo.png',
+  monochromeImage: './src/assets/images/icons/android/logo.png',
+  backgroundImage: './src/assets/images/icons/android/logo.png',
+  backgroundColor: '#ffffff',
+})
+
+// Helper function to generate splash screen configuration
+const createSplashScreenConfig = (environment: string): [string, any] => [
+  'expo-splash-screen',
+  {
+    image: `./src/assets/images/icons/splash/light/splash.png`,
+    imageWidth: 200,
+    resizeMode: 'contain',
+    backgroundColor: '#ffffff',
+    dark: {
+      image: `./src/assets/images/icons/splash/dark/splash.png`,
+      imageWidth: 200,
+      resizeMode: 'contain',
+      backgroundColor: '#000000',
+    },
+  },
+]
+
+// Environment configuration mapping
+const ENVIRONMENT_CONFIG = {
+  production: {
+    nameSuffix: '',
+    identifierSuffix: '',
+    schemeSuffix: '',
+    supportsTablet: true,
+    adaptiveIcon: ADAPTIVE_ICON,
+  },
+  preview: {
+    nameSuffix: ' Preview',
+    identifierSuffix: '.preview',
+    schemeSuffix: '-prev',
+    supportsTablet: true,
+    adaptiveIcon: './src/assets/images/icons/Android-Prev.png',
+  },
+  development: {
+    nameSuffix: ' Development',
+    identifierSuffix: '.dev',
+    schemeSuffix: '-dev',
+    supportsTablet: true,
+    adaptiveIcon: './src/assets/images/icons/Android-Dev.png',
+  },
+} as const
+
 export const getDynamicAppConfig = (
   environment: 'development' | 'preview' | 'production'
 ) => {
-  if (environment === 'production') {
-    return {
-      name: APP_NAME,
-      bundleIdentifier: BUNDLE_IDENTIFIER,
-      packageName: PACKAGE_NAME,
-      icon: ICON,
-      adaptiveIcon: ADAPTIVE_ICON,
-      scheme: SCHEME,
-    }
-  }
-
-  if (environment === 'preview') {
-    return {
-      name: `${APP_NAME} Preview`,
-      bundleIdentifier: `${BUNDLE_IDENTIFIER}.preview`,
-      packageName: `${PACKAGE_NAME}.preview`,
-      icon: './assets/images/icons/iOS-Prev.png',
-      adaptiveIcon: './assets/images/icons/Android-Prev.png',
-      scheme: `${SCHEME}-prev`,
-    }
-  }
+  const config = ENVIRONMENT_CONFIG[environment]
+  const bundleIdentifier = `${BUNDLE_IDENTIFIER}${config.identifierSuffix}`
+  const packageName = `${PACKAGE_NAME}${config.identifierSuffix}`
 
   return {
-    name: `${APP_NAME} Development`,
-    bundleIdentifier: `${BUNDLE_IDENTIFIER}.dev`,
-    packageName: `${PACKAGE_NAME}.dev`,
-    icon: './assets/images/icons/iOS-Dev.png',
-    adaptiveIcon: './assets/images/icons/Android-Dev.png',
-    scheme: `${SCHEME}-dev`,
+    name: `${APP_NAME}${config.nameSuffix}`,
+    bundleIdentifier,
+    packageName,
+    adaptiveIcon: config.adaptiveIcon,
+    scheme: `${SCHEME}${config.schemeSuffix}`,
+    ios: {
+      supportsTablet: config.supportsTablet,
+      bundleIdentifier,
+      icon: createIOSIconConfig(environment),
+    },
+    android: {
+      package: packageName,
+      adaptiveIcon: createAndroidAdaptiveIcon(),
+    },
   }
 }

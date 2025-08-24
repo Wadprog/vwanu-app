@@ -16,11 +16,7 @@
     "orientation": "portrait",
     "icon": "./src/assets/images/app-icons-data_image/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./src/assets/images/app-icons-data_image/splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#053DC8"
-    },
+
     "updates": {
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/e550dc60-d34d-4c1d-8286-c670002c81d3"

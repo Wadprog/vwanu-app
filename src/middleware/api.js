@@ -2,7 +2,6 @@
 import axios from 'axios'
 import { Alert } from 'react-native'
 import * as actions from '../store/apiAction'
-import env from '../config/environnement'
 
 // eslint-disable-next-line consistent-return
 const api = (store) => (next) => async (action) => {
@@ -14,7 +13,7 @@ const api = (store) => (next) => async (action) => {
   next(action)
   try {
     const response = await axios({
-      baseURL: env.apiUrl,
+      baseURL: process.env.EXPO_PUBLIC_API_URL,
       ...action.payload,
     })
 
