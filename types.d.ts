@@ -46,6 +46,8 @@ interface User {
 interface Profile extends User {
   dob?: Date
   gender?: string
+  bio?: string
+  location?: string
 }
 type Notice = 'public' | 'private' | 'network'
 

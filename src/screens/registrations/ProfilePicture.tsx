@@ -73,7 +73,7 @@ const ProfilePictureForm: React.FC<{}> = () => {
           style={tw`flex-1 flex justify-between`}
         >
           <View style={tw` flex items-center`}>
-            <ImageField name="profilePicture" style={tw`w-3/4 h-[70px]"/>`} />
+            <ImageField name="profilePicture" />
             <View style={tw`mt-5`}>
               <Text style={tw`text-[#979292] text-lg text-center`}>
                 Choose a profile picture

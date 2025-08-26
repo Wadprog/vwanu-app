@@ -1,11 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, TouchableWithoutFeedback, ImageBackground } from "react-native";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { View, TouchableWithoutFeedback, ImageBackground } from 'react-native'
 // Custom Imports
 
-import tw from "../lib/tailwind";
-import Text from "./Text";
+import tw from '../lib/tailwind'
+import LongText from 'components/LongText'
 
 const AddToNetwork = ({ user, onRemove, onAdd, selected }) => (
   <View style={tw` w-[106px] h-[118px] rounded-2xl overflow-hidden m-1`}>
@@ -20,7 +20,7 @@ const AddToNetwork = ({ user, onRemove, onAdd, selected }) => (
             <MaterialCommunityIcons
               name="check"
               size={24}
-              color={tw.color("text-white font-bold")}
+              color={tw.color('text-white font-bold')}
               selectionColor={tw`bg-red-500`}
             />
           </View>
@@ -34,24 +34,25 @@ const AddToNetwork = ({ user, onRemove, onAdd, selected }) => (
       </TouchableWithoutFeedback>
     )}
     <ImageBackground
-      source={{ uri: user?.profilePicture }}
+      source={{ uri: user?.profilePicture.tiny }}
       style={tw`h-full flex flex-1 `}
     >
       <View style={tw`flex-1`} />
-      <Text
-        style={tw`bottom-3 text-right mr-2 leading-6 font-light text-lg truncate text-nowrap z-3`}
-      >
-        Namee
-      </Text>
+      <LongText
+        text={user?.firstName + ' ' + user?.lastName}
+        showShowMoreText={false}
+        maxLength={5}
+        style={tw`font-light text-white z-3`}
+      />
     </ImageBackground>
   </View>
-);
+)
 
-export default AddToNetwork;
+export default AddToNetwork
 
 AddToNetwork.propTypes = {
   selected: PropTypes.bool,
   onAdd: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
   onRemove: PropTypes.func.isRequired,
-};
+}

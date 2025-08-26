@@ -1,13 +1,14 @@
-import React from "react";
-import { useFormikContext } from "formik";
+import React from 'react'
+import { useFormikContext } from 'formik'
 // Custom dependencies
-import Error from "./Error";
-import Select from "../Select";
-import FieldParams from "./fieldParams";
+import Error from './Error'
+import Select from '../Select'
+import tw from 'lib/tailwind'
+import FieldParams from './fieldParams'
 
 interface FormSelectProps extends FieldParams {
-  items: Array<{ label: string; value: string }>;
-  whenSelect?: (arg: string) => void;
+  items: Array<{ label: string; value: string }>
+  whenSelect?: (arg: string) => void
 }
 
 const FormSelect: React.FC<FormSelectProps> = ({
@@ -17,7 +18,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
   ...otherProps
 }) => {
   const { setFieldTouched, setFieldValue, errors, touched } =
-    useFormikContext<any>();
+    useFormikContext<any>()
 
   return (
     <>
@@ -25,18 +26,19 @@ const FormSelect: React.FC<FormSelectProps> = ({
         items={items}
         onBlur={() => setFieldTouched(name)}
         onSelect={(value) => {
-          whenSelect && whenSelect(value);
-          setFieldValue(name, value);
+          whenSelect && whenSelect(value)
+          setFieldValue(name, value)
         }}
         {...otherProps}
+        style={tw`py-3 rounded`}
       />
 
       <Error
-        error={typeof errors[name] === "string" ? errors[name] : undefined}
-        visible={typeof touched[name] === "boolean" ? touched[name] : false}
+        error={typeof errors[name] === 'string' ? errors[name] : undefined}
+        visible={typeof touched[name] === 'boolean' ? touched[name] : false}
       />
     </>
-  );
-};
+  )
+}
 
-export default FormSelect;
+export default FormSelect

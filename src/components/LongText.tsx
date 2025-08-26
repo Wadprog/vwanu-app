@@ -10,6 +10,7 @@ interface LongTextProps extends TextProps {
   showMoreText?: string
   showLessText?: string
   textStyles?: string // For tailwind styles
+  showShowMoreText?: boolean
 }
 
 const LongText: React.FC<LongTextProps> = ({
@@ -18,6 +19,7 @@ const LongText: React.FC<LongTextProps> = ({
   showMoreText = 'Show more',
   showLessText = 'Show less',
   textStyles = '',
+  showShowMoreText = true,
   ...textProps
 }) => {
   const [isExpanded, toggleExpanded] = useToggle(false)
@@ -26,7 +28,7 @@ const LongText: React.FC<LongTextProps> = ({
   const displayText =
     shouldTruncate && !isExpanded ? `${text.slice(0, maxLength)}...` : text
 
-  const toggleButton = shouldTruncate && (
+  const toggleButton = shouldTruncate && showShowMoreText && (
     <TouchableOpacity onPress={toggleExpanded}>
       <Text style={tw`text-primary text-sm ml-1`}>
         {isExpanded ? showLessText : showMoreText}

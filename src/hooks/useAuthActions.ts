@@ -7,6 +7,7 @@ import {
   signOutUser,
   forgotPassword,
   confirmResetPassword,
+  setRequiredData,
 } from 'store/auth-slice'
 import { Profile, User } from '../../types.d'
 
@@ -26,6 +27,10 @@ export const useAuthActions = () => {
       action: signUpUser,
       successMessage:
         'Sign up successful! Please check your email for the confirmation code.',
+    },
+    setBirthdate: {
+      action: setRequiredData,
+      successMessage: 'You are ready to go!',
     },
     confirmSignUp: {
       action: confirmSignUpUser,
@@ -86,6 +91,10 @@ export const useAuthActions = () => {
       executeAction(actionConfigs.signOut.action, undefined, {
         successMessage: actionConfigs.signOut.successMessage,
       }),
+    setBirthdateWithMessage: createActionMethod<{
+      birthdate: string
+      location: string
+    }>(actionConfigs.setBirthdate),
     forgotPasswordWithMessage: createActionMethod<string>(
       actionConfigs.forgotPassword
     ),

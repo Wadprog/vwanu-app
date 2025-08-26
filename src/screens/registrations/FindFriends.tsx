@@ -28,6 +28,7 @@ const FindFriends: React.FC<{}> = () => {
   const { userId } = useSelector((state: RootState) => state.auth)
   const { data: profile } = useFetchProfileQuery(userId!)
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation()
+  console.log('profile', users)
   return (
     <PageWrapper
       title="Connect with new people"
@@ -56,7 +57,7 @@ const FindFriends: React.FC<{}> = () => {
           <View />
           <View style={tw`flex-1`}>
             <MultiImageSelector
-              items={users}
+              items={users?.data || []}
               name="users"
               isLoading={isFetching}
             />

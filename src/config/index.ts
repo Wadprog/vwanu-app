@@ -8,6 +8,7 @@ export enum endpoints {
   COUNTRIES = 'country',
   STATES = 'state',
   CITIES = 'city',
+  LOCATION = '/location',
   INTERESTS = '/interests',
   USERS = '/users',
   POSTS = '/posts',

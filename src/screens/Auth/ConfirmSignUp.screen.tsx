@@ -67,10 +67,7 @@ const ConfirmSignUpScreen: React.FC = () => {
 
   return (
     <Screen loading={loading} error={error}>
-      <ImageBackground
-        style={tw`px-5  pt-10 flex-1 flex`}
-        source={images.registerBg}
-      >
+      <ImageBackground style={tw`px-5 pt-10 flex-1 flex`}>
         <View style={tw` mb-4`}>
           <Text category="h6" style={tw`text-black mb-[7px] w-1/2`}>
             Almost there!
