@@ -91,6 +91,8 @@ interface AuthState {
   nextAction: NextActions
   previousAction: NextActions
   userId: string | null
+  birthdate: string | null
+  location?: string | null
 }
 
 const initialState: AuthState = {
@@ -102,6 +104,8 @@ const initialState: AuthState = {
   userId: null,
   nextAction: NextActions.INITIALIZING,
   previousAction: NextActions.INITIALIZING,
+  birthdate: null,
+  location: null,
 }
 
 // Define a simplified response interface
@@ -133,6 +137,7 @@ export const signUpUser = createAsyncThunk(
     lastName,
     gender,
     dob,
+    location = undefined,
   }: Profile & { password: string }) => {
     const url = `${process.env.EXPO_PUBLIC_API_URL}/auth/signup`
 
@@ -143,6 +148,7 @@ export const signUpUser = createAsyncThunk(
       lastName,
       gender,
       dob,
+      location,
     })
     // Store password temporarily in the service instead of returning it
     AuthSessionService.storeTempPassword(email, password)
@@ -389,6 +395,15 @@ const authSlice = createSlice({
     setNextAction: (state, action: PayloadAction<NextActions>) => {
       state.nextAction = action.payload
     },
+    setRequiredData: (
+      state,
+      action: PayloadAction<{ birthdate: string; location: string }>
+    ) => {
+      console.log('[setBirthdate]', action.payload)
+      state.birthdate = action.payload.birthdate
+      state.location = action.payload.location
+      state.nextAction = NextActions.SIGNED_IN_SIGNED_UP
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -560,6 +575,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { setNextAction } = authSlice.actions
+export const { setNextAction, setRequiredData } = authSlice.actions
 
 export default authSlice.reducer

@@ -14,20 +14,21 @@ import PageWrapper from 'components/PageWrapper'
 import { useAuthActions } from 'hooks/useAuthActions'
 import { NextActions, setNextAction } from 'store/auth-slice'
 import { Form, Field, Submit, Switch, Select, DateInput } from 'components/form'
+import routes from 'navigation/routes'
 
 const ValidationSchema = object().shape({
   email: string().email().required().label('Email'),
   password: string().required().min(8).label('Password'),
   lastName: string().required().label('Last Name'),
   firstName: string().required().label('First Name'),
-  gender: string().required().oneOf(['m', 'f']).label('Gender'),
-  birthdate: string(), // date().min(new Date('2000-01-01')).required().label('Date of Birth'),
+  gender: string().required().oneOf(['m', 'f']).label('Gender'), // date().min(new Date('2000-01-01')).required().label('Date of Birth'),
   passwordConfirmation: string()
     .required()
     .oneOf([ref('password'), ''], 'Passwords must be match'),
   termOfUse: bool()
     .required()
     .oneOf([true], 'You must accept the terms of use and the policy privacy'),
+  birthdate: string().required().label('Date of Birth'),
 })
 
 const genders = [
@@ -48,11 +49,12 @@ const RegisterScreen: React.FC<{}> = () => {
   const [showPassword, toggleShowPassword] = useToggle(false)
   const { error, loading } = useSelector((state: RootState) => state.auth)
   const random4letters = Math.random().toString(36).substring(2, 6)
+  const { birthdate } = useSelector((state: RootState) => state.auth)
 
   return (
     <PageWrapper
-      title="Personal Information"
-      subtitle="Please fill the following"
+      title="Let's create your account"
+      subtitle="Tell us a little about yourself"
       pageNumber={0}
       loading={loading}
       error={error}
@@ -67,7 +69,7 @@ const RegisterScreen: React.FC<{}> = () => {
             password: 'Password@123!',
             passwordConfirmation: 'Password@123!',
             gender: 'm',
-            birthdate: '1990-01-01',
+            birthdate: birthdate ?? '1990-01-01',
             termOfUse: true,
           }}
           onSubmit={async (values) => {
@@ -116,15 +118,6 @@ const RegisterScreen: React.FC<{}> = () => {
               autoComplete="new-email"
               iconLeft={<Icon />}
             />
-            <DateInput
-              label="Date of Birth"
-              style={tw`mb-5 rounded`}
-              // @ts-ignore
-              placeholder="Date of Birth"
-              name="birthdate"
-              type="text"
-              autoComplete="new-email"
-            />
 
             <Field
               label="Password"
@@ -172,13 +165,13 @@ const RegisterScreen: React.FC<{}> = () => {
                   <Text style={tw`text-black mr-1`}>I agree to the</Text>
                   <Link
                     text="Privacy terms"
-                    to="privacy"
+                    to={routes.GUIDELINES}
                     style={tw`text-secondary`}
                   />
                   <Text style={tw`text-black mx-1`}>and</Text>
                   <Link
                     text="Community guidelines"
-                    to="privacy"
+                    to={routes.PRIVACY_TERMS}
                     style={tw`text-secondary`}
                   />
                 </View>

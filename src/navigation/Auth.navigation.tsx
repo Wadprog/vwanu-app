@@ -13,6 +13,8 @@ import ResetPassword from '../screens/Auth/ResetPassword.screen'
 import SignInOSignOut from '../screens/Auth/SignInOSignUp.screen'
 import ForgetPassword from '../screens/Auth/ForgetPassword.screen'
 import ConfirmSignUp from '../screens/Auth/ConfirmSignUp.screen'
+import PrivacyTerms from '../screens/Auth/PrivacyTerms'
+import Guidelines from '../screens/Auth/Guidlines'
 
 export type AuthStackParamList = {
   [routes.SIGN_IN]: undefined
@@ -21,6 +23,8 @@ export type AuthStackParamList = {
   [routes.SIGN_IN_SIGN_UP]: undefined
   [routes.CONFIRM_SIGNUP]: undefined
   [routes.FORGET_PASSWORD]: undefined
+  [routes.PRIVACY_TERMS]: undefined
+  [routes.GUIDELINES]: undefined
 }
 export type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>
 const { Navigator, Screen } = createStackNavigator<AuthStackParamList>()
@@ -60,6 +64,8 @@ const AuthNavigator: React.FC<{}> = () => {
       <Screen name={routes.RESET_PASSWORD} component={ResetPassword} />
       <Screen name={routes.FORGET_PASSWORD} component={ForgetPassword} />
       <Screen name={routes.CONFIRM_SIGNUP} component={ConfirmSignUp} />
+      <Screen name={routes.PRIVACY_TERMS} component={PrivacyTerms} />
+      <Screen name={routes.GUIDELINES} component={Guidelines} />
     </Navigator>
   )
 }

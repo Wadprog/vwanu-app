@@ -20,11 +20,15 @@ import FieldParams from './fieldParams'
 interface DateInputProps extends FieldParams {
   name: string
   style?: object
+  showIcon?: boolean
+  showLabel?: boolean
 }
 const DateInput: React.FC<DateInputProps> = ({
   name,
   label,
   style,
+  showIcon = false,
+  showLabel = false,
   ...otherProps
 }) => {
   const [showModal, toggleModal] = useToggle(false)
@@ -41,8 +45,8 @@ const DateInput: React.FC<DateInputProps> = ({
   return (
     <>
       <Wrapper
-        iconLeft={<Icon />}
-        label={label}
+        iconLeft={showIcon ? <Icon /> : undefined}
+        label={showLabel ? label : undefined}
         style={style}
         {...otherProps}
         onPress={toggleModal}

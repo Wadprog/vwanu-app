@@ -1,18 +1,18 @@
-import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, FlatList, TouchableOpacity } from "react-native";
-import { Divider, InputProps, Spinner } from "@ui-kitten/components";
+import React from 'react'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { View, FlatList, TouchableOpacity } from 'react-native'
+import { Divider, InputProps, Spinner } from '@ui-kitten/components'
 
 // Custom import
-import Text from "./Text";
-import Modal from "./Modal";
-import tw from "../lib/tailwind";
-import Wrapper, { WrapperProps } from "./InputsWrapper";
-import useToggle from "../hooks/useToggle";
+import Text from './Text'
+import Modal from './Modal'
+import tw from '../lib/tailwind'
+import Wrapper, { WrapperProps } from './InputsWrapper'
+import useToggle from '../hooks/useToggle'
 
 interface OptionProps {
-  label: string;
-  onPress: () => void;
+  label: string
+  onPress: () => void
 }
 const Option: React.FC<OptionProps> = ({ label, onPress }) => (
   <TouchableOpacity onPress={onPress}>
@@ -20,23 +20,23 @@ const Option: React.FC<OptionProps> = ({ label, onPress }) => (
       <Text style={tw`text-primary`}>{label}</Text>
     </View>
   </TouchableOpacity>
-);
+)
 
 interface SelectProps extends InputProps {
-  style?: object;
-  items: ListItem[];
-  placeholder?: string;
-  label?: string;
-  otherProps?: WrapperProps;
-  isLoading?: boolean;
-  onSelect: (value: string) => void; // onOptionSelect
+  style?: object
+  items: ListItem[]
+  placeholder?: string
+  label?: string
+  otherProps?: WrapperProps
+  isLoading?: boolean
+  onSelect: (value: string) => void // onOptionSelect
 }
 
 const LoadingIndicator: React.FC<{}> = () => (
   <View>
     <Spinner size="small" />
   </View>
-);
+)
 
 const Select: React.FC<SelectProps> = ({
   items,
@@ -45,8 +45,8 @@ const Select: React.FC<SelectProps> = ({
   isLoading,
   ...otherProps
 }) => {
-  const [modalVisible, toggleModalVisible] = useToggle(false);
-  const [selectedItem, setSelectedItem] = React.useState<ListItem | null>(null);
+  const [modalVisible, toggleModalVisible] = useToggle(false)
+  const [selectedItem, setSelectedItem] = React.useState<ListItem | null>(null)
 
   return (
     <Wrapper
@@ -60,6 +60,7 @@ const Select: React.FC<SelectProps> = ({
       }
       onIconRightPress={toggleModalVisible}
       {...otherProps}
+      style={tw`-py-1 h-[43px] rounded-lg `}
     >
       <View>
         <View>
@@ -69,7 +70,7 @@ const Select: React.FC<SelectProps> = ({
             </Text>
           ) : (
             <Text category="c1" appearance="hint" style={tw`text-gray-400  `}>
-              {placeholder || "Pick an option"}
+              {placeholder || 'Pick an option'}
             </Text>
           )}
         </View>
@@ -87,9 +88,9 @@ const Select: React.FC<SelectProps> = ({
                 <Option
                   label={item.label}
                   onPress={() => {
-                    setSelectedItem(item);
-                    onSelect(item.value);
-                    toggleModalVisible();
+                    setSelectedItem(item)
+                    onSelect(item.value)
+                    toggleModalVisible()
                   }}
                 />
               )}
@@ -99,7 +100,7 @@ const Select: React.FC<SelectProps> = ({
         </Modal>
       </View>
     </Wrapper>
-  );
-};
+  )
+}
 
-export default Select;
+export default Select
