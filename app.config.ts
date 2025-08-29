@@ -146,6 +146,9 @@ export const getDynamicAppConfig = (
       supportsTablet: config.supportsTablet,
       bundleIdentifier,
       icon: createIOSIconConfig(environment),
+      config: {
+        usesNonExemptEncryption: false,
+      },
     },
     android: {
       package: packageName,

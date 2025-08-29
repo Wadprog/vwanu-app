@@ -100,8 +100,13 @@ const ImageInput: React.FC<ImageInputProps> = ({ InitialImage, ...props }) => {
           {!props.uri && (
             <>
               {InitialImage ? (
+                // <View style={tw`w-full h-full relative`}>
                 InitialImage
               ) : (
+                // <View style={tw` -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg border border-gray-200`}>
+                //   <MaterialCommunityIcons name="camera" size={20} color="#3B82F6" />
+                // </View>
+                // </View>
                 <MaterialCommunityIcons name="camera" size={30} />
               )}
             </>

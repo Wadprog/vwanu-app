@@ -130,29 +130,52 @@ export const resendPasscode = createAsyncThunk(
 
 export const signUpUser = createAsyncThunk(
   'auth/signUp',
-  async ({
-    email,
-    password,
-    firstName,
-    lastName,
-    gender,
-    dob,
-    location = undefined,
-  }: Profile & { password: string }) => {
-    const url = `${process.env.EXPO_PUBLIC_API_URL}/auth/signup`
-
-    await axios.post(url, {
+  async (
+    {
       email,
       password,
       firstName,
       lastName,
       gender,
       dob,
-      location,
-    })
-    // Store password temporarily in the service instead of returning it
-    AuthSessionService.storeTempPassword(email, password)
-    return email
+      location = undefined,
+    }: Profile & { password: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const url = `${process.env.EXPO_PUBLIC_API_URL}/auth/signup`
+
+      await axios.post(url, {
+        email,
+        password,
+        firstName,
+        lastName,
+        gender,
+        dob,
+        location,
+      })
+      // Store password temporarily in the service instead of returning it
+      AuthSessionService.storeTempPassword(email, password)
+      return email
+    } catch (error: any) {
+      console.log('[signUpUser] Error:', error)
+
+      // Handle different types of errors
+      if (error.response) {
+        // Server responded with error status (4xx, 5xx)
+        const message =
+          error.response.data?.message ||
+          error.response.data?.error ||
+          `Server error: ${error.response.status}`
+        return rejectWithValue(message)
+      } else if (error.request) {
+        // Network error (no response received)
+        return rejectWithValue('Network error. Please check your connection.')
+      } else {
+        // Other errors
+        return rejectWithValue(error.message || 'An unexpected error occurred')
+      }
+    }
   }
 )
 
@@ -419,8 +442,10 @@ const authSlice = createSlice({
         state.nextAction = NextActions.CONFIRMED_SIGNUP
       })
       .addCase(signUpUser.rejected, (state, action) => {
+        console.log('[signUpUser.rejected]>>>>>', action)
         state.loading = false
-        state.error = action.error.message || 'Sign up failed'
+        state.error =
+          (action.payload as string) || action.error.message || 'Sign up failed'
       })
       // Sign In
       .addCase(signInUser.pending, (state) => {

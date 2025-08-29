@@ -19,7 +19,10 @@
     "preview": {
       "distribution": "internal",
       "environment": "preview",
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "APP_ENV": "preview"
+      }
     },
     "production": {
       "autoIncrement": true,
