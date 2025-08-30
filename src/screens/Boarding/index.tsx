@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'store'
 
 import tw from '../../lib/tailwind'
-import images from '../../config/image'
 import Text from '../../components/Text'
 import onBoardingScreen from './screenData'
 import Button from '../../components/Button'
@@ -71,7 +70,7 @@ const BoardingScreen: React.FC<{}> = () => {
                           )
                         : setCurrentScreen(onBoardingScreen.length - 1) // last screen to set age
                     }}
-                    style={tw`border-black bg-white ${
+                    style={tw`border-primary bg-white ${
                       currentScreen === onBoardingScreen.length - 1
                         ? 'opacity-0'
                         : ''

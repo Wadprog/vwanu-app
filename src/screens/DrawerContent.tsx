@@ -81,9 +81,6 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
   } = useSelector((state: RootState) => state.auth)
   const { data: auth, isLoading, error } = useFetchProfileQuery(userId!)
 
-  //   const themeContext = React.useContext(ThemeContext)
-  // Main Object
-  // loading={isLoading} error={error ? 'Failed to load profile' : null}
   return (
     <Screen
       loading={isLoading || loading}
@@ -95,7 +92,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             <View style={{ flexDirection: 'row', marginTop: 15 }}>
               <Avatar.Image
                 source={{
-                  uri: auth?.profilePicture,
+                  uri: auth?.profilePicture?.original,
                 }}
                 size={50}
               />

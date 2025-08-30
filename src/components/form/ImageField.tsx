@@ -1,14 +1,17 @@
-import React from "react";
-import { useFormikContext } from "formik";
+import React from 'react'
+import { useFormikContext } from 'formik'
 
 // Custom dependencies
-import Error from "./Error";
-import ImageInput from "../ImageInput";
+import Error from './Error'
+import ImageInput, { ImageInputProps } from '../ImageInput'
 
-interface ImageFieldProps {
-  name: string;
-  onChange?: (uri: string) => void;
-  style?: object;
+interface ImageFieldProps
+  extends Omit<
+    ImageInputProps,
+    'onChangeImage' | 'uri' | 'onBlur' | 'onChange'
+  > {
+  name: string
+  onChange?: (uri: string) => void
 }
 
 const ImageField: React.FC<ImageFieldProps> = ({
@@ -17,26 +20,26 @@ const ImageField: React.FC<ImageFieldProps> = ({
   ...props
 }) => {
   const { setFieldTouched, setFieldValue, errors, touched, values } =
-    useFormikContext<any>();
+    useFormikContext<any>()
 
   return (
     <>
       <ImageInput
         onBlur={() => setFieldTouched(name)}
         onChangeImage={(uri) => {
-          onChange && onChange(uri);
-          setFieldValue(name, uri);
+          onChange && onChange(uri)
+          setFieldValue(name, uri)
         }}
         uri={values[name]}
         {...props}
       />
 
       <Error
-        error={typeof errors[name] === "string" ? errors[name] : undefined}
-        visible={typeof touched[name] === "boolean" ? touched[name] : false}
+        error={typeof errors[name] === 'string' ? errors[name] : undefined}
+        visible={typeof touched[name] === 'boolean' ? touched[name] : false}
       />
     </>
-  );
-};
+  )
+}
 
-export default ImageField;
+export default ImageField

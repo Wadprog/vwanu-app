@@ -29,7 +29,7 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
         )}
         <View
           style={[
-            tw` p-2 mb-1 border flex  bg-[#F2F2F2] border-accent ${
+            tw` p-2 mb-1 border flex  bg-[#F2F2F2] border-primary ${
               props.disabled ? 'border-opacity-400 bg-opacity-50' : ''
             }
           `,
@@ -39,16 +39,16 @@ const Wrapper: React.FC<WrapperProps> = (props) => {
           ]}
         >
           <View style={tw`flex py-1 flex-row items-center justify-between`}>
-            <View style={tw`flex flex-row items-center justify-between `}>
-              {props.iconLeft && (
-                <TouchableOpacity
-                  onPress={props.disabled ? () => {} : props.onIconLeftPress}
-                >
-                  {props.iconLeft}
-                </TouchableOpacity>
-              )}
-              <View>{props.children}</View>
-            </View>
+            {props.iconLeft && (
+              <TouchableOpacity
+                onPress={props.disabled ? () => {} : props.onIconLeftPress}
+              >
+                {props.iconLeft}
+              </TouchableOpacity>
+            )}
+
+            <View>{props.children}</View>
+
             {props.iconRight && (
               <TouchableOpacity
                 onPress={props.disabled ? undefined : props.onIconRightPress}

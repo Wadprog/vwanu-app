@@ -70,7 +70,8 @@ const RegisterNavigator = () => {
         break
       case NextCompletionStep.START:
       default:
-        navigation.navigate(routes.MORE_INFO)
+        // navigation.navigate(routes.MORE_INFO)
+        navigation.navigate(routes.PROFILE_PICTURE)
         break
     }
   }, [nextAction, isLoading, error, navigation])

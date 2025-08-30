@@ -9,6 +9,7 @@ import { User } from '../../types'
 interface AvatarGroupProps {
   avatars: User[]
   style?: Object
+  size?: number
 }
 const AvatarGroup: React.FC<AvatarGroupProps> = (props) => {
   const profilePictureToUrl = (
@@ -30,7 +31,7 @@ const AvatarGroup: React.FC<AvatarGroupProps> = (props) => {
               ? profilePictureToUrl(avatar.profilePicture)
               : userToPictureUrl(avatar),
           }}
-          size={30}
+          size={props.size || 30}
           style={tw`border border-primary ${index && '-ml-2'}`}
         />
       ))}

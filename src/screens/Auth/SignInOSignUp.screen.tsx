@@ -11,7 +11,7 @@ const LogSignup: React.FC<{}> = () => {
   const dispatch = useDispatch()
 
   return (
-    <ImageBackground style={tw`px-5 flex-1`} source={images.onBoardBg}>
+    <ImageBackground style={tw`px-5 flex-1`}>
       <View style={tw`flex-1 flex items-center mt-[30%] pt-5`}>
         <Image source={images.connectedPeople[0]} style={tw``} />
       </View>
@@ -40,7 +40,7 @@ const LogSignup: React.FC<{}> = () => {
             onPress={() => {
               dispatch(setNextAction(NextActions.SIGNED_IN))
             }}
-            style={tw`border-black bg-white`}
+            style={tw`border-primary bg-white`}
           />
         </View>
       </View>

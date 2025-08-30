@@ -16,7 +16,6 @@
     "orientation": "portrait",
     "icon": "./src/assets/images/app-icons-data_image/icon.png",
     "userInterfaceStyle": "light",
-
     "updates": {
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/e550dc60-d34d-4c1d-8286-c670002c81d3"
@@ -26,7 +25,15 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.waddprog.vwanuapp"
+      "bundleIdentifier": "com.webvitals.vwanu.dev",
+      "icon": {
+        "dark": "./src/assets/images/icons/ios/dark/development/logo.png",
+        "light": "./src/assets/images/icons/ios/light/development/logo.png",
+        "tinted": "./src/assets/images/icons/ios/tinted/development/logo.png"
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
