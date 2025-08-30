@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { AppDispatch } from 'store'
+import { AppDispatch, RootState } from 'store'
 import axios from 'axios'
 import { Profile } from '../../types'
+import { AuthTokenService } from '../lib/authTokenService'
 
 import {
   confirmSignUp,
@@ -158,7 +159,7 @@ export const signUpUser = createAsyncThunk(
       AuthSessionService.storeTempPassword(email, password)
       return email
     } catch (error: any) {
-      console.log('[signUpUser] Error:', error)
+      // console.log('[signUpUser] Error:', error)
 
       // Handle different types of errors
       if (error.response) {
@@ -222,15 +223,22 @@ export const confirmSignUpUser = createAsyncThunk<
   // Get the session to retrieve tokens
   try {
     const session = await fetchAuthSession()
-    console.log(`[debug] fetched session after confirmation`, session)
+    // console.log(`[debug] fetched session after confirmation`, session)
 
-    return {
+    const tokens = {
       token: session.tokens?.accessToken?.toString() || null,
       idToken: session.tokens?.idToken?.toString() || null,
       userId: session.tokens?.idToken?.payload.sub || null,
     }
+
+    // Store tokens securely for persistence
+    if (session.tokens && tokens.userId) {
+      await AuthTokenService.storeTokens(session.tokens, tokens.userId)
+    }
+
+    return tokens
   } catch (error) {
-    console.log(`[debug] error fetching session after confirmation`, error)
+    // console.log(`[debug] error fetching session after confirmation`, error)
 
     if (error instanceof Error) {
       if (
@@ -271,12 +279,18 @@ export const signInUser = createAsyncThunk<
     }
 
     const session = await fetchAuthSession()
-    return {
+    const tokens = {
       token: session.tokens?.accessToken?.toString() || null,
       idToken: session.tokens?.idToken?.toString() || null,
       userId: session.tokens?.idToken?.payload.sub || null,
-      ...session,
     }
+
+    // Store tokens securely for persistence
+    if (session.tokens && tokens.userId) {
+      await AuthTokenService.storeTokens(session.tokens, tokens.userId)
+    }
+
+    return tokens
   } catch (error) {
     if (error instanceof Error) {
       if (error.message?.toLowerCase().includes('already a signed in user')) {
@@ -289,12 +303,18 @@ export const signInUser = createAsyncThunk<
             throw new Error('NEEDS_CONFIRMATION')
           }
           const session = await fetchAuthSession()
-          return {
+          const tokens = {
             token: session.tokens?.accessToken?.toString() || null,
             idToken: session.tokens?.idToken?.toString() || null,
             userId: session.tokens?.idToken?.payload.sub || null,
-            ...session,
           }
+
+          // Store tokens securely for persistence
+          if (session.tokens && tokens.userId) {
+            await AuthTokenService.storeTokens(session.tokens, tokens.userId)
+          }
+
+          return tokens
         } catch (retryError) {
           throw retryError
         }
@@ -316,11 +336,8 @@ export const signOutUser = createAsyncThunk(
   'auth/signOut',
   async (_, { rejectWithValue }) => {
     try {
-      // Sign out from Cognito (this will clear the persistent session)
-      await signOut({ global: true })
-
-      // Also clear any tokens from secure storage
-      // await clearTokens();
+      // Sign out from Cognito and clear tokens from secure storage
+      await AuthTokenService.forceSignOut()
 
       return null
     } catch (error) {
@@ -390,22 +407,40 @@ export const checkExistingSession = createAsyncThunk(
   'auth/checkExistingSession',
   async (_, { rejectWithValue }) => {
     try {
-      // First get the current user, this will throw if not signed in
-      const currentUser = await getCurrentUser()
+      // First check if we have stored tokens
+      const storedTokens = await AuthTokenService.getStoredTokens()
 
-      // Then fetch the auth session to get tokens
-      const { tokens } = await fetchAuthSession()
+      if (
+        storedTokens.accessToken &&
+        storedTokens.idToken &&
+        storedTokens.userId
+      ) {
+        // We have stored tokens, verify they're still valid with Cognito
+        try {
+          const currentUser = await getCurrentUser()
 
-      // Return session data
-      return {
-        username: currentUser.username,
-        userId: currentUser.userId,
-        token: tokens?.accessToken?.toString() || null,
-        idToken: tokens?.idToken?.toString() || null,
-        nextAction: NextActions.SIGNED_IN,
+          // Get fresh tokens (this will refresh if needed)
+          const validTokens = await AuthTokenService.getValidTokens()
+
+          if (validTokens?.accessToken && validTokens?.idToken) {
+            return {
+              username: currentUser.username,
+              userId: currentUser.userId,
+              token: validTokens.accessToken,
+              idToken: validTokens.idToken,
+              nextAction: NextActions.SIGNED_IN,
+            }
+          }
+        } catch (cognitoError) {
+          // Cognito session invalid, clear stored tokens
+          await AuthTokenService.clearTokens()
+        }
       }
+
+      // No valid session found
+      return rejectWithValue('No authenticated user')
     } catch (error) {
-      console.log('No existing session found', error)
+      // console.log('No existing session found', error)
       return rejectWithValue('No authenticated user')
     }
   }
@@ -422,7 +457,7 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{ birthdate: string; location: string }>
     ) => {
-      console.log('[setBirthdate]', action.payload)
+      // console.log('[setBirthdate]', action.payload)
       state.birthdate = action.payload.birthdate
       state.location = action.payload.location
       state.nextAction = NextActions.SIGNED_IN_SIGNED_UP
@@ -442,7 +477,7 @@ const authSlice = createSlice({
         state.nextAction = NextActions.CONFIRMED_SIGNUP
       })
       .addCase(signUpUser.rejected, (state, action) => {
-        console.log('[signUpUser.rejected]>>>>>', action)
+        // console.log('[signUpUser.rejected]>>>>>', action)
         state.loading = false
         state.error =
           (action.payload as string) || action.error.message || 'Sign up failed'
@@ -601,5 +636,8 @@ const authSlice = createSlice({
 })
 
 export const { setNextAction, setRequiredData } = authSlice.actions
+export const isAuthenticated = (state: RootState) => {
+  return Boolean(state.auth.token && state.auth.idToken)
+}
 
 export default authSlice.reducer

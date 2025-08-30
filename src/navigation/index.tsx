@@ -16,6 +16,7 @@ import Screen from 'components/screen'
 import { NextCompletionStep } from '../../types.d'
 import { useFetchProfileQuery } from '../store/profiles'
 import { NextActions, checkExistingSession } from '../store/auth-slice'
+import { useTokenMonitoring } from '../hooks/useTokenMonitoring'
 
 interface GeneralError {
   className: string
@@ -60,6 +61,12 @@ const Routes: React.FC = () => {
     [token, idToken, userId]
   )
 
+  // Initialize token monitoring for authenticated users
+  const { isMonitoring } = useTokenMonitoring({
+    checkInterval: 5 * 60 * 1000, // Check every 5 minutes
+    enabled: isAuthenticated, // Only monitor when authenticated
+  })
+
   // Memoized loading state check
   const isInitializing = useMemo(
     () => nextAction === NextActions.INITIALIZING,
@@ -74,16 +81,16 @@ const Routes: React.FC = () => {
   }, [dispatch, isInitializing])
 
   // Optimized debug logging (only in development)
-  useEffect(() => {
-    if (__DEV__) {
-      console.log('Auth State:', {
-        token: !!token,
-        idToken: !!idToken,
-        userId,
-        nextAction,
-      })
-    }
-  }, [token, idToken, userId, nextAction])
+  // useEffect(() => {
+  //   if (__DEV__) {
+  //     console.log('Auth State:', {
+  //       token: !!token,
+  //       idToken: !!idToken,
+  //       userId,
+  //       nextAction,
+  //     })
+  //   }
+  // }, [token, idToken, userId, nextAction])
 
   // Enhanced profile query with retry logic
   const {
@@ -129,7 +136,7 @@ const Routes: React.FC = () => {
         // Reset retry count on successful fetch
         setRetryState((prev) => ({ ...prev, retryCount: 0 }))
       } catch (error) {
-        console.log('Retry failed:', error)
+        // console.log('Retry failed:', error)
       }
     }
   }, [refetch, retryState])
@@ -272,14 +279,14 @@ const Routes: React.FC = () => {
       }
     }
 
-    if (__DEV__) {
-      console.log(
-        'Profile navigation - completionStep:',
-        completionStep,
-        'raw value:',
-        profileData.nextCompletionStep
-      )
-    }
+    // if (__DEV__) {
+    //   console.log(
+    //     'Profile navigation - completionStep:',
+    //     completionStep,
+    //     'raw value:',
+    //     profileData.nextCompletionStep
+    //   )
+    // }
 
     switch (completionStep) {
       case NextCompletionStep.PROFILE_COMPLETE:

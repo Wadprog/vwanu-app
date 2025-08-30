@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { Avatar } from 'react-native-paper'
 import { View, Platform } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { useNavigation } from '@react-navigation/native'
 
 import Input from './Input'
 import tw from 'lib/tailwind'
@@ -59,7 +58,7 @@ const PostInput = () => {
         <Avatar.Image
           source={{
             uri:
-              user?.profilePicture ||
+              user?.profilePicture?.original ||
               `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}`,
           }}
           size={50}

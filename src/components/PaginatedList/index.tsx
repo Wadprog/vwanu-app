@@ -19,14 +19,13 @@ export interface PaginationParams {
   limit: number
   skip: number
 }
+
 interface PaginatedListProps<T>
   extends Omit<FlatListProps<T>, 'onScroll' | 'data'> {
-  onBottomNavVisibilityChange?: (isVisible: boolean) => void
-  isFetching?: boolean
-  isLoading?: boolean
-  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void
-  LoadingComponent?: React.ReactElement
-  data?: T[]
+  // onBottomNavVisibilityChange?: (isVisible: boolean) => void
+  isFetching: boolean
+  // onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void
+  initialData: { data: T[]; total: number }
   fetchData: (
     pagination: PaginationState
   ) => Promise<{ data: T[]; total?: number }>
@@ -34,24 +33,23 @@ interface PaginatedListProps<T>
 }
 
 function PaginatedList<T>({
-  onBottomNavVisibilityChange,
-  isFetching: externalIsFetching,
-  isLoading: externalIsLoading,
-  onScroll,
-  LoadingComponent,
-  data: externalData,
+  // onBottomNavVisibilityChange,
+  isFetching,
+  // onScroll,
+  initialData,
   fetchData,
   initialLimit = 10,
   ...flatListProps
 }: PaginatedListProps<T>) {
   const [lastScrollY, setLastScrollY] = useState(0)
-  const [data, setData] = useState<T[]>([])
-  const [hasMore, setHasMore] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isFetching, setIsFetching] = useState(false)
+  const [hasScrolledUp, setHasScrolledUp] = useState(false)
+  const [data, setData] = useState<T[]>(initialData.data)
+  const [hasMore, setHasMore] = useState(
+    initialData.total > initialData.data.length
+  )
   const [pagination, setPagination] = useState<PaginationState>({
     limit: initialLimit,
-    skip: 0,
+    skip: initialData.data.length || 0,
   })
 
   const loadData = async (
@@ -59,7 +57,6 @@ function PaginatedList<T>({
     isRefresh = false
   ) => {
     try {
-      setIsFetching(true)
       const response = await fetchData(newPagination)
 
       if (isRefresh) {
@@ -72,13 +69,11 @@ function PaginatedList<T>({
       setPagination(newPagination)
     } catch (error) {
       console.error('Error loading data:', error)
-    } finally {
-      setIsFetching(false)
     }
   }
 
   const handleLoadMore = () => {
-    if (!isFetching && hasMore) {
+    if (!isFetching && hasMore && hasScrolledUp) {
       const newPagination = {
         ...pagination,
         skip: pagination.skip + pagination.limit,
@@ -97,11 +92,6 @@ function PaginatedList<T>({
     }
   }
 
-  useEffect(() => {
-    setIsLoading(true)
-    loadData(pagination).finally(() => setIsLoading(false))
-  }, []) // Initial load
-
   const handleScrollEvent = (
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) => {
@@ -109,23 +99,20 @@ function PaginatedList<T>({
 
     // Determine scroll direction and toggle bottom nav visibility
     if (Math.abs(currentScrollY - lastScrollY) > SCROLL_THRESHOLD) {
-      onBottomNavVisibilityChange?.(currentScrollY < lastScrollY)
+      const isScrollingUp = currentScrollY < lastScrollY
+      //onBottomNavVisibilityChange?.(currentScrollY < lastScrollY)
+      // Set hasScrolledUp to true when user scrolls up for the first time
+      if (isScrollingUp && !hasScrolledUp) {
+        setHasScrolledUp(true)
+      }
+
       setLastScrollY(currentScrollY)
     }
 
     // Call original onScroll if provided
-    onScroll?.(event)
+    // onScroll?.(event)
   }
 
-  if ((isLoading || externalIsLoading) && !data.length && LoadingComponent) {
-    return LoadingComponent
-  }
-
-  // onEndReachedThreshold={0.5}
-  // onScroll={(e) => {
-  //   handleScroll2(e)
-  //   handleScroll(e)
-  // }}
   return (
     <FlatList
       {...flatListProps}
@@ -137,7 +124,7 @@ function PaginatedList<T>({
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       ListFooterComponent={() =>
-        (isFetching || externalIsFetching) && pagination.skip > 0 ? (
+        isFetching ? (
           <View style={tw`py-4`}>
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
