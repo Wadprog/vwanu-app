@@ -9,17 +9,23 @@ import {
   Text,
   Modal,
   TouchableOpacity,
-  Platform,
   StatusBar,
   Animated,
   ScrollView,
 } from 'react-native'
+import { styles } from './style'
 
 import tw from 'lib/tailwind'
-import ProfAvatar from './ProfAvatar'
-import { Field, Form, Submit, ImageFields, PrivacyNoticeField } from './form'
+import ProfAvatar from '../../ProfAvatar'
+import {
+  Field,
+  Form,
+  Submit,
+  ImageFields,
+  PrivacyNoticeField,
+} from '../../form'
 import { useCreatePostMutation } from 'store/post'
-import { Notice } from '../../types'
+import { Notice } from '../../../../types'
 import { useFetchProfileQuery } from 'store/profiles'
 import { RootState } from 'store'
 import nameToPicture from 'lib/nameToPicture'
@@ -35,6 +41,7 @@ interface PostInputModalInterface {
 export interface PostInputModalHandle {
   focus: () => void
 }
+const POST_INPUT_MODAL_CLOSE_TIMEOUT = 250 // 250ms
 
 const ValidationSchema = object().shape({
   postText: string().label('Content'),
@@ -125,7 +132,7 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
           )
           // If navigation fails, at least the modal will close and the post was created
         }
-      }, 1000)
+      }, POST_INPUT_MODAL_CLOSE_TIMEOUT)
     }
     if (result.isError) {
       console.error(result.error)
@@ -162,9 +169,8 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
           onSubmit={async (values) => {
             //@ts-ignore
             await createPost(values)
-            handleClose()
           }}
-          style={styles.container}
+          style={tw`flex-1 bg-white`}
         >
           {/* Enhanced Header */}
           <View style={styles.header}>
@@ -359,215 +365,6 @@ const CustomField = ({ onChangeText, ...props }: any) => {
       }}
     />
   )
-}
-
-const styles = {
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'space-between' as const,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F3F4F6',
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600' as const,
-    color: '#111827',
-  },
-  postButton: {
-    backgroundColor: '#E5E7EB',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-    minWidth: 70,
-  },
-  postButtonActive: {
-    backgroundColor: '#3B82F6',
-  },
-  postButtonText: {
-    color: '#9CA3AF',
-    fontWeight: '600' as const,
-    fontSize: 14,
-  },
-  postButtonTextActive: {
-    color: '#FFFFFF',
-  },
-  postButtonLoading: {
-    backgroundColor: '#9CA3AF',
-    opacity: 0.7,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  userSection: {
-    flexDirection: 'row' as const,
-    alignItems: 'flex-start' as const,
-    justifyContent: 'space-between' as const,
-    gap: 10,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  privacySection: {
-    marginLeft: 12,
-    marginTop: 8,
-  },
-  textInputSection: {
-    paddingVertical: 20,
-    position: 'relative' as const,
-  },
-  textInput: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#374151',
-    minHeight: 120,
-    maxHeight: 200,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    paddingBottom: 30,
-  },
-  characterCounter: {
-    position: 'absolute' as const,
-    bottom: 8,
-    right: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  counterText: {
-    fontSize: 12,
-    color: '#9CA3AF',
-    fontWeight: '500' as const,
-  },
-  counterWarning: {
-    color: '#F59E0B',
-  },
-  quickActions: {
-    flexDirection: 'row' as const,
-    justifyContent: 'space-around' as const,
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
-    marginTop: 20,
-  },
-  actionButton: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  actionText: {
-    marginLeft: 6,
-    fontSize: 14,
-    color: '#6B7280',
-    fontWeight: '500' as const,
-  },
-  bottomSheet: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  bottomSheetHandle: {
-    backgroundColor: '#D1D5DB',
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-  },
-  bottomSheetBackground: {
-    backgroundColor: '#FFFFFF',
-  },
-  bottomSheetContent: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  bottomSheetHeader: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    paddingVertical: 12,
-  },
-  bottomSheetTitle: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-    color: '#374151',
-    marginLeft: 8,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E5E7EB',
-    marginVertical: 16,
-  },
-  loadingOverlay: {
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    zIndex: 1000,
-  },
-  loadingContent: {
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
-    padding: 32,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  loadingIcon: {
-    marginBottom: 16,
-  },
-  loadingText: {
-    fontSize: 18,
-    fontWeight: '600' as const,
-    color: '#1F2937',
-    marginBottom: 8,
-    textAlign: 'center' as const,
-  },
-  loadingSubtext: {
-    fontSize: 14,
-    color: '#6B7280',
-    textAlign: 'center' as const,
-    lineHeight: 20,
-  },
 }
 
 export default PostInputModal

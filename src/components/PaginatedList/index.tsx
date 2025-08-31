@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import tw from '../../lib/tailwind'
 
-const SCROLL_THRESHOLD = 10
+const SCROLL_THRESHOLD = 50
 
 interface PaginationState {
   limit: number
@@ -56,13 +56,30 @@ function PaginatedList<T>({
     newPagination: PaginationState,
     isRefresh = false
   ) => {
+    console.log('loadData')
+    console.log('newPagination', newPagination)
+    console.log('isRefresh', isRefresh)
     try {
       const response = await fetchData(newPagination)
+      console.log('response', response)
 
       if (isRefresh) {
         setData(response.data)
       } else {
-        setData((prev) => [...prev, ...response.data])
+        // Filter out duplicates when appending new data
+        setData((prev) => {
+          const existingIds = new Set(
+            prev.map((item) => (item as any).id?.toString())
+          )
+          const newItems = response.data.filter(
+            (item) => !existingIds.has((item as any).id?.toString())
+          )
+          console.log(
+            'Filtered duplicates:',
+            response.data.length - newItems.length
+          )
+          return [...prev, ...newItems]
+        })
       }
 
       setHasMore(response.data.length >= newPagination.limit)
@@ -73,7 +90,14 @@ function PaginatedList<T>({
   }
 
   const handleLoadMore = () => {
-    if (!isFetching && hasMore && hasScrolledUp) {
+    console.log('handleLoadMore')
+    console.log('hasMore', hasMore)
+    console.log(initialData.total)
+    console.log(initialData.data.length)
+    console.log('isFetching', isFetching)
+    console.log('hasScrolledUp', hasScrolledUp)
+    console.log('pagination', pagination)
+    if (!isFetching && hasMore) {
       const newPagination = {
         ...pagination,
         skip: pagination.skip + pagination.limit,
@@ -118,7 +142,7 @@ function PaginatedList<T>({
       {...flatListProps}
       data={data}
       onScroll={handleScrollEvent}
-      scrollEventThrottle={16}
+      scrollEventThrottle={100}
       refreshing={isFetching && pagination.skip === 0}
       onRefresh={handleRefresh}
       onEndReached={handleLoadMore}

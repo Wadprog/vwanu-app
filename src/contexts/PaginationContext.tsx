@@ -48,6 +48,8 @@ export const PaginationProvider: React.FC<PaginationProviderProps> = ({
   })
 
   const loadMore = useCallback(() => {
+    console.log('loadMore')
+    console.log('pagination', pagination)
     if (!pagination.hasMore) return
 
     setPagination((prev) => ({

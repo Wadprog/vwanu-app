@@ -315,13 +315,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 1,
     position: 'relative',
   },
   textInput: {
     fontSize: 16,
     color: '#374151',
-    paddingRight: 40, // Space for character counter
+    paddingRight: 0, // Space for character counter
     minHeight: 40,
     maxHeight: 120,
   },

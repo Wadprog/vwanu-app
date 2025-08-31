@@ -4,11 +4,11 @@ import { Avatar } from 'react-native-paper'
 import { View, Platform } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 
-import Input from './Input'
+import Input from '../../Input'
 import tw from 'lib/tailwind'
 import Img from 'assets/svg/Image'
 import useToggle from 'hooks/useToggle'
-import PostInputModal from './PostInputModal'
+import PostInputModal from '../PostInputModal'
 import { useFetchProfileQuery } from 'store/profiles'
 import { RootState } from 'store'
 
@@ -32,7 +32,7 @@ const PostInput = () => {
 
   const [creatingPost, toggleCreatingPost] = useToggle(false)
   const [openBottomSheet, toggleOpenBottomSheet] = useToggle(false)
-  // const navigation = useNavigation()
+
   const handleIconRightPress = async () => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -58,7 +58,7 @@ const PostInput = () => {
         <Avatar.Image
           source={{
             uri:
-              user?.profilePicture?.original ||
+              (user?.profilePicture as any)?.original ||
               `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}`,
           }}
           size={50}
@@ -69,7 +69,7 @@ const PostInput = () => {
             editable={false}
             autoFocus
             placeholder="What's on your mind?"
-            onPressIn={toggleCreatingPost}
+            onPressIn={() => toggleCreatingPost()}
             style={tw`border-[#F2F3F5] border-[1px] bg-white rounded-2xl mb-0`}
             iconRight={<Img />}
             onIconRightPress={() => {
@@ -80,7 +80,7 @@ const PostInput = () => {
       </View>
       <PostInputModal
         visible={creatingPost}
-        onClose={toggleCreatingPost}
+        onClose={() => toggleCreatingPost()}
         openBottomSheet={openBottomSheet}
       />
     </View>

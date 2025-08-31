@@ -24,10 +24,12 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
     isLoading: loadingPost,
     error,
   } = useFetchPostQuery(postId)
+
   const { data: commentsData = { data: [] }, isLoading: loadingComments } =
     useFetchPostsQuery({ postId })
+
   const comments = commentsData.data
-  console.log('comments', commentsData)
+
   const { handleScroll, scrollRef } = useScroll()
 
   if (loadingPost) {

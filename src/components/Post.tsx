@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { memo, useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { View, Dimensions } from 'react-native'
+import { View } from 'react-native'
 
 import tw from '../lib/tailwind'
 import ImageGrid from './ImageGrid'
@@ -12,7 +12,7 @@ import PostFooter from './PostFooter'
 import { PostProps } from '../../types'
 import LongText from './LongText'
 
-const { height } = Dimensions.get('screen')
+//TO DELETE const { height } = Dimensions.get('screen')
 
 interface Props extends PostProps {
   showViewComment?: boolean
@@ -30,10 +30,21 @@ const Post: React.FC<Props> = ({
   const [updatePost, updatePostMeta] = useUpdatePostMutation()
   const [deletePost, deletePostMeta] = useDeletePostMutation()
 
-  const handleDeletePress = () => {
+  const handleDeletePress = useCallback(() => {
     deletePost(props.id)
     toggleModifying()
-  }
+  }, [deletePost, props.id, toggleModifying])
+
+  const handleImageTouch = useCallback(
+    (id: number) => {
+      const index = props.media?.findIndex(
+        (media) => media?.id.toString() === id.toString()
+      )
+      //@ts-ignore
+      navigation.navigate('Gallery', { ...props, initialSlide: index })
+    },
+    [navigation, props]
+  )
   return (
     <View style={tw`static my-3`}>
       <PostHeader
@@ -51,15 +62,9 @@ const Post: React.FC<Props> = ({
 
       {props?.media && props.media.length > 0 && (
         <ImageGrid
-          medias={props.media || []}
+          medias={props.media}
           style={tw`mb-2`}
-          onImageTouch={(id) => {
-            const index = props.media?.findIndex(
-              (media) => media?.id === id.toString()
-            )
-            //@ts-ignore
-            navigation.navigate('Gallery', { ...props, initialSlide: index })
-          }}
+          onImageTouch={handleImageTouch}
         />
       )}
 
@@ -76,4 +81,20 @@ const Post: React.FC<Props> = ({
   )
 }
 
-export default Post
+// Memoize with custom comparison
+const MemoizedPost = memo(Post, (prevProps, nextProps) => {
+  // Only re-render if these specific props change
+  return (
+    prevProps.id === nextProps.id &&
+    prevProps.amountOfKorems === nextProps.amountOfKorems &&
+    prevProps.amountOfComments === nextProps.amountOfComments &&
+    prevProps.isReactor === nextProps.isReactor &&
+    prevProps.postText === nextProps.postText &&
+    prevProps.media?.length === nextProps.media?.length &&
+    prevProps.createdAt === nextProps.createdAt
+  )
+})
+
+MemoizedPost.displayName = 'Post'
+
+export default MemoizedPost

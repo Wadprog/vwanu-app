@@ -222,26 +222,52 @@ const post = apiSlice.injectEndpoints({
         method: HttpMethods.POST,
       }),
       async onQueryStarted(postId, { dispatch, queryFulfilled }) {
-        try {
-          const { data: updatedPost } = await queryFulfilled
-          // Update posts list cache
-          dispatch(
-            post.util.updateQueryData('fetchPosts', undefined, (draft) => {
+        // Define the query parameters that match the timeline
+        const timelineQueryArgs = {
+          $limit: 10,
+          $skip: 0,
+          $sort: { createdAt: -1 as const },
+        }
+
+        // Optimistic update for the main timeline query
+        const patchResult = dispatch(
+          post.util.updateQueryData(
+            'fetchPosts',
+            timelineQueryArgs,
+            (draft) => {
               const postIndex = draft.data.findIndex(
                 (post) => post.id.toString() === postId
               )
+
               if (postIndex !== -1) {
-                draft.data[postIndex] = updatedPost
+                const currentPost = draft.data[postIndex]
+
+                // Toggle the isReactor status and adjust count
+                if (currentPost.isReactor) {
+                  currentPost.isReactor = false
+                  currentPost.amountOfKorems = Math.max(
+                    0,
+                    currentPost.amountOfKorems - 1
+                  )
+                } else {
+                  currentPost.isReactor = true
+                  currentPost.amountOfKorems = currentPost.amountOfKorems + 1
+                }
+              } else {
+                console.log('❌ Post not found in cache for ID:', postId)
               }
-            })
+            }
           )
-          // Invalidate the single post query
-          dispatch(
-            apiSlice.util.invalidateTags([
-              { type: 'Post' as const, id: postId },
-            ])
-          )
+        )
+
+        try {
+          await queryFulfilled
         } catch (error) {
+          console.log(
+            '❌ Toggle kore API call failed, reverting optimistic update'
+          )
+          // Revert optimistic update on failure
+          patchResult.undo()
           console.error('Toggle kore failed:', error)
         }
       },
