@@ -15,7 +15,11 @@ import { RootState, AppDispatch } from '../store'
 import Screen from 'components/screen'
 import { NextCompletionStep } from '../../types.d'
 import { useFetchProfileQuery } from '../store/profiles'
-import { NextActions, checkExistingSession } from '../store/auth-slice'
+import {
+  NextActions,
+  checkExistingSession,
+  signOutUser,
+} from '../store/auth-slice'
 import { useTokenMonitoring } from '../hooks/useTokenMonitoring'
 
 interface GeneralError {
@@ -104,11 +108,6 @@ const Routes: React.FC = () => {
     refetchOnMountOrArgChange: true,
   })
 
-  // Separate polling logic to avoid circular dependency
-  const pollingInterval = useMemo(() => {
-    return profile ? 30000 : 0 // Poll every 30s if we have profile data
-  }, [profile])
-
   // Smart retry function with exponential backoff
   const handleRetry = useCallback(async () => {
     const now = Date.now()
@@ -137,14 +136,50 @@ const Routes: React.FC = () => {
         setRetryState((prev) => ({ ...prev, retryCount: 0 }))
       } catch (error) {
         // console.log('Retry failed:', error)
+
+        // If this was the last retry attempt, sign out the user
+        if (retryState.retryCount + 1 >= retryState.maxRetries) {
+          console.log(
+            '🚫 Maximum retries reached for profile fetch, signing out user...'
+          )
+          dispatch(signOutUser())
+        }
       }
+    } else {
+      // Max retries already reached, sign out the user
+      console.log(
+        '🚫 Maximum retries reached for profile fetch, signing out user...'
+      )
+      dispatch(signOutUser())
     }
-  }, [refetch, retryState])
+  }, [refetch, retryState, dispatch])
 
   // Reset retry state when authentication changes
   useEffect(() => {
     setRetryState((prev) => ({ ...prev, retryCount: 0 }))
   }, [isAuthenticated])
+
+  // Sign out user when max retries reached and there's an error
+  useEffect(() => {
+    const maxRetriesReached = retryState.retryCount >= retryState.maxRetries
+    if (isAuthenticated && error && maxRetriesReached) {
+      console.log(
+        '🚫 Maximum retries reached for profile fetch, automatically signing out user...'
+      )
+      // Add a small delay to show the error message before signing out
+      const signOutTimer = setTimeout(() => {
+        dispatch(signOutUser())
+      }, 2000) // 2 second delay
+
+      return () => clearTimeout(signOutTimer)
+    }
+  }, [
+    isAuthenticated,
+    error,
+    retryState.retryCount,
+    retryState.maxRetries,
+    dispatch,
+  ])
 
   // Enhanced error message calculation with retry context
   const errorMessage = useMemo(() => {
@@ -185,7 +220,7 @@ const Routes: React.FC = () => {
     return {
       message: isRetryable
         ? 'Unable to load your profile. Please check your connection and try again.'
-        : 'Failed to load profile after multiple attempts. Please restart the app.',
+        : 'Failed to load profile after multiple attempts. You will be signed out for security.',
       onRetry: isRetryable ? handleRetry : undefined,
       retryText,
     }
@@ -213,7 +248,7 @@ const Routes: React.FC = () => {
     }
 
     if (maxRetriesReached) {
-      return 'Unable to load your profile after multiple attempts. Please check your connection and restart the app.'
+      return 'Unable to load your profile after multiple attempts. You will be signed out for security reasons. Please sign in again.'
     }
 
     return `Unable to load your profile. ${
