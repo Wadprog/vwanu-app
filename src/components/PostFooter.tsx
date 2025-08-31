@@ -4,7 +4,7 @@
    - Renders like info, share, and comment buttons.
 ======================================================== */
 
-import React from 'react'
+import React, { memo, useCallback } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { TouchableOpacity, View } from 'react-native'
@@ -34,7 +34,7 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
     ? (props.amountOfKorems ?? 0) - 1
     : (props.amountOfKorems ?? 0) - (props.reactors?.length - 2 || 0)
 
-  const handleCommentPress = () => {
+  const handleCommentPress = useCallback(() => {
     if (props.disableNavigation) {
       // We're in SinglePost view, just toggle the comment form
       props.toggleCommenting()
@@ -46,7 +46,7 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
         isCommenting: true,
       })
     }
-  }
+  }, [props.disableNavigation, props.toggleCommenting, props.id, navigation])
 
   return (
     <View style={tw`flex flex-row items-center justify-between`}>
@@ -141,4 +141,19 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
   )
 }
 
-export default PostFooter
+// Memoize PostFooter with custom comparison
+const MemoizedPostFooter = memo(PostFooter, (prevProps, nextProps) => {
+  return (
+    prevProps.id === nextProps.id &&
+    prevProps.amountOfKorems === nextProps.amountOfKorems &&
+    prevProps.amountOfComments === nextProps.amountOfComments &&
+    prevProps.isReactor === nextProps.isReactor &&
+    prevProps.seeLikers === nextProps.seeLikers &&
+    prevProps.showViewComment === nextProps.showViewComment &&
+    prevProps.reactors?.length === nextProps.reactors?.length
+  )
+})
+
+MemoizedPostFooter.displayName = 'PostFooter'
+
+export default MemoizedPostFooter

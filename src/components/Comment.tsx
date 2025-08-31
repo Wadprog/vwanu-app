@@ -19,11 +19,11 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
       <ProfAvatar
         size={20}
         source={
-          comment.User?.profilePicture
-            ? (comment.User.profilePicture as string)
-            : (comment.User && nameToPicture(comment.User)) || ''
+          comment.user?.profilePicture
+            ? comment.user.profilePicture.toString()
+            : (comment.user && nameToPicture(comment.user)) || ''
         }
-        name={`${comment.User?.firstName} ${comment.User?.lastName}`}
+        name={`${comment.user?.firstName} ${comment.user?.lastName}`}
         subtitle={comment.postText}
         subtitleParams={{
           maxLength: 150,
