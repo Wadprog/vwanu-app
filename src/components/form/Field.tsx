@@ -1,56 +1,62 @@
 import React, { useCallback, useMemo, forwardRef } from 'react'
 import { useFormikContext } from 'formik'
-import { TextInput } from 'react-native'
 
-import Input, { P } from '../Input'
+import { P } from '../Input'
 import Error from './Error'
 import FieldParams from './fieldParams'
 
+import { Input } from '@ui-kitten/components'
+
 type Props = FieldParams & P
 
-const FormField = forwardRef<TextInput, Props>(
-  ({ name, ...otherProps }, ref) => {
-    const { setFieldTouched, setFieldValue, errors, touched, values } =
-      useFormikContext<any>()
+// const FormField = forwardRef<TextInput, Props>(
+//   ({ name, ...otherProps }, ref) => {
+const FormField = ({ name, ...otherProps }: Props) => {
+  const { setFieldTouched, setFieldValue, errors, touched, values } =
+    useFormikContext<any>()
 
-    // Memoized change handler
-    const handleTextChange = useCallback(
-      (text: string) => {
-        setFieldValue(name, text)
-      },
-      [setFieldValue, name]
-    )
+  // console.log('otherProps', otherProps)
 
-    // Memoized blur handler
-    const handleBlur = useCallback(() => {
-      setFieldTouched(name)
-    }, [setFieldTouched, name])
+  // Memoized change handler
+  const handleTextChange = useCallback(
+    (text: string) => {
+      setFieldValue(name, text)
+    },
+    [setFieldValue, name]
+  )
 
-    // Memoize the input props
-    const inputProps = useMemo(
-      () => ({
-        value: values[name],
-        onBlur: handleBlur,
-        onChangeText: handleTextChange,
-        ...otherProps,
-      }),
-      [values[name], handleBlur, handleTextChange, otherProps]
-    )
+  // Memoized blur handler
+  const handleBlur = useCallback(() => {
+    setFieldTouched(name)
+  }, [setFieldTouched, name])
 
-    const error = errors[name]
-    const visible = touched[name]
+  // Memoize the input props
+  const inputProps = useMemo(
+    () => ({
+      value: values[name],
+      onBlur: handleBlur,
+      onChangeText: handleTextChange,
+      ...otherProps,
+    }),
+    [values[name], handleBlur, handleTextChange, otherProps]
+  )
 
-    return (
-      <>
-        <Input ref={ref} {...inputProps} />
-        <Error
-          error={typeof error === 'string' ? error : undefined}
-          visible={typeof visible === 'boolean' ? visible : false}
-        />
-      </>
-    )
-  }
-)
+  const error = errors[name]
+  const visible = touched[name]
+
+  return (
+    <>
+      {/* <Input ref={ref} {...inputProps} />
+       */}
+      <Input {...inputProps} />
+      <Error
+        error={typeof error === 'string' ? error : undefined}
+        visible={typeof visible === 'boolean' ? visible : false}
+      />
+    </>
+  )
+}
+// )
 
 FormField.displayName = 'FormField'
 

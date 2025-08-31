@@ -13,8 +13,7 @@ import { StyleSheet, View } from 'react-native'
 import Icon from '@expo/vector-icons/MaterialCommunityIcons'
 import { Avatar, Drawer, TouchableRipple } from 'react-native-paper'
 
-import { Toggle, Text } from '@ui-kitten/components'
-// import { ThemeContext } from '../config/theme-context'
+import { Text } from '@ui-kitten/components'
 
 // import Screen from 'components/Screen'
 // Customs imports
@@ -23,6 +22,7 @@ import { useFetchProfileQuery } from '../store/profiles'
 import { RootState, AppDispatch } from '../store'
 import routes from '../navigation/routes'
 import { signOutUser } from 'store/auth-slice'
+import { useTheme } from '../hooks/useTheme'
 // Main Function to Return
 
 // Styles
@@ -80,6 +80,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
     error: authError,
   } = useSelector((state: RootState) => state.auth)
   const { data: auth, isLoading, error } = useFetchProfileQuery(userId!)
+  const { isDarkMode, systemColorScheme } = useTheme()
 
   return (
     <Screen
@@ -92,7 +93,10 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             <View style={{ flexDirection: 'row', marginTop: 15 }}>
               <Avatar.Image
                 source={{
-                  uri: auth?.profilePicture?.original,
+                  uri:
+                    typeof auth?.profilePicture === 'string'
+                      ? auth.profilePicture
+                      : auth?.profilePicture?.original,
                 }}
                 size={50}
               />
@@ -168,16 +172,27 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
               }}
             />
           </Drawer.Section>
-          <Drawer.Section title="Preferences">
-            <TouchableRipple>
-              <View style={styles.preference}>
+          <Drawer.Section title="Theme">
+            <View style={styles.preference}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Icon
+                  name={
+                    isDarkMode ? 'moon-waning-crescent' : 'white-balance-sunny'
+                  }
+                  size={20}
+                  color={isDarkMode ? '#fff' : '#000'}
+                  style={{ marginRight: 8 }}
+                />
                 <View>
-                  <Toggle checked onChange={() => {}}>
-                    Dark Mode
-                  </Toggle>
+                  <Text category="s1">
+                    {isDarkMode ? 'Dark' : 'Light'} theme
+                  </Text>
+                  <Text category="c1" appearance="hint">
+                    Follows system settings automatically
+                  </Text>
                 </View>
               </View>
-            </TouchableRipple>
+            </View>
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>

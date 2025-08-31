@@ -11,6 +11,7 @@ import PostHeader from './PostHeader'
 import PostFooter from './PostFooter'
 import { PostProps } from '../../types'
 import LongText from './LongText'
+import { useTheme } from '../hooks/useTheme'
 
 //TO DELETE const { height } = Dimensions.get('screen')
 
@@ -29,6 +30,7 @@ const Post: React.FC<Props> = ({
   const [seeLikers, toggleLikerPopover] = useToggle(false)
   const [updatePost, updatePostMeta] = useUpdatePostMutation()
   const [deletePost, deletePostMeta] = useDeletePostMutation()
+  const { isDarkMode } = useTheme()
 
   const handleDeletePress = useCallback(() => {
     deletePost(props.id)
@@ -45,6 +47,7 @@ const Post: React.FC<Props> = ({
     },
     [navigation, props]
   )
+
   return (
     <View style={tw`static my-3`}>
       <PostHeader
@@ -57,13 +60,16 @@ const Post: React.FC<Props> = ({
       />
 
       {props.postText && (
-        <LongText style={tw`text-gray-500  font-thin`} text={props.postText} />
+        <LongText
+          style={tw`${isDarkMode ? 'text-white' : 'text-gray-500'}  font-thin`}
+          text={props.postText}
+        />
       )}
 
       {props?.media && props.media.length > 0 && (
         <ImageGrid
           medias={props.media}
-          style={tw`mb-2`}
+          style={tw`my-2`}
           onImageTouch={handleImageTouch}
         />
       )}

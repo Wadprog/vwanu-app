@@ -8,14 +8,16 @@ import ProfAvatar from './ProfAvatar'
 import nameToPicture from 'lib/nameToPicture'
 import { PostProps } from '../../types'
 import LikeForm from './LikeForm'
+import { useTheme } from 'hooks/useTheme'
 
 interface CommentProps {
   comment: PostProps
 }
 
 const Comment: React.FC<CommentProps> = ({ comment }) => {
+  const { isDarkMode } = useTheme()
   return (
-    <View style={tw`p-4 border-b border-gray-100`}>
+    <View style={tw`p-4 border-b border-gray-${isDarkMode ? '700' : '100'}`}>
       <ProfAvatar
         size={20}
         source={

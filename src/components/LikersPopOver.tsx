@@ -6,7 +6,7 @@
 
 import React from 'react'
 import { TouchableOpacity, View, Dimensions, FlatList } from 'react-native'
-import { Popover, Layout } from '@ui-kitten/components'
+import { Popover } from '@ui-kitten/components'
 
 import Text from './Text'
 import tw from '../lib/tailwind'
@@ -46,7 +46,7 @@ const LikerPopover: React.FC<LikerPopoverProps> = ({
       onBackdropPress={onDismiss}
       backdropStyle={tw`bg-black bg-opacity-50`}
     >
-      <Layout style={[tw`bg-white p-2`, { width: width / 2 }]}>
+      <View style={[tw` p-2`, { width: width / 2 }]}>
         {likers.isLoading || likers.isFetching ? (
           <ActivityIndicator animating={true} />
         ) : (
@@ -76,7 +76,7 @@ const LikerPopover: React.FC<LikerPopoverProps> = ({
             showsVerticalScrollIndicator={false}
           />
         )}
-      </Layout>
+      </View>
     </Popover>
   )
 }

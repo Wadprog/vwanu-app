@@ -164,7 +164,7 @@ const ImageGrid: React.FC<ImageGridProps> = (props) => {
   )
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, props.style]}>
       <View style={styles.columnsContainer}>
         {/* Left Column */}
         <View style={styles.leftColumn}>

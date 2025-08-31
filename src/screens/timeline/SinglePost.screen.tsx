@@ -9,10 +9,10 @@ import Screen from 'components/screen'
 import Comment from 'components/Comment'
 import CommentForm from 'components/CommentForm'
 import { FeedStackParams } from '../../../types'
-import { useFetchCommentsQuery } from 'store/comment'
 import { useFetchPostQuery, useFetchPostsQuery } from 'store/post'
 import useToggle from 'hooks/useToggle'
 import { useScroll } from 'contexts/ScrollContext'
+import { useTheme } from 'hooks/useTheme'
 
 type Props = StackScreenProps<FeedStackParams, 'SinglePost'>
 
@@ -24,6 +24,7 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
     isLoading: loadingPost,
     error,
   } = useFetchPostQuery(postId)
+  const { isDarkMode } = useTheme()
 
   const { data: commentsData = { data: [] }, isLoading: loadingComments } =
     useFetchPostsQuery({ postId })
@@ -54,7 +55,7 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
 
   return (
     <Screen>
-      <View style={tw`bg-white pb-3 pt-10 px-3 relative flex-1`}>
+      <View style={tw` pb-3 pt-10 px-3 relative flex-1`}>
         <FlatList
           ref={scrollRef}
           onScroll={handleScroll}
@@ -68,8 +69,18 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
                 disableNavigation={true}
                 toggleCommenting={toggleCommenting}
               />
-              <View style={tw`px-4 py-2 bg-gray-50`}>
-                <Text style={tw`font-bold text-gray-700`}>Comments</Text>
+              <View
+                style={tw`px-4 py-2 ${
+                  isDarkMode ? 'bg-gray-800' : 'bg-gray-50'
+                }`}
+              >
+                <Text
+                  style={tw`font-bold ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}
+                >
+                  Comments
+                </Text>
               </View>
             </>
           )}
