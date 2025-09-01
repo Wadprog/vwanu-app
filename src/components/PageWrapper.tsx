@@ -3,7 +3,6 @@ import React from 'react'
 import { View, ImageBackground, StyleProp, ViewStyle } from 'react-native'
 
 import tw from '../lib/tailwind'
-import images from '../config/image'
 import Screen, { ScreenProps } from './screen'
 import PageTitles from './PageTitles'
 import NavigationDots from './NavigationDots'
@@ -28,7 +27,6 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
     <Screen {...otherProps}>
       <ImageBackground
         style={[tw`p-3 flex-1 flex content-center justify-center`, style]}
-        source={images.registerBg}
       >
         {(title || subtitle) && (
           <View style={tw`mb-5 mt-10`}>

@@ -1,5 +1,4 @@
 import { View } from 'react-native'
-import React, { useState, useCallback, useEffect } from 'react'
 
 import tw from 'lib/tailwind'
 import PostList from './PostList'
@@ -11,7 +10,7 @@ import TimelineSkeletone from './TimelineSkeletone'
 const Timeline = () => {
   return (
     <Screen loading={false} loadingScreen={<TimelineSkeletone />} error={null}>
-      <View style={tw`bg-white p-3 relative`}>
+      <View style={tw` p-3 relative`}>
         {/* <BannerList />  */}
         <View style={tw`mt-3`}>
           <PostInput />

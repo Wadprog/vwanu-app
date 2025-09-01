@@ -1,24 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react'
 import {
   View,
   Modal,
   TouchableWithoutFeedback,
   TouchableOpacity,
-} from "react-native";
-import { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
+} from 'react-native'
+import { useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
 
-import Button from "./Button";
-import tw from "../lib/tailwind";
+import Button from './Button'
+import tw from '../lib/tailwind'
+import { useTailwindTheme } from '../hooks/useTailwindTheme'
 
 interface AppModalProps extends React.ComponentProps<typeof Modal> {
-  children: React.ReactNode;
-  withMenu?: boolean;
-  onClose: () => void;
-  onConfirm?: () => void;
-  confirmText?: string;
-  cancelText?: string;
-  otherProps?: object;
-  height?: number;
+  children: React.ReactNode
+  withMenu?: boolean
+  onClose: () => void
+  onConfirm?: () => void
+  confirmText?: string
+  cancelText?: string
+  otherProps?: object
+  height?: number
 }
 
 const AppModal: React.FC<AppModalProps> = ({
@@ -31,11 +32,20 @@ const AppModal: React.FC<AppModalProps> = ({
   height,
   ...otherProps
 }) => {
+  const { colors } = useTailwindTheme()
+
+  // Use our custom theme colors
+  const backgroundColor = colors.background.primary
+  const separatorColor = colors.border.subtle
+  const handleColor = colors.text.secondary
+
   return (
     <Modal transparent animationType="slide" {...otherProps}>
       <View style={tw`flex-1 bg-black bg-opacity-50 `}>
         <TouchableOpacity style={tw`flex-1 w-full`} onPress={onClose} />
-        <View style={tw`bg-white  w-full  overflow-hidden max-h-100`}>
+        <View
+          style={[tw`w-full overflow-hidden max-h-100`, { backgroundColor }]}
+        >
           <View style={tw`items-center `}>
             {withMenu ? (
               <View style={tw` w-full flex items-center`}>
@@ -44,31 +54,41 @@ const AppModal: React.FC<AppModalProps> = ({
                 justify-items-between `}
                 >
                   <Button
-                    title={cancelText || "close"}
+                    title={cancelText || 'close'}
                     appearance="ghost"
                     onPress={() => {
-                      onClose();
+                      onClose()
                     }}
                   />
                   {onConfirm && (
                     <Button
-                      title={confirmText || "confirm"}
+                      title={confirmText || 'confirm'}
                       appearance="ghost"
                       onPress={() => {
-                        onConfirm();
+                        onConfirm()
                       }}
                     />
                   )}
                 </View>
-                <View style={tw`h-[1px] bg-gray-200 w-[90%]`} />
+                <View
+                  style={[
+                    tw`h-[1px] w-[90%]`,
+                    { backgroundColor: separatorColor },
+                  ]}
+                />
               </View>
             ) : (
               <TouchableWithoutFeedback
                 onLongPress={() => {
-                  onClose();
+                  onClose()
                 }}
               >
-                <View style={tw`bg-black h-[5px] w-2/4 rounded-lg my-4`} />
+                <View
+                  style={[
+                    tw`h-[5px] w-2/4 rounded-lg my-4`,
+                    { backgroundColor: handleColor },
+                  ]}
+                />
               </TouchableWithoutFeedback>
             )}
           </View>
@@ -76,7 +96,7 @@ const AppModal: React.FC<AppModalProps> = ({
         </View>
       </View>
     </Modal>
-  );
-};
+  )
+}
 
-export default AppModal;
+export default AppModal

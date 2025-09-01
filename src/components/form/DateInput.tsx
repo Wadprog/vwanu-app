@@ -6,8 +6,6 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker'
 import { Ionicons } from '@expo/vector-icons'
 import { View } from 'react-native'
-
-const Icon = () => <Ionicons name="calendar" size={24} color="black" />
 // Custom dependencies
 import Error from './Error'
 import tw from '../../lib/tailwind'
@@ -16,6 +14,7 @@ import Wrapper from '../InputsWrapper'
 import useToggle from '../../hooks/useToggle'
 import Text from '../Text'
 import FieldParams from './fieldParams'
+import { useTailwindTheme } from '../../hooks/useTailwindTheme'
 
 interface DateInputProps extends FieldParams {
   name: string
@@ -36,6 +35,14 @@ const DateInput: React.FC<DateInputProps> = ({
   const { setFieldTouched, setFieldValue, errors, touched, values } =
     useFormikContext<any>()
 
+  const { colors } = useTailwindTheme()
+
+  // Get appropriate colors from our custom theme
+  const iconColor = colors.text.primary
+  const textColor = colors.text.primary
+
+  const Icon = () => <Ionicons name="calendar" size={24} color={iconColor} />
+
   const handleDateChange = (_: DateTimePickerEvent, new_date?: Date) => {
     if (!new_date) return
     setDate(new Date(new_date))
@@ -51,7 +58,9 @@ const DateInput: React.FC<DateInputProps> = ({
         {...otherProps}
         onPress={toggleModal}
       >
-        <Text style={tw`text-black`}>{date.toDateString()}</Text>
+        <Text style={[tw`text-black`, { color: textColor }]}>
+          {date.toDateString()}
+        </Text>
       </Wrapper>
 
       <Modal visible={showModal} onClose={toggleModal} onConfirm={toggleModal}>

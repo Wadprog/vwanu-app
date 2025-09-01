@@ -17,6 +17,7 @@ import { Notice } from '../../types'
 import { Form, Field, Submit } from './form'
 import { useCreateCommentMutation } from 'store/post'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { useTheme } from 'hooks/useTheme'
 
 const validationSchema = object().shape({
   postText: string().label('Comment'),
@@ -52,6 +53,7 @@ const CommentForm = forwardRef<CommentFormHandle, CommentFormProps>(
     const translateY = React.useRef(new Animated.Value(0)).current
     const sendButtonScale = React.useRef(new Animated.Value(1)).current
     const inputRef = useRef<TextInput>(null)
+    const { isDarkMode } = useTheme()
 
     const MAX_CHARACTERS = 500
     const remainingChars = MAX_CHARACTERS - commentText.length
@@ -160,8 +162,17 @@ const CommentForm = forwardRef<CommentFormHandle, CommentFormProps>(
           onSubmit={handleSubmit}
           style={styles.formContainer}
         >
-          <View style={styles.inputContainer}>
-            <View style={styles.inputWrapper}>
+          <View style={[styles.inputContainer]}>
+            <View
+              style={[
+                styles.inputWrapper,
+                {
+                  backgroundColor: isDarkMode
+                    ? tw.color('bg-gray-300')
+                    : tw.color('bg-white'),
+                },
+              ]}
+            >
               <CustomField
                 ref={inputRef}
                 multiline
@@ -173,6 +184,7 @@ const CommentForm = forwardRef<CommentFormHandle, CommentFormProps>(
                 placeholderTextColor="#9CA3AF"
                 maxLength={MAX_CHARACTERS}
                 textAlignVertical="top"
+                isDarkMode={isDarkMode}
               />
 
               {/* Character counter */}
@@ -201,7 +213,7 @@ const CommentForm = forwardRef<CommentFormHandle, CommentFormProps>(
                       size={18}
                       color={
                         commentText.trim().length > 0
-                          ? tw.color('blue-500')
+                          ? tw.color('bg-primary')
                           : '#D1D5DB'
                       }
                     />
@@ -211,10 +223,9 @@ const CommentForm = forwardRef<CommentFormHandle, CommentFormProps>(
                       size={18}
                       color={
                         commentText.trim().length > 0
-                          ? tw.color('blue-500')
+                          ? tw.color('bg-primary')
                           : '#D1D5DB'
                       }
-                      style={{ transform: [{ rotate: '-15deg' }] }}
                     />
                   )
                 }
@@ -242,22 +253,24 @@ interface CustomFieldProps {
   maxLength: number
   textAlignVertical: 'auto' | 'center' | 'bottom' | 'top'
   multiline: boolean
+  isDarkMode: boolean
 }
 
 const CustomField = forwardRef<TextInput, CustomFieldProps>(
-  ({ onChangeText, name, ...props }, ref) => {
+  ({ onChangeText, name, isDarkMode, ...props }, ref) => {
     const { setFieldValue } = useFormikContext<any>()
 
     return (
       <Field
-        ref={ref}
         name={name}
         {...props}
         onChangeText={(text: string) => {
           setFieldValue(name, text)
           onChangeText(text)
         }}
-        style={tw`flex-1 rounded-lg border-0 bg-transparent`}
+        style={tw`flex-1 rounded-lg border-0 ${
+          isDarkMode ? 'bg-gray-300' : 'bg-transparent'
+        }`}
       />
     )
   }

@@ -4,6 +4,7 @@ import { View, TouchableOpacity, Pressable } from 'react-native'
 // Custom import
 import Text from './Text'
 import tw from '../lib/tailwind'
+import { useTailwindTheme } from '../hooks/useTailwindTheme'
 
 export interface WrapperProps {
   label?: string
@@ -19,23 +20,34 @@ export interface WrapperProps {
 }
 
 const Wrapper: React.FC<WrapperProps> = (props) => {
+  const { combinations } = useTailwindTheme()
+
+  // Use the pre-defined input color combination from our custom theme
+  const inputColors = combinations.input
+  const borderColor = props.isFocus
+    ? inputColors.borderFocus
+    : inputColors.border
+
   return (
     <Pressable onPress={props.onPress} disabled={props.disabled}>
       <>
         {props.label && (
-          <Text style={tw`text-black mb-1`} category="c1" appearance="hint">
+          <Text
+            style={[tw`mb-1`, { color: inputColors.placeholder }]}
+            category="c1"
+            appearance="hint"
+          >
             {props.label}
           </Text>
         )}
         <View
           style={[
-            tw` p-2 mb-1 border flex  bg-[#F2F2F2] border-primary ${
-              props.disabled ? 'border-opacity-400 bg-opacity-50' : ''
-            }
-          `,
-
+            tw`p-2 mb-1 border flex ${props.disabled ? 'opacity-50' : ''}`,
+            {
+              backgroundColor: inputColors.background,
+              borderColor,
+            },
             props.style,
-            tw`${props.isFocus ? 'border-accent' : ''}`,
           ]}
         >
           <View style={tw`flex py-1 flex-row items-center justify-between`}>

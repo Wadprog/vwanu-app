@@ -2,6 +2,7 @@ import React from 'react'
 import { Formik, FormikValues, FormikHelpers } from 'formik'
 import { View, StyleProp, ViewStyle } from 'react-native'
 import { AnyObjectSchema, InferType } from 'yup'
+import { Layout } from '@ui-kitten/components'
 
 interface FormProps<S extends AnyObjectSchema> {
   validationSchema: S
@@ -28,7 +29,7 @@ function Form<S extends AnyObjectSchema>({
       onSubmit={onSubmit}
       validationSchema={validationSchema}
     >
-      {() => <View style={style}>{children}</View>}
+      {() => <Layout style={style}>{children}</Layout>}
     </Formik>
   )
 }

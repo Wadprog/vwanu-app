@@ -10,6 +10,7 @@ import { abbreviateNumber } from '../lib/numberFormat'
 import LikerPopover from './LikersPopOver'
 import useToggle from '../hooks/useToggle'
 import Kore from '../assets/svg/Kore'
+import { useTheme } from 'hooks/useTheme'
 
 interface PostInputModalInterface {
   id: string
@@ -32,6 +33,7 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
 }) => {
   const [toggleKore, { isLoading }] = useToggleKoreMutation()
   const [showLikers, toggleLikers] = useToggle(false)
+  const { isDarkMode } = useTheme()
 
   const handleSubmit = async () => {
     await toggleKore(id)
@@ -46,9 +48,9 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
       <Text
         category="c1"
         appearance="hint"
-        style={tw`text-black text-sm font-thin ${
-          flexDir === 'row' ? '-mr' : ''
-        }`}
+        style={tw`${
+          isDarkMode ? 'text-white' : 'text-black'
+        } text-sm font-thin ${flexDir === 'row' ? '-mr' : ''}`}
       >
         {abbreviateNumber(amountOfKorems)}
       </Text>
@@ -70,7 +72,11 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
   }
 
   return (
-    <View style={tw`flex-${flexDir} -gap-1 items-center`}>
+    <View
+      style={tw`flex-${flexDir} ${
+        flexDir === 'row' ? 'gap-1' : '-gap-1'
+      } items-center`}
+    >
       <LikeCount />
       <Form
         validationSchema={ValidationSchema}

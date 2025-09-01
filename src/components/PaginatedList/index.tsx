@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   FlatList,
   FlatListProps,
@@ -56,13 +56,8 @@ function PaginatedList<T>({
     newPagination: PaginationState,
     isRefresh = false
   ) => {
-    console.log('loadData')
-    console.log('newPagination', newPagination)
-    console.log('isRefresh', isRefresh)
     try {
       const response = await fetchData(newPagination)
-      console.log('response', response)
-
       if (isRefresh) {
         setData(response.data)
       } else {
@@ -73,10 +68,6 @@ function PaginatedList<T>({
           )
           const newItems = response.data.filter(
             (item) => !existingIds.has((item as any).id?.toString())
-          )
-          console.log(
-            'Filtered duplicates:',
-            response.data.length - newItems.length
           )
           return [...prev, ...newItems]
         })
@@ -90,13 +81,6 @@ function PaginatedList<T>({
   }
 
   const handleLoadMore = () => {
-    console.log('handleLoadMore')
-    console.log('hasMore', hasMore)
-    console.log(initialData.total)
-    console.log(initialData.data.length)
-    console.log('isFetching', isFetching)
-    console.log('hasScrolledUp', hasScrolledUp)
-    console.log('pagination', pagination)
     if (!isFetching && hasMore) {
       const newPagination = {
         ...pagination,
@@ -132,9 +116,6 @@ function PaginatedList<T>({
 
       setLastScrollY(currentScrollY)
     }
-
-    // Call original onScroll if provided
-    // onScroll?.(event)
   }
 
   return (

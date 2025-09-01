@@ -15,7 +15,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/app-icons-data_image/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "updates": {
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/e550dc60-d34d-4c1d-8286-c670002c81d3"

@@ -12,7 +12,7 @@ module.exports = {
         primary: '#1A38D7',
         secondary: '#FF4200',
         accent: '#006175',
-        'color-basic-100': '#FfFfFF',
+        'color-basic-100': '#FFFFFF',
         'color-basic-200': '#F8FAFF',
         'color-basic-300': '#F5F8FF',
         'color-basic-400': '#F3F6FF',
@@ -82,52 +82,4 @@ module.exports = {
     },
   },
   plugins: [],
-
-  // Config (optional)
-  daisyui: {
-    styled: true,
-    themes: [
-      {
-        mytheme: {
-          primary: '#ff4200',
-
-          secondary: '#053dc8',
-
-          accent: '#2155d7',
-
-          neutral: '#3D4451',
-
-          'base-100': '#FFFFFF',
-
-          info: '#e0f2fe',
-
-          success: '#dcfce7',
-
-          warning: '#fef9c3',
-
-          error: '#fee2e2',
-        },
-        screens: {
-          sm: '425px',
-          // => @media (min-width: 425px) { ... }
-
-          md: '768px',
-          // => @media (min-width: 768px) { ... }
-
-          lg: '1024px',
-          // => @media (min-width: 1024px) { ... }
-
-          xl: '1100px',
-          // => @media (min-width: 1100px) { ... }
-
-          '2xl': '1440px',
-          // => @media (min-width: 1440px) { ... }
-        },
-      },
-    ],
-    base: true,
-    utils: true,
-    logs: true,
-    rtl: false,
-  },
 }

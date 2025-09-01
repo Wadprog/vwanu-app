@@ -2,15 +2,15 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Avatar } from 'react-native-paper'
 import { View, Platform } from 'react-native'
-import * as ImagePicker from 'expo-image-picker'
+import { Input } from '@ui-kitten/components'
 
-import Input from '../../Input'
 import tw from 'lib/tailwind'
 import Img from 'assets/svg/Image'
 import useToggle from 'hooks/useToggle'
 import PostInputModal from '../PostInputModal'
 import { useFetchProfileQuery } from 'store/profiles'
 import { RootState } from 'store'
+import { useTheme } from 'hooks/useTheme'
 
 const shadowStyle = {
   ...Platform.select({
@@ -29,32 +29,13 @@ const shadowStyle = {
 const PostInput = () => {
   const { userId } = useSelector((state: RootState) => state.auth)
   const { data: user } = useFetchProfileQuery(userId!)
-
+  const { isDarkMode } = useTheme()
   const [creatingPost, toggleCreatingPost] = useToggle(false)
   const [openBottomSheet, toggleOpenBottomSheet] = useToggle(false)
 
-  const handleIconRightPress = async () => {
-    try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
-
-      if (status === 'granted') {
-        toggleCreatingPost()
-        toggleOpenBottomSheet()
-      } else {
-        // If permission is not granted, handle accordingly
-        console.log(
-          'We will navigate to a permission request page or show a prompt'
-        )
-        // navigation.navigate('PermissionRequestPage')
-      }
-    } catch (error) {
-      console.error('Error requesting media library permission:', error)
-    }
-  }
-
   return (
     <View style={[tw`px-1`, shadowStyle]}>
-      <View style={tw`flex flex-row  my-2`}>
+      <View style={tw`flex flex-row my-2`}>
         <Avatar.Image
           source={{
             uri:
@@ -65,16 +46,15 @@ const PostInput = () => {
         />
         <View style={tw`flex-1 ml-2`}>
           <Input
-            disabled
             editable={false}
             autoFocus
             placeholder="What's on your mind?"
             onPressIn={() => toggleCreatingPost()}
-            style={tw`border-[#F2F3F5] border-[1px] bg-white rounded-2xl mb-0`}
-            iconRight={<Img />}
-            onIconRightPress={() => {
-              handleIconRightPress()
-            }}
+            style={tw`border-[${
+              isDarkMode ? 'white' : (tw.color('text-primary') as string)
+            }] border-[1px] bg-white rounded-2xl mb-0`}
+            accessoryRight={<Img />}
+            disabled={true}
           />
         </View>
       </View>

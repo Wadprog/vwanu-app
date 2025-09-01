@@ -15,6 +15,7 @@ import { PostProps } from '../../types'
 import LikerPopover from './LikersPopOver'
 import { abbreviateNumber } from '../lib/numberFormat'
 import LikeForm from './LikeForm'
+import { useTheme } from '../hooks/useTheme'
 
 interface Props extends PostProps {
   showViewComment?: boolean
@@ -33,7 +34,7 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
   const moreReactors = props.isReactor
     ? (props.amountOfKorems ?? 0) - 1
     : (props.amountOfKorems ?? 0) - (props.reactors?.length - 2 || 0)
-
+  const { isDarkMode } = useTheme()
   const handleCommentPress = useCallback(() => {
     if (props.disableNavigation) {
       // We're in SinglePost view, just toggle the comment form
@@ -61,13 +62,13 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
             )}
             {props.isReactor ? (
               <TouchableOpacity onPress={() => {}}>
-                <Text style={tw`text-black`}>
+                <Text style={tw`${isDarkMode ? 'text-white' : 'text-black'}`}>
                   {props.reactors && props.reactors[0]?.firstName}
                 </Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={() => {}}>
-                <Text style={tw`text-black`}>
+                <Text style={tw`${isDarkMode ? 'text-white' : 'text-black'}`}>
                   {props.reactors &&
                     props.reactors.map((u: any) => u.firstName).join(',')}
                 </Text>
@@ -75,10 +76,18 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
             )}
             {moreReactors > 0 && (
               <>
-                <Text style={tw`text-black font-thin`}>and</Text>
-                <Text style={tw`text-black`}>
-                  {abbreviateNumber(moreReactors)}+
+                <Text
+                  style={tw`${
+                    isDarkMode ? 'text-white' : 'text-black'
+                  } font-thin`}
+                >
+                  and
                 </Text>
+                <Text style={tw`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  {' '}
+                  {abbreviateNumber(moreReactors)}{' '}
+                </Text>
+
                 <LikerPopover
                   id={props.id.toString()}
                   visible={props.seeLikers}
@@ -88,7 +97,11 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
             )}
           </View>
         ) : (
-          <Text style={tw`font-thin text-sm`}>
+          <Text
+            style={tw`${
+              isDarkMode ? 'text-white' : 'text-black'
+            } font-thin text-sm`}
+          >
             Be the first to
             <Text style={tw`text-sm font-thin italic`}> Kore</Text>
           </Text>
@@ -96,12 +109,27 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
 
         {props.showViewComment && (props.amountOfComments ?? 0) > 0 && (
           <TouchableOpacity onPress={handleCommentPress}>
-            <Text style={tw`text-primary font-thin text-sm`}>
+            <Text
+              style={tw`${
+                isDarkMode ? 'text-white' : 'text-primary'
+              } font-thin text-sm`}
+            >
               View all{' '}
-              <Text style={tw`text-primary text-sm`}>
+              <Text
+                style={tw`${
+                  isDarkMode ? 'text-white' : 'text-primary'
+                } text-sm`}
+              >
                 {abbreviateNumber(props.amountOfComments || 0)}
               </Text>
-              <Text style={tw`text-primary font-thin text-sm`}> comments</Text>
+              <Text
+                style={tw`${
+                  isDarkMode ? 'text-white' : 'text-primary'
+                } font-thin text-sm`}
+              >
+                {' '}
+                comments
+              </Text>
             </Text>
           </TouchableOpacity>
         )}
@@ -109,7 +137,11 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
 
       <View style={tw`flex flex-row items-center justify-between`}>
         <View style={tw`self-end flex-row items-center`}>
-          <Ionicons name="share-outline" size={15} color="black" />
+          <Ionicons
+            name="share-outline"
+            size={15}
+            color={isDarkMode ? 'white' : 'black'}
+          />
         </View>
         <View style={tw`mx-2 items-center`}>
           <LikeForm
@@ -124,7 +156,9 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
           <Text
             category="c1"
             appearance="hint"
-            style={tw`text-black text-sm font-thin`}
+            style={tw`${
+              isDarkMode ? 'text-white' : 'text-black'
+            } text-sm font-thin`}
           >
             {abbreviateNumber(props.amountOfComments || 0)}
           </Text>
@@ -132,7 +166,7 @@ const PostFooter: React.FC<PostFooterProps> = (props) => {
             <Ionicons
               name="chatbubble-ellipses-outline"
               size={15}
-              color="black"
+              color={isDarkMode ? 'white' : 'black'}
             />
           </TouchableOpacity>
         </View>

@@ -1,7 +1,8 @@
 import React from 'react'
 import { View, TouchableOpacity } from 'react-native'
-import { string, ref, bool, object, date } from 'yup'
+import { string, ref, bool, object } from 'yup'
 import Icon from '@expo/vector-icons/Ionicons'
+import { Layout } from '@ui-kitten/components'
 
 import tw from 'lib/tailwind'
 import Text from 'components/Text'
@@ -13,7 +14,7 @@ import { RootState, AppDispatch } from 'store'
 import PageWrapper from 'components/PageWrapper'
 import { useAuthActions } from 'hooks/useAuthActions'
 import { NextActions, setNextAction } from 'store/auth-slice'
-import { Form, Field, Submit, Switch, Select, DateInput } from 'components/form'
+import { Form, Field, Submit, Switch, Select } from 'components/form'
 import routes from 'navigation/routes'
 
 const ValidationSchema = object().shape({
@@ -77,7 +78,7 @@ const RegisterScreen: React.FC<{}> = () => {
           }}
           style={tw`flex-1 flex justify-between items-center`}
         >
-          <View style={tw`mb-5 flex-1 items-stretch`}>
+          <Layout style={tw`mb-5 flex-1 items-stretch`}>
             <Field
               label="First Name"
               style={tw`mb-5 rounded-lg`}
@@ -179,7 +180,7 @@ const RegisterScreen: React.FC<{}> = () => {
             />
 
             <Submit title="Sign up" />
-          </View>
+          </Layout>
         </Form>
         <View style={tw`h-[70px] bg-green-50 bg-opacity-0`}>
           <View style={tw`flex flex-row justify-center`}>

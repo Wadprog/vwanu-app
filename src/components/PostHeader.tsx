@@ -6,7 +6,7 @@ Sub-Component: PostHeader
 
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { TouchableOpacity, View, Dimensions, FlatList } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import { Popover, Layout } from '@ui-kitten/components'
 import { formatDistanceToNow } from 'date-fns'
 import { useSelector } from 'react-redux'
