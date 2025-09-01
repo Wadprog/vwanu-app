@@ -13,10 +13,12 @@ import { useFetchPostQuery, useFetchPostsQuery } from 'store/post'
 import useToggle from 'hooks/useToggle'
 import { useScroll } from 'contexts/ScrollContext'
 import { useTheme } from 'hooks/useTheme'
+import Button from 'components/Button'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 type Props = StackScreenProps<FeedStackParams, 'SinglePost'>
 
-const SinglePostScreen: React.FC<Props> = ({ route }) => {
+const SinglePostScreen: React.FC<Props> = ({ route, navigation }) => {
   const { postId, isCommenting: initialCommenting = false } = route.params
   const [commenting, toggleCommenting] = useToggle(initialCommenting)
   const {
@@ -56,6 +58,20 @@ const SinglePostScreen: React.FC<Props> = ({ route }) => {
   return (
     <Screen>
       <View style={tw` pb-3 pt-10 px-3 relative flex-1`}>
+        {/* Back Button */}
+        <Button
+          style={tw`absolute z-10`}
+          accessibilityLabel="Go back to timeline"
+          onPress={() => navigation.goBack()}
+          appearance="ghost"
+          accessoryLeft={() => (
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={24}
+              color={isDarkMode ? 'white' : 'black'}
+            />
+          )}
+        />
         <FlatList
           ref={scrollRef}
           onScroll={handleScroll}

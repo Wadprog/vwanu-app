@@ -1,44 +1,58 @@
+/**
+ * Feed Stack Navigator
+ * Handles timeline, gallery, and post-related screens
+ */
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 
-// Custom core imports
+// Configuration
+import { stackConfig, screenConfigs } from './config/navigationConfig'
+import { SCREEN_NAMES } from './utils/navigationUtils'
+
+// Screens
 import TimelineScreen from '../screens/timeline/Timeline.screen'
 import ImageGallery from '../screens/timeline/ImageGallery.screen'
-import CommentScreen from '../screens/timeline/Comment.screen' // to delete
 import SinglePostScreen from '../screens/timeline/SinglePost.screen'
+
+// Types
 import { FeedStackParams } from '../../types'
 
-const options = {
-  headerTitle: '',
-  headerShown: true,
-  headerTransparent: false,
-  headerStyle: { height: 100 },
-}
 const Stack = createStackNavigator<FeedStackParams>()
 
-const TimelineNavigator = () => (
+/**
+ * Feed navigation stack
+ * Provides navigation between timeline, gallery, and post details
+ */
+const FeedNavigator: React.FC = () => (
   <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-      headerTransparent: false,
-    }}
+    screenOptions={stackConfig}
+    initialRouteName={SCREEN_NAMES.TIMELINE}
   >
     <Stack.Screen
-      name="Timeline"
+      name={SCREEN_NAMES.TIMELINE}
       component={TimelineScreen}
-      options={options}
+      options={{
+        ...screenConfigs.timeline,
+        title: 'Timeline', // Better accessibility
+      }}
     />
-    <Stack.Screen name="Gallery" component={ImageGallery} />
-    <Stack.Screen name="SinglePost" component={SinglePostScreen} />
+    <Stack.Screen
+      name={SCREEN_NAMES.GALLERY}
+      component={ImageGallery}
+      options={{
+        ...screenConfigs.gallery,
+        title: 'Image Gallery',
+      }}
+    />
+    <Stack.Screen
+      name={SCREEN_NAMES.SINGLE_POST}
+      component={SinglePostScreen}
+      options={{
+        ...screenConfigs.singlePost,
+        title: 'Post Details',
+      }}
+    />
   </Stack.Navigator>
 )
 
-export default TimelineNavigator
-
-// Helper function to get tab bar visibility
-const getTabBarVisibility = (route: any) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Timeline'
-  return routeName === 'Gallery' || routeName === 'SinglePost'
-}
+export default FeedNavigator

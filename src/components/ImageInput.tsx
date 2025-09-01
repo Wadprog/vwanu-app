@@ -24,10 +24,9 @@ const ImageInput: React.FC<ImageInputProps> = ({ InitialImage, ...props }) => {
   const hasVideoSupport = () => {
     try {
       require('expo-av')
-      console.log('ImageInput: Video support available')
       return true
     } catch {
-      console.log('ImageInput: Video support not available')
+      // ImageInput: Video support not available
       return false
     }
   }
