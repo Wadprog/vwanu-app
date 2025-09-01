@@ -41,7 +41,17 @@ const BottomTabBar: React.FC<TabBarProps> = ({ navigation, state }) => {
   const iconColor = isDarkMode ? 'white' : tw.color('text-primary')
 
   const handleTabPress = (index: number) => {
-    navigation.navigate(state.routeNames[index])
+    const routeName = state.routeNames[index]
+
+    // If navigating to Account tab, reset profile parameters to show own profile
+    if (routeName === routes.ACCOUNT) {
+      navigation.navigate(routeName, {
+        screen: routes.PROFILE,
+        params: { profileId: undefined },
+      })
+    } else {
+      navigation.navigate(routeName)
+    }
   }
 
   return (

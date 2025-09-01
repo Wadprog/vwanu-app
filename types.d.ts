@@ -38,6 +38,7 @@ interface User {
       }
   amountOfFollower: number
   amountOfFollowing: number
+  amountOfFriends: number
   nextCompletionStep: NextCompletionStep
   id: string
   email: string
@@ -91,6 +92,14 @@ export type FeedStackParams = Record<string, object | undefined> & {
 
 export type ProfileStackParams = {
   [routes.PROFILE]: { profileId: string } | undefined
+  SinglePost: { postId: string; isCommenting?: boolean }
+  Settings: undefined
+  NotificationSettings: undefined
+  AccountSettings: undefined
+  PrivacySettings: undefined
+  AppearanceSettings: undefined
+  HelpSettings: undefined
+  AboutSettings: undefined
 }
 
 export type BottomTabParms = {
