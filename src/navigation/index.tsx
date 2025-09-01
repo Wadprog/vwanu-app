@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { ActivityIndicator } from 'react-native-paper'
 
 // Navigation Stacks
-import AppNavigation from './Drawer'
+import DrawerNavigator from './Drawer'
 import AuthNavigator from './Auth.navigation'
 import BoardingNavigator from './boarding.navigation'
 import ProfileCreationNavigator from './updateuser.navigator'
@@ -325,7 +325,7 @@ const Routes: React.FC = () => {
 
     switch (completionStep) {
       case NextCompletionStep.PROFILE_COMPLETE:
-        return <AppNavigation />
+        return <DrawerNavigator />
       default:
         return <ProfileCreationNavigator />
     }

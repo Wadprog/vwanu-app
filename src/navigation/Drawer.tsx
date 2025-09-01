@@ -1,40 +1,35 @@
-/* eslint-disable react/no-unstable-nested-components */
+/**
+ * Main Drawer Navigator
+ * Provides side drawer navigation with swipe gesture support
+ */
 import React from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer'
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 
-// Custom imports
+// Configuration
+import { drawerConfig } from './config/navigationConfig'
+import routes from './routes'
+
+// Components
 import DrawerContent from '../screens/DrawerContent'
 import BottomTabNavigator from './Bottom'
-import routes from './routes'
 
 const Drawer = createDrawerNavigator()
 
-const DrawerNav = () => (
+/**
+ * Main drawer navigator component
+ * Accessible via swipe gestures from left edge
+ */
+const DrawerNavigator: React.FC = () => (
   <Drawer.Navigator
     drawerContent={(props) => <DrawerContent {...props} />}
-    screenOptions={{
-      headerTransparent: true,
-      headerTitle: '',
-    }}
-
-    //    screenOptions={({ route }) => ({
-    //   headerShown: false,
-    //   headerTransparent: true,
-    //   headerTitle: "",
-
-    //   tabBarStyle: {
-    //     display: getTabBarVisibility(route) ? 'none' : 'flex',
-    //   },
-    // })}
+    screenOptions={drawerConfig}
   >
-    <Drawer.Screen name={routes.BOTTOM_TAB} component={BottomTabNavigator} />
+    <Drawer.Screen
+      name={routes.BOTTOM_TAB}
+      component={BottomTabNavigator}
+      options={{ title: 'Main' }} // Better accessibility
+    />
   </Drawer.Navigator>
 )
 
-export default DrawerNav
-
-const getTabBarVisibility = (route: any) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Timeline'
-  return routeName === 'Gallery'
-}
+export default DrawerNavigator

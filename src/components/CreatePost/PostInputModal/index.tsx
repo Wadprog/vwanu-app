@@ -6,7 +6,6 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { useNavigation } from '@react-navigation/native'
 import {
   View,
-  Text,
   Modal,
   TouchableOpacity,
   StatusBar,
@@ -24,6 +23,7 @@ import {
   ImageFields,
   PrivacyNoticeField,
 } from '../../form'
+import Text from '../../Text'
 import { useCreatePostMutation } from 'store/post'
 import { Notice } from '../../../../types'
 import { useFetchProfileQuery } from 'store/profiles'
@@ -31,6 +31,7 @@ import { RootState } from 'store'
 import nameToPicture from 'lib/nameToPicture'
 import { useFormikContext } from 'formik'
 import routes from 'navigation/routes'
+import { useTheme } from 'hooks/useTheme'
 
 interface PostInputModalInterface {
   visible: boolean
@@ -144,15 +145,16 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
   }
 
   const isPostReady = postText.trim().length > 0
+  const { isDarkMode } = useTheme()
 
   return (
     <Modal
       visible={visible}
       animationType="fade"
       onRequestClose={handleClose}
-      statusBarTranslucent
+      // statusBarTranslucent
     >
-      <StatusBar barStyle="light-content" backgroundColor="rgba(0,0,0,0.5)" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="rgba(0,0,0,0.5)" /> */}
 
       <Animated.View
         style={[
@@ -170,15 +172,25 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
             //@ts-ignore
             await createPost(values)
           }}
-          style={tw`flex-1 bg-white`}
+          style={tw`flex-1`}
         >
           {/* Enhanced Header */}
-          <View style={styles.header}>
+          <View
+            style={[
+              styles.header,
+              {
+                backgroundColor: isDarkMode ? 'gray-800' : 'white',
+                borderBottomColor: isDarkMode
+                  ? tw.color('border-primary')
+                  : 'gray-200',
+              },
+            ]}
+          >
             <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
               <Ionicons name="close" size={24} color="#374151" />
             </TouchableOpacity>
 
-            <Text style={styles.headerTitle}>Create Post</Text>
+            <Text>Create Post</Text>
 
             <Submit
               title={result.isLoading ? 'Posting...' : 'Post'}
@@ -201,7 +213,16 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
             showsVerticalScrollIndicator={false}
           >
             {/* Enhanced User Section */}
-            <View style={styles.userSection}>
+            <View
+              style={[
+                styles.userSection,
+                {
+                  borderBottomColor: isDarkMode
+                    ? tw.color('border-primary')
+                    : 'gray-200',
+                },
+              ]}
+            >
               <ProfAvatar
                 source={
                   (typeof user?.profilePicture === 'object' &&

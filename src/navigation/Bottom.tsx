@@ -1,43 +1,51 @@
-/* eslint-disable react/no-unstable-nested-components */
+/**
+ * Bottom Tab Navigator
+ * Main navigation between primary app sections
+ */
 import React from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
-import {
-  BottomNavigation,
-  BottomNavigationTab,
-  Layout,
-  Text,
-} from '@ui-kitten/components'
+import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components'
 
+// Configuration and utilities
+import { tabConfig } from './config/navigationConfig'
+import { getTabBarStyle, SCREEN_NAMES } from './utils/navigationUtils'
 import routes from './routes'
-// import Feed from './Feed'
-// import Chat from './Chat'
+
+// Hooks and styles
 import tw from '../lib/tailwind'
-import ChatNavigator from './Chat'
-import FeedNavigator from './Feed'
-import AccountNavigator from './Account'
-import { BottomTabParms } from '../../types'
-// import CommunityIcon from 'assets/svg/Community'
 import { useTailwindTheme } from '../hooks/useTailwindTheme'
 import { useTheme } from '../hooks/useTheme'
 
+// Navigators
+import ChatNavigator from './Chat'
+import FeedNavigator from './Feed'
+import AccountNavigator from './Account'
+
+// Types
+import { BottomTabParms } from '../../types'
+
 const Tab = createBottomTabNavigator<BottomTabParms>()
 
-const BottomTabBar = ({
-  navigation,
-  state,
-}: {
+/**
+ * Custom Bottom Tab Bar Component
+ * Uses UI Kitten's BottomNavigation with theme support
+ */
+interface TabBarProps {
   navigation: any
   state: any
-}) => {
+}
+
+const BottomTabBar: React.FC<TabBarProps> = ({ navigation, state }) => {
   const { isDarkMode } = useTheme()
   const iconColor = isDarkMode ? 'white' : tw.color('text-primary')
+
+  const handleTabPress = (index: number) => {
+    navigation.navigate(state.routeNames[index])
+  }
+
   return (
-    <BottomNavigation
-      selectedIndex={state.index}
-      onSelect={(index) => navigation.navigate(state.routeNames[index])}
-    >
+    <BottomNavigation selectedIndex={state.index} onSelect={handleTabPress}>
       <BottomNavigationTab
         title={routes.TIMELINE}
         icon={
@@ -54,37 +62,72 @@ const BottomTabBar = ({
           <MaterialCommunityIcons name="account" size={20} color={iconColor} />
         }
       />
-      {/* <BottomNavigationTab title={routes.INBOX} icon={<MaterialCommunityIcons name="chat" size={20} color={iconColor} />} />
-    <BottomNavigationTab title={routes.COMMUNITY} icon={<CommunityIcon size={20} color={iconColor} />} /> */}
+      {/* Disabled tabs - can be enabled when features are ready
+      <BottomNavigationTab 
+        title={routes.INBOX} 
+        icon={
+          <MaterialCommunityIcons 
+            name="chat" 
+            size={20} 
+            color={iconColor} 
+          />
+        } 
+      />
+      <BottomNavigationTab 
+        title={routes.COMMUNITY} 
+        icon={
+          <CommunityIcon 
+            size={20} 
+            color={iconColor} 
+          />
+        } 
+      />
+      */}
     </BottomNavigation>
   )
 }
 
-const TabNavigator = () => {
+/**
+ * Main Bottom Tab Navigator
+ * Provides primary navigation between app sections
+ */
+const BottomTabNavigator: React.FC = () => {
   const { colors } = useTailwindTheme()
+
   return (
     <Tab.Navigator
       screenOptions={(route) => ({
-        headerShown: false,
-        headerTransparent: true,
-        tabBarShowLabel: true,
+        ...tabConfig,
         tabBarActiveTintColor: colors.brand.primary,
         tabBarInactiveTintColor: colors.text.secondary,
-        tabBarStyle: getTabBarVisibility(route)
-          ? { display: 'none' }
-          : { display: 'flex' },
+        tabBarStyle: getTabBarStyle(route),
       })}
       tabBar={(props) => <BottomTabBar {...props} />}
+      initialRouteName={SCREEN_NAMES.FEED_TAB}
     >
-      <Tab.Screen name={routes.TIMELINE} component={FeedNavigator} />
-      <Tab.Screen name={routes.ACCOUNT} component={AccountNavigator} />
-      <Tab.Screen name={routes.INBOX} component={ChatNavigator} />
-      <Tab.Screen name={routes.COMMUNITY} component={ChatNavigator} />
+      <Tab.Screen
+        name={routes.TIMELINE}
+        component={FeedNavigator}
+        options={{ title: 'Timeline' }}
+      />
+      <Tab.Screen
+        name={routes.ACCOUNT}
+        component={AccountNavigator}
+        options={{ title: 'Profile' }}
+      />
+      {/* Disabled for now - can be enabled when features are ready */}
+      <Tab.Screen
+        name={routes.INBOX}
+        component={ChatNavigator}
+        options={{ title: 'Messages' }}
+      />
+      <Tab.Screen
+        name={routes.COMMUNITY}
+        component={ChatNavigator}
+        options={{ title: 'Community' }}
+      />
     </Tab.Navigator>
   )
 }
-const getTabBarVisibility = (route: any) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Timeline'
-  return routeName === 'Gallery'
-}
-export default TabNavigator
+
+export default BottomTabNavigator

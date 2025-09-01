@@ -19,6 +19,7 @@ import PrivacyNotice from './PrivacyNotice'
 import { PostProps, UpdatePost } from '../../types'
 import { RootState } from '../store'
 import nameToPicture from 'lib/nameToPicture'
+import { useTheme } from 'hooks/useTheme'
 
 interface PostHeaderProps extends PostProps {
   onDeletePress: () => void
@@ -33,7 +34,7 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
   const user = useSelector((state: RootState) => state.auth)
   const PostUser = props.user
   const navigation = useNavigation()
-
+  const { isDarkMode } = useTheme()
   const handlePress = () => {
     // console.log('props', props)
     if (!props.disableNavigation) {
@@ -91,22 +92,26 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
               <Ionicons
                 name="ellipsis-horizontal-outline"
                 size={15}
-                color="black"
+                color={isDarkMode ? 'white' : 'black'}
               />
             </TouchableOpacity>
           )}
           onBackdropPress={props.toggleDeleting}
           backdropStyle={tw`bg-black/2`}
         >
-          <Layout style={tw`bg-white p-5`}>
+          <View style={tw`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-5`}>
             <TouchableOpacity
               onPress={props.onDeletePress}
               style={tw`flex flex-row items-center`}
             >
-              <Ionicons name="trash-outline" size={15} color="#000" />
+              <Ionicons
+                name="trash-outline"
+                size={15}
+                color={isDarkMode ? 'white' : 'black'}
+              />
               <Text style={tw`text-sm font-thin`}>Delete Post</Text>
             </TouchableOpacity>
-          </Layout>
+          </View>
         </Popover>
       )}
     </TouchableOpacity>
