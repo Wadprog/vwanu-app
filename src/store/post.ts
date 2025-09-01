@@ -56,6 +56,7 @@ const _toFormData = (values: Partial<PostCreationProps>): FormData => {
 // type Post = Response<PostProps>;
 
 interface FetchPostsParams {
+  userId?: string | number
   postId?: string | number
   $limit?: number
   $skip?: number
@@ -69,6 +70,9 @@ const post = apiSlice.injectEndpoints({
         const baseUrl = `${endpoints.POSTS}`
         const queryParams = new URLSearchParams()
 
+        if (params?.userId) {
+          queryParams.append('userId', params.userId.toString())
+        }
         if (params?.postId) {
           queryParams.append('PostId', params.postId.toString())
         }

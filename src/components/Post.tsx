@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 
 import tw from '../lib/tailwind'
 import ImageGrid from './ImageGrid'
@@ -47,7 +47,13 @@ const Post: React.FC<Props> = ({
     },
     [navigation, props]
   )
-
+  const handlePress = () => {
+    // console.log('props', props)
+    if (!props.disableNavigation) {
+      // @ts-ignore
+      navigation.navigate('SinglePost', { postId: props.id })
+    }
+  }
   return (
     <View style={tw`static my-3`}>
       <PostHeader
@@ -60,10 +66,14 @@ const Post: React.FC<Props> = ({
       />
 
       {props.postText && (
-        <LongText
-          style={tw`${isDarkMode ? 'text-white' : 'text-gray-500'}  font-thin`}
-          text={props.postText}
-        />
+        <TouchableOpacity onPress={handlePress}>
+          <LongText
+            style={tw`${
+              isDarkMode ? 'text-white' : 'text-gray-500'
+            }  font-thin`}
+            text={props.postText}
+          />
+        </TouchableOpacity>
       )}
 
       {props?.media && props.media.length > 0 && (

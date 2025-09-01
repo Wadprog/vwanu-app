@@ -11,15 +11,17 @@ import { Popover, Layout } from '@ui-kitten/components'
 import { formatDistanceToNow } from 'date-fns'
 import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
 
 import Text from './Text'
 import tw from '../lib/tailwind'
 import ProfAvatar from './ProfAvatar'
 import PrivacyNotice from './PrivacyNotice'
-import { PostProps, UpdatePost } from '../../types'
+import { PostProps, UpdatePost, ProfileStackParams } from '../../types'
 import { RootState } from '../store'
 import nameToPicture from 'lib/nameToPicture'
 import { useTheme } from 'hooks/useTheme'
+import routes from '../navigation/routes'
 
 interface PostHeaderProps extends PostProps {
   onDeletePress: () => void
@@ -33,22 +35,34 @@ interface PostHeaderProps extends PostProps {
 const PostHeader: React.FC<PostHeaderProps> = (props) => {
   const user = useSelector((state: RootState) => state.auth)
   const PostUser = props.user
-  const navigation = useNavigation()
+  const navigation = useNavigation<StackNavigationProp<ProfileStackParams>>()
   const { isDarkMode } = useTheme()
-  const handlePress = () => {
-    // console.log('props', props)
-    if (!props.disableNavigation) {
+
+  const handleProfileNavigation = (userId: string | number) => {
+    // Navigate to the user's profile
+    console.log('Navigating to profile for user:', userId)
+
+    // Get the parent navigator (bottom tabs) to navigate to ACCOUNT tab with profile params
+    const parentNavigation = navigation.getParent()
+    if (parentNavigation) {
+      // @ts-ignore - Navigate to ACCOUNT tab and then to PROFILE with profileId
+      parentNavigation.navigate(routes.ACCOUNT, {
+        screen: routes.PROFILE,
+        params: { profileId: userId.toString() },
+      })
+    } else {
+      // Fallback: try direct navigation
       // @ts-ignore
-      navigation.navigate('SinglePost', { postId: props.id })
+      navigation.navigate(routes.ACCOUNT, {
+        screen: routes.PROFILE,
+        params: { profileId: userId.toString() },
+      })
     }
   }
 
   return (
-    <TouchableOpacity
-      onPress={handlePress}
-      style={tw`flex flex-row justify-between items-center mb-2`}
-    >
-      <View style={tw`flex flex-row items-center`}>
+    <View style={tw`flex flex-row justify-between items-center mb-2`}>
+      <View style={tw`flex flex-row items-center mb-2`}>
         <ProfAvatar
           size={30}
           source={
@@ -66,6 +80,8 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
           subtitleParams={{
             textStyles: 'text-white font-thin',
           }}
+          userId={props.user?.id}
+          onLongPress={handleProfileNavigation}
         />
         <PrivacyNotice
           privacyType={props.privacyType}
@@ -114,7 +130,7 @@ const PostHeader: React.FC<PostHeaderProps> = (props) => {
           </View>
         </Popover>
       )}
-    </TouchableOpacity>
+    </View>
   )
 }
 
