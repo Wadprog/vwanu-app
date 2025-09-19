@@ -52,7 +52,6 @@ export const screenConfigs = {
   },
   gallery: {
     headerShown: false,
-    presentation: 'modal' as const,
   },
   singlePost: {
     headerShown: false,

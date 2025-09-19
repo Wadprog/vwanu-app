@@ -46,6 +46,15 @@ interface RetryState {
   maxRetries: number
 }
 
+// Utility function to detect 404 errors from RTK Query
+const is404Error = (error: any): boolean => {
+  return (
+    error?.status === 404 ||
+    error?.data?.status === 404 ||
+    (error?.status === 'FETCH_ERROR' && error?.error?.includes('404'))
+  )
+}
+
 const Routes: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -108,8 +117,14 @@ const Routes: React.FC = () => {
     refetchOnMountOrArgChange: true,
   })
 
-  // Smart retry function with exponential backoff
+  // Smart retry function with exponential backoff (excludes 404 errors)
   const handleRetry = useCallback(async () => {
+    // Don't retry if current error is a 404
+    if (error && is404Error(error)) {
+      console.log('🚫 Cannot retry 404 error - profile not found')
+      return
+    }
+
     const now = Date.now()
     const timeSinceLastRetry = now - retryState.lastRetryTime
 
@@ -152,17 +167,28 @@ const Routes: React.FC = () => {
       )
       dispatch(signOutUser())
     }
-  }, [refetch, retryState, dispatch])
+  }, [error, refetch, retryState, dispatch])
 
   // Reset retry state when authentication changes
   useEffect(() => {
     setRetryState((prev) => ({ ...prev, retryCount: 0 }))
   }, [isAuthenticated])
 
-  // Sign out user when max retries reached and there's an error
+  // Handle immediate sign-out for 404 profile errors or max retries reached
   useEffect(() => {
+    if (!isAuthenticated || !error) return
+
+    // Check if error is a 404 (profile not found)
+    if (is404Error(error)) {
+      console.log('🚫 Profile not found (404), signing out user immediately...')
+      // Immediate sign-out for 404 errors - no delay needed
+      dispatch(signOutUser())
+      return
+    }
+
+    // Handle max retries for other error types
     const maxRetriesReached = retryState.retryCount >= retryState.maxRetries
-    if (isAuthenticated && error && maxRetriesReached) {
+    if (maxRetriesReached) {
       console.log(
         '🚫 Maximum retries reached for profile fetch, automatically signing out user...'
       )
@@ -184,6 +210,15 @@ const Routes: React.FC = () => {
   // Enhanced error message calculation with retry context
   const errorMessage = useMemo(() => {
     if (!error) return null
+
+    // For 404 errors, don't allow retries and show appropriate message
+    if (is404Error(error)) {
+      return {
+        message: 'Profile not found. You will be signed out automatically.',
+        onRetry: undefined, // No retry for 404 errors
+        retryText: 'Signing out...',
+      }
+    }
 
     const isRetryable = retryState.retryCount < retryState.maxRetries
     const retryText = isRetryable
@@ -229,6 +264,11 @@ const Routes: React.FC = () => {
   // Enhanced error display message with retry context
   const errorDisplayMessage = useMemo(() => {
     if (!error) return ''
+
+    // For 404 errors, show immediate sign-out message
+    if (is404Error(error)) {
+      return 'Profile not found. You will be signed out automatically to reset your session.'
+    }
 
     const hasRetried = retryState.retryCount > 0
     const maxRetriesReached = retryState.retryCount >= retryState.maxRetries
