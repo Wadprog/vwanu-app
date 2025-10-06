@@ -26,7 +26,11 @@ const shadowStyle = {
   }),
 }
 
-const PostInput = () => {
+interface PostInputProps {
+  communityId?: string
+}
+
+const PostInput: React.FC<PostInputProps> = ({ communityId }) => {
   const { userId } = useSelector((state: RootState) => state.auth)
   const { data: user } = useFetchProfileQuery(userId!)
   const { isDarkMode } = useTheme()
@@ -62,6 +66,7 @@ const PostInput = () => {
         visible={creatingPost}
         onClose={() => toggleCreatingPost()}
         openBottomSheet={openBottomSheet}
+        communityId={communityId}
       />
     </View>
   )
