@@ -1,6 +1,16 @@
 import routes from './src/navigation/routes'
 
+// Import generated types from backend API
+export * from './src/types/generatedTypes'
+
+// Frontend-specific types and overrides
 type Id = string | number
+
+// Type aliases to resolve conflicts between frontend and backend types
+// Use backend types as base and extend with frontend-specific properties
+export type BackendUser = UserInterface
+export type BackendPost = PostInterface
+export type BackendProfile = ProfileInterface
 interface ListItem {
   label: string
   value: string
@@ -24,7 +34,7 @@ export enum NextCompletionStep {
   PROFILE_PICTURE = 3,
   PROFILE_COMPLETE = 4,
 }
-interface User {
+export interface User {
   firstName: string
   lastName: string
   createdAt: Date
@@ -50,7 +60,16 @@ interface Profile extends User {
   bio?: string
   location?: string
 }
-type Notice = 'public' | 'private' | 'network'
+export type Notice = 'public' | 'private' | 'network'
+
+// Community privacy types
+export type CommunityPrivacyType = 'public' | 'private' | 'hidden'
+
+export interface CommunityPrivacyConfig {
+  type: CommunityPrivacyType
+  requireApproval: boolean
+  description: string
+}
 
 export interface PostProps {
   postText?: string
@@ -67,6 +86,7 @@ export interface PostProps {
   privacyType: Notice
   userId: number | string
   disableNavigation?: boolean
+  communityId?: string
 }
 
 export interface UpdatePost {
@@ -109,6 +129,13 @@ export type BottomTabParms = {
   [routes.COMMUNITY]: undefined
 }
 
+export type CommunityStackParams = {
+  Communities: undefined
+  CommunityDetail: { communityId: string }
+  CreateCommunity: undefined
+  CommunitySettings: { communityId: string }
+}
+
 export interface Message {
   id: number
   content: string
@@ -133,4 +160,27 @@ interface Profiles extends User {
   dob?: string
   searchVector?: string | null
   online: boolean
+}
+
+export interface CommunityInterface {
+  name: string
+  profilePicture: string
+  createdAt: string
+  id: number
+  interests?: Interest[]
+  canInvite: string
+  canPost: string
+  createdAt: Date
+  creatorId: string
+  description: string
+  id: string
+  members: User[]
+  numAdmins: number
+  numMembers: number
+  pendingInvitation: null
+  privacyType: string
+  profilePicture: string
+  updatedAt: Date
+  isCreateCard?: boolean
+  isMember?: Member
 }

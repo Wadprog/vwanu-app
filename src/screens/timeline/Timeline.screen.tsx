@@ -3,7 +3,7 @@ import { View } from 'react-native'
 import tw from 'lib/tailwind'
 import PostList from './PostList'
 import Screen from 'components/screen'
-// import CommunityList from './CommunityList'
+import CommunityList from './CommunityList'
 import PostInput from 'components/CreatePost/PostInput'
 import TimelineSkeletone from './TimelineSkeletone'
 
@@ -15,7 +15,7 @@ const Timeline = () => {
         <View style={tw`mt-3`}>
           <PostInput />
         </View>
-        {/* <CommunityList /> */}
+        <CommunityList />
         <View>
           <PostList />
         </View>

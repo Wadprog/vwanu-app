@@ -8,14 +8,17 @@ import { useFetchPostsQuery } from 'store/post'
 import TimelineSkeletone from './TimelineSkeletone'
 import PaginatedList, { PaginationParams } from 'components/PaginatedList'
 
-interface Props {}
+interface Props {
+  communityId?: string
+}
 
-const PostList: React.FC<Props> = () => {
+const PostList: React.FC<Props> = ({ communityId }) => {
   const initialQueryParams = useMemo(
     () => ({
       $limit: 10,
       $skip: 0,
       $sort: { createdAt: -1 } as const,
+      communityId: communityId || undefined,
     }),
     []
   )

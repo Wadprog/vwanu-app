@@ -18,9 +18,9 @@ import { useTailwindTheme } from '../hooks/useTailwindTheme'
 import { useTheme } from '../hooks/useTheme'
 
 // Navigators
-import ChatNavigator from './Chat'
 import FeedNavigator from './Feed'
 import AccountNavigator from './Account'
+import CommunityNavigator from './Community'
 
 // Types
 import { BottomTabParms } from '../../types'
@@ -72,25 +72,26 @@ const BottomTabBar: React.FC<TabBarProps> = ({ navigation, state }) => {
           <MaterialCommunityIcons name="account" size={20} color={iconColor} />
         }
       />
-      {/* Disabled tabs - can be enabled when features are ready
-      <BottomNavigationTab 
-        title={routes.INBOX} 
+      <BottomNavigationTab
+        title={routes.COMMUNITY}
         icon={
-          <MaterialCommunityIcons 
-            name="chat" 
-            size={20} 
-            color={iconColor} 
+          <MaterialCommunityIcons
+            name="account-group"
+            size={20}
+            color={iconColor}
           />
-        } 
+        }
       />
-      <BottomNavigationTab 
-        title={routes.COMMUNITY} 
+      {/* Disabled inbox tab for now
+      <BottomNavigationTab
+        title={routes.INBOX}
         icon={
-          <CommunityIcon 
-            size={20} 
-            color={iconColor} 
+          <MaterialCommunityIcons
+            name="chat"
+            size={20}
+            color={iconColor}
           />
-        } 
+        }
       />
       */}
     </BottomNavigation>
@@ -125,17 +126,18 @@ const BottomTabNavigator: React.FC = () => {
         component={AccountNavigator}
         options={{ title: 'Profile' }}
       />
-      {/* Disabled for now - can be enabled when features are ready */}
+      <Tab.Screen
+        name={routes.COMMUNITY}
+        component={CommunityNavigator}
+        options={{ title: 'Communities' }}
+      />
+      {/* Disabled for now - can be enabled when inbox feature is ready
       <Tab.Screen
         name={routes.INBOX}
         component={ChatNavigator}
         options={{ title: 'Messages' }}
       />
-      <Tab.Screen
-        name={routes.COMMUNITY}
-        component={ChatNavigator}
-        options={{ title: 'Community' }}
-      />
+      */}
     </Tab.Navigator>
   )
 }

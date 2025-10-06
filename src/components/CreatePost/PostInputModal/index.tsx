@@ -1,5 +1,5 @@
 import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react'
-import { string, object, mixed, InferType, array } from 'yup'
+import { string, object, mixed, InferType, array, number } from 'yup'
 import { useSelector } from 'react-redux'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
@@ -37,6 +37,7 @@ interface PostInputModalInterface {
   visible: boolean
   openBottomSheet: boolean
   onClose?: () => void
+  communityId?: string
 }
 
 export interface PostInputModalHandle {
@@ -48,18 +49,14 @@ const ValidationSchema = object().shape({
   postText: string().label('Content'),
   privacyType: mixed<Notice>().required().label('Privacy Type'),
   postImage: array().of(string()).label('Images'),
+  communityId: string().label('Community ID').optional(),
 })
-
-const initialValues: InferType<typeof ValidationSchema> = {
-  postText: '',
-  privacyType: 'public',
-  postImage: [],
-}
 
 const PostInputModal: React.FC<PostInputModalInterface> = ({
   visible,
   onClose,
   openBottomSheet,
+  communityId,
 }) => {
   const navigation = useNavigation()
   const { userId } = useSelector((state: RootState) => state.auth)
@@ -72,6 +69,19 @@ const PostInputModal: React.FC<PostInputModalInterface> = ({
   const fadeAnim = useRef(new Animated.Value(0)).current
   const slideAnim = useRef(new Animated.Value(50)).current
   const spinAnim = useRef(new Animated.Value(0)).current
+
+  const initialValues: InferType<typeof ValidationSchema> = {
+    postText: '',
+    privacyType: 'public',
+    postImage: [],
+    communityId: communityId,
+  }
+  // React.useEffect(() => {
+  //   if (communityId) {
+  //      initialValues.communityId = communityId
+  //   }
+  // }, [communityId])
+  // console.log('communityId', communityId)
 
   React.useEffect(() => {
     if (visible) {

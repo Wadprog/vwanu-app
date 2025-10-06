@@ -61,7 +61,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
           // Add refreshed authentication tokens
           headers.set('authorization', `Bearer ${refreshedTokens.accessToken}`)
-          headers.set('x-id-token', refreshedTokens.idToken)
+          headers.set('x-id-token', refreshedTokens.idToken || '')
           return headers
         },
       })
@@ -80,7 +80,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
 const apiSlice = createApi({
   reducerPath: 'api',
-  tagTypes: ['Profile', 'Post'],
+  tagTypes: ['Profile', 'Post', 'Community', 'Interest'],
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),
 })

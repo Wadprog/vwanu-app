@@ -1,9 +1,9 @@
-import apiSlice from "./api-slice";
-import { endpoints, HttpMethods } from "../config";
+import apiSlice from './api-slice'
+import { endpoints, HttpMethods } from '../config'
 
-interface Interest {
-  id: string;
-  name: string;
+export interface Interest {
+  id: string
+  name: string
 }
 
 const interests = apiSlice.injectEndpoints({
@@ -13,10 +13,12 @@ const interests = apiSlice.injectEndpoints({
         url: endpoints.INTERESTS,
         method: HttpMethods.GET,
       }),
+      providesTags: ['Interest'],
     }),
   }),
-});
+})
 
-const { useFetchInterestsQuery } = interests;
+const { useFetchInterestsQuery } = interests
 
-export { useFetchInterestsQuery };
+export { useFetchInterestsQuery }
+export type { Interest as InterestType }

@@ -17,16 +17,19 @@ interface Rep {
 
 type PostCreationProps = PostProps & { postImage: string[] }
 type CommentType = Partial<PostProps> & { postId: number }
+
 const _toFormData = (values: Partial<PostCreationProps>): FormData => {
   const formData = new FormData()
   formData.append('postText', values.postText || '')
   formData.append('privacyType', values?.privacyType || 'public')
+  if (values?.communityId) {
+    formData.append('communityId', values?.communityId || '')
+  }
   if (values?.postImage?.length) {
     values.postImage.forEach((uri) => {
       const filename = uri.split('/').pop() || 'postMedia.jpg'
       let mimeType = 'image/jpeg' // default
 
-      // Determine mime type based on file extension
       if (filename.endsWith('.png')) {
         mimeType = 'image/png'
       } else if (filename.endsWith('.gif')) {
@@ -61,6 +64,7 @@ interface FetchPostsParams {
   $limit?: number
   $skip?: number
   $sort?: Record<string, 1 | -1>
+  communityId?: string
 }
 
 const post = apiSlice.injectEndpoints({
@@ -88,6 +92,9 @@ const post = apiSlice.injectEndpoints({
         }
         if (params?.$skip) {
           queryParams.append('$skip', params.$skip.toString())
+        }
+        if (params?.communityId) {
+          queryParams.append('communityId', params.communityId.toString())
         }
 
         return `${baseUrl}?${queryParams.toString()}`
